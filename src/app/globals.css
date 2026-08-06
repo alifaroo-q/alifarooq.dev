@@ -1,17 +1,117 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: oklch(0.16 0.008 265);
-  --color-paper: oklch(0.98 0.004 90);
-  --color-accent: oklch(0.62 0.17 250);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", monospace;
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Type scale — 1.25 minor third off a 16px base */
+  --text-nameplate: clamp(3.25rem, 9vw, 5.5rem);
 }
 
 :root {
   color-scheme: light dark;
+
+  --page: #fbfaf7;
+  --line: #e4e1d9;
+  --text: #16161a;
+  --text-2: #55555e;
+  --text-3: #6e6e77;
+  --accent: #8a5a16;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0b0b0d;
+    --line: #212126;
+    --text: #ececee;
+    --text-2: #a8a8ae;
+    --text-3: #8a8a92;
+    --accent: #e8b24c;
+  }
 }
 
 html {
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--page);
+  color: var(--text);
+}
+
+/* Atmosphere: a single faint bloom behind the nameplate, plus film grain.
+   Both are decorative and static — no SC 2.2.2 exposure. */
+.ground::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    60rem 40rem at 18% 12%,
+    color-mix(in oklab, var(--accent) 11%, transparent),
+    transparent 70%
+  );
+}
+
+.ground::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* One orchestrated load reveal. Opt-in, so reduced-motion is the default state. */
+.reveal > * {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal > * {
+    opacity: 0;
+    animation: rise 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .reveal > *:nth-child(1) { animation-delay: 0.05s; }
+  .reveal > *:nth-child(2) { animation-delay: 0.14s; }
+  .reveal > *:nth-child(3) { animation-delay: 0.23s; }
+  .reveal > *:nth-child(4) { animation-delay: 0.32s; }
+  .reveal > *:nth-child(5) { animation-delay: 0.41s; }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Link treatment: rule thickens and takes the accent on hover. */
+.link {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition:
+    text-decoration-color 180ms ease,
+    text-decoration-thickness 180ms ease,
+    color 180ms ease;
+}
+
+.link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
