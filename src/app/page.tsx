@@ -1,6 +1,6 @@
 const links = [
   { label: "GitHub", href: "https://github.com/alifaroo-q" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/alifaroo-q" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/itsalifarooq" },
 ];
 
 export default function Home() {
@@ -19,12 +19,13 @@ export default function Home() {
           Ali Farooq
         </h1>
         <p className="text-lg leading-relaxed text-pretty opacity-80">
-          Full stack engineer. I build TypeScript systems that make failure
-          explicit — and try to get the compiler to enforce it.
+          Full stack engineer. I have experience developing AI-powered backend
+          systems, automation workflows, and integration-heavy products using
+          TypeScript, NodeJS, NestJS, HonoJS, OpenAI, and PostgreSQL.
         </p>
         <p className="leading-relaxed text-pretty opacity-60">
-          This site is being built in the open. Case studies, open source write-ups,
-          and a way to reach me are on the way.
+          This site is being built in the open. Case studies, open source
+          write-ups, and a way to reach me are on the way.
         </p>
       </div>
 
