@@ -14,6 +14,20 @@ export const person = {
   name: "Ali Farooq",
   positioning:
     "I'm a backend engineer who designs for the failure case first — the integration that degrades silently, the payment that must never be captured twice, the transaction that outgrows the service it started in.",
+
+  /**
+   * The same sentence, decomposed. #8's central claim is that the sentence *is*
+   * the page's table of contents — three clauses, three case-study slots, in the
+   * order the sections appear. Nothing on the page showed that. Splitting it
+   * lets a take mark each clause against the slot it opens. No copy changes;
+   * this is the identical string, cut at its existing commas.
+   */
+  positioningLead: "I'm a backend engineer who designs for the failure case first —",
+  positioningClauses: [
+    "the integration that degrades silently,",
+    "the payment that must never be captured twice,",
+    "the transaction that outgrows the service it started in.",
+  ],
   // Fold micro-line: role, location, availability. Deliberately no proof element.
   role: "Backend engineer",
   location: "Karachi, Pakistan",

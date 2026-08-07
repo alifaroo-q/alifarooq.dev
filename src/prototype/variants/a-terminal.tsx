@@ -6,19 +6,39 @@
  * Density is high; whitespace is rationed. Case studies read as rows in a
  * listing, not cards — the page looks like something a machine printed.
  *
- * Refinement pass — see `.take-a` in globals.css:
- *   · No colour is set inline. Every value is a variable, so `.a-row:hover`
- *     inverts the whole subtree at once. Previously the inline styles beat
- *     the `group-hover:` classes and left grey text on a light ground.
- *   · JetBrains Mono replaces IBM Plex Mono; body up to 15px/1.7 and the
- *     measure cut to ~54ch, which is where mono prose actually reads.
- *   · Real <h2> per section, a skip link, stated focus rings, and decorative
- *     shell punctuation hidden from assistive tech.
+ * Refinement pass 1 — see `.take-a` in globals.css. No colour is set inline;
+ * every value is a variable, so `.a-row:hover` inverts the whole subtree at
+ * once instead of stranding grey text on a light ground. JetBrains Mono,
+ * body at 15px/1.7, measure cut to ~54ch.
+ *
+ * Refinement pass 2 — ARGUMENT OVER COSPLAY. The terminal register is a
+ * crowded one (akkila.dev is a near neighbour), and the shell furniture was
+ * the least defensible part of it. Removed: the `$ whoami` prompt, the
+ * `$ mail` prefix, `~/` path notation on section heads, the `[ bracket ]`
+ * button chrome, and the lowercased name. What replaces them is structure:
+ * #8 established that the positioning sentence *is* the table of contents —
+ * three clauses, three slots, in order — so each clause now carries the
+ * marker of the case study it opens, and each work row carries the same
+ * marker back. The page argues; it no longer cosplays.
+ *
+ * What stays is the part that was never cosplay: dark ground, mono, hard
+ * edges, full-bleed rules, whole-row inversion.
  */
 
 import { about, contact, openSource, person, work } from "../content";
 
-/** Small mono label. 11px is the floor — 10px was unreadable at this weight. */
+/** Ties a clause of the positioning sentence to the slot it opens. Decorative. */
+function Marker({ n }: { n: number }) {
+  return (
+    <sup
+      aria-hidden
+      className="ml-0.5 align-super text-[0.5625rem] tracking-[0.1em] text-[var(--a-accent)] tabular-nums"
+    >
+      {String(n).padStart(2, "0")}
+    </sup>
+  );
+}
+
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-[0.6875rem] tracking-[0.18em] text-[var(--a-fg-3)] uppercase">
@@ -30,13 +50,7 @@ function Label({ children }: { children: React.ReactNode }) {
 function SectionHead({ id, label }: { id: string; label: string }) {
   return (
     <div className="flex items-baseline gap-4 border-t border-[var(--a-line)] px-6 py-3 md:px-10">
-      {/* Path notation, adopted from akkila.dev — the `~/` is decorative, so the
-          accessible name stays "Work", not "tilde slash work". */}
-      <h2
-        id={id}
-        className="text-[0.6875rem] tracking-[0.2em] text-[var(--a-accent)] uppercase"
-      >
-        <span aria-hidden className="text-[var(--a-fg-3)]">~/</span>
+      <h2 id={id} className="text-[0.6875rem] tracking-[0.2em] text-[var(--a-accent)] uppercase">
         {label}
       </h2>
       <span aria-hidden className="h-px flex-1 bg-[var(--a-line)]" />
@@ -53,37 +67,41 @@ export function VariantA() {
 
       {/* header — name, resume, contact. Nothing else. */}
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--a-line)] bg-[color-mix(in_oklab,var(--a-bg)_88%,transparent)] px-6 py-3 text-[0.8125rem] backdrop-blur md:px-10">
-        <span className="lowercase">Ali Farooq</span>
+        <span>{person.name}</span>
         <nav aria-label="Primary" className="flex gap-6 text-[var(--a-fg-2)]">
-          <a href={person.resumeHref} className="lowercase hover:text-[var(--a-accent)]">
-            resume.pdf
+          <a href={person.resumeHref} className="hover:text-[var(--a-accent)]">
+            Résumé
           </a>
-          <a href="#contact" className="lowercase hover:text-[var(--a-accent)]">
-            contact
+          <a href="#contact" className="hover:text-[var(--a-accent)]">
+            Contact
           </a>
         </nav>
       </header>
 
       <main id="main">
         {/* fold — four slots, no proof element */}
-        <section className="px-6 pt-16 pb-20 md:px-10 md:pt-24">
-          <p aria-hidden className="mb-6 text-[0.8125rem] text-[var(--a-fg-3)]">
-            <span className="text-[var(--a-accent)]">$</span> whoami
-          </p>
-          <h1 className="text-[clamp(2.5rem,8vw,5rem)] leading-[0.95] font-medium tracking-tight lowercase">
+        <section className="px-6 pt-20 pb-20 md:px-10 md:pt-28">
+          <h1 className="text-[clamp(2.5rem,8vw,5rem)] leading-[0.95] font-medium tracking-tight">
             {person.name}
           </h1>
-          <p className="mt-10 max-w-[54ch] text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.55]">
-            {person.positioning}
+
+          {/* The sentence, marked against the sections it opens. Still one
+              sentence — the markers are quiet and the prose runs unbroken. */}
+          <p className="mt-10 max-w-[54ch] text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
+            {person.positioningLead}{" "}
+            {person.positioningClauses.map((clause, i) => (
+              <span key={clause}>
+                {clause}
+                <Marker n={i + 1} />
+                {i < person.positioningClauses.length - 1 ? " " : ""}
+              </span>
+            ))}
           </p>
 
           <dl className="mt-12 max-w-md space-y-1.5 text-[0.8125rem]">
             {[
               ["role", person.role, false],
               ["based", person.location, false],
-              // Live dot on availability, adopted from akkila.dev's "● replies in
-              // < 24h". #8 wants availability stated outright; this is the cheapest
-              // way to make it read as current rather than boilerplate.
               ["status", person.availability, true],
             ].map(([k, v, live]) => (
               <div key={String(k)} className="flex items-baseline gap-3">
@@ -106,23 +124,21 @@ export function VariantA() {
           <div className="mt-12 flex flex-wrap gap-3 text-[0.9375rem]">
             <a
               href={person.resumeHref}
-              aria-label="Download resume"
-              className="border border-[var(--a-accent)] px-4 py-2 text-[var(--a-accent)] transition-colors hover:bg-[var(--a-accent)] hover:text-[var(--a-bg)]"
+              className="border border-[var(--a-accent)] px-5 py-2.5 text-[var(--a-accent)] transition-colors hover:bg-[var(--a-accent)] hover:text-[var(--a-bg)]"
             >
-              [ download resume ]
+              Download résumé
             </a>
             <a
               href="#contact"
-              aria-label="Get in touch"
-              className="border border-[var(--a-line-strong)] px-4 py-2 transition-colors hover:bg-[var(--a-fg)] hover:text-[var(--a-bg)]"
+              className="border border-[var(--a-line-strong)] px-5 py-2.5 transition-colors hover:bg-[var(--a-fg)] hover:text-[var(--a-bg)]"
             >
-              [ get in touch ]
+              Get in touch
             </a>
           </div>
         </section>
 
-        {/* work — rows, indexed, whole row inverts on hover */}
-        <SectionHead id="work" label="work" />
+        {/* work — rows carry the marker of the clause that promised them */}
+        <SectionHead id="work" label="Work" />
         <div>
           {work.map((w, i) => (
             <a
@@ -130,7 +146,10 @@ export function VariantA() {
               href={w.href}
               className="a-row group grid grid-cols-[2.5rem_1fr] gap-x-4 border-b border-[var(--a-line)] px-6 py-8 md:grid-cols-[4rem_1fr] md:px-10 md:py-10"
             >
-              <span aria-hidden className="pt-1.5 text-[0.6875rem] tabular-nums text-[var(--a-fg-3)]">
+              <span
+                aria-hidden
+                className="pt-1.5 text-[0.6875rem] tracking-[0.1em] text-[var(--a-accent)] tabular-nums"
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
@@ -153,7 +172,7 @@ export function VariantA() {
         </div>
 
         {/* open source — uneven weight: conviction, then drizzle-tx, then the pair */}
-        <SectionHead id="open-source" label="open source" />
+        <SectionHead id="open-source" label="Open source" />
         <section className="px-6 py-14 md:px-10">
           <p className="max-w-[42ch] border-l-2 border-[var(--a-accent)] pl-5 text-[clamp(1.1875rem,2.4vw,1.625rem)] leading-[1.45]">
             {openSource.conviction}
@@ -201,7 +220,7 @@ export function VariantA() {
         </section>
 
         {/* about */}
-        <SectionHead id="about" label="about" />
+        <SectionHead id="about" label="About" />
         <section className="grid gap-8 px-6 py-14 md:grid-cols-[9rem_1fr] md:px-10">
           <div
             aria-hidden
@@ -220,13 +239,12 @@ export function VariantA() {
       </main>
 
       {/* contact — shared footer component on every page */}
-      <SectionHead id="contact" label="contact" />
+      <SectionHead id="contact" label="Contact" />
       <footer className="px-6 py-16 md:px-10 md:py-24">
         <a
           href={`mailto:${person.email}`}
           className="block text-[clamp(1.375rem,5vw,3rem)] leading-tight wrap-anywhere text-[var(--a-accent)] hover:underline hover:underline-offset-[0.2em]"
         >
-          <span aria-hidden className="text-[var(--a-fg-3)]">$ mail </span>
           {person.email}
         </a>
         <p className="mt-6 max-w-[52ch] text-[0.9375rem] leading-[1.7] text-[var(--a-fg-2)]">
@@ -234,10 +252,9 @@ export function VariantA() {
         </p>
         <a
           href={person.resumeHref}
-          aria-label="Download resume, PDF"
-          className="mt-6 inline-block border border-[var(--a-line-strong)] px-4 py-2 text-[0.9375rem] transition-colors hover:bg-[var(--a-fg)] hover:text-[var(--a-bg)]"
+          className="mt-8 inline-block border border-[var(--a-line-strong)] px-5 py-2.5 text-[0.9375rem] transition-colors hover:bg-[var(--a-fg)] hover:text-[var(--a-bg)]"
         >
-          [ resume.pdf ]
+          Download résumé (PDF)
         </a>
       </footer>
     </div>
