@@ -217,3 +217,58 @@ body {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   PROTOTYPE — Detail take C: the pinned reference that tracks the section.
+
+   Every rule here keys off `data-focus` on the `.c-ref` wrapper, which the
+   scroll observer sets. Two things follow from #10's "no colour is ever set
+   inline" rule and #9's currentColor asset:
+
+   1. The SVG carries no hex, so the ACCENT ON THE ACTIVE PART is just `color`
+      inherited by `currentColor`. The asset never learns it is being
+      highlighted, which is what keeps it a plain committed file.
+   2. Dimming is opacity, not a second grey. A grey would have to be re-picked
+      per ground; opacity survives the inversion #10 built the whole take on.
+   ========================================================================== */
+
+.c-ref [data-part] {
+  transition:
+    opacity 280ms ease,
+    color 280ms ease;
+}
+
+/* Untracked — no JS yet, or nothing scrolled. The whole machine is legible. */
+.c-ref[data-tracking="false"] [data-part] {
+  opacity: 1;
+}
+
+.c-ref[data-tracking="true"] [data-part][data-active="false"] {
+  opacity: 0.24;
+}
+
+.c-ref[data-tracking="true"] [data-part][data-active="true"] {
+  opacity: 1;
+  color: var(--a-accent);
+}
+
+/* The section index on the drizzle-tx page: same mechanism, no diagram. The
+   marker is a rule rather than a colour swap so the label keeps its contrast. */
+.c-ref [data-idx] {
+  border-left: 2px solid transparent;
+  transition:
+    border-color 280ms ease,
+    color 280ms ease;
+}
+
+.c-ref[data-tracking="true"] [data-idx][data-active="true"] {
+  border-left-color: var(--a-accent);
+  color: var(--a-fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-ref [data-part],
+  .c-ref [data-idx] {
+    transition: none;
+  }
+}

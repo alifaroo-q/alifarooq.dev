@@ -30,6 +30,8 @@ export const caseStudy = {
 
   sections: [
     {
+      /** `key` ties the section to the parts of the diagram it is talking about. */
+      key: "problem",
       heading: "The problem",
       body: [
         "The automation read a shared inbox, classified what came in, and pushed the result into the CRM the team actually worked out of. On a good day nobody thought about it.",
@@ -37,6 +39,7 @@ export const caseStudy = {
       ],
     },
     {
+      key: "decision",
       heading: "The decision",
       body: [
         "I stopped treating the Google connection as infrastructure and started treating it as a state machine with failure states I had to name.",
@@ -44,6 +47,7 @@ export const caseStudy = {
       ],
     },
     {
+      key: "cost",
       heading: "The cost",
       body: [
         "The recovery machinery was written before a single one of these failures had happened in production, and most of it has still never fired. That is the trade: the work is paid up front, against outages that are invisible until they are expensive.",
