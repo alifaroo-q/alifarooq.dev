@@ -6,3 +6,5 @@ next-env.d.ts
 .vercel
 *.tsbuildinfo
 worktrees/
+AGENTS.md
+CLAUDE.md

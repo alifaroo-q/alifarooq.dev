@@ -76,7 +76,8 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${sans.variable} ${mono.variable}`}
     >
-      <body className="ground min-h-dvh font-sans">
+      {/* PROTOTYPE: `ground` (bloom + grain) removed so each take paints its own background. */}
+      <body className="min-h-dvh font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
