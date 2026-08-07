@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Instrument_Serif } from "next/font/google";
+import {
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+  Instrument_Serif,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 
 const display = Instrument_Serif({
@@ -13,6 +18,15 @@ const sans = IBM_Plex_Sans({
   weight: ["400", "500"],
   subsets: ["latin"],
   variable: "--font-plex-sans",
+  display: "swap",
+});
+
+// Take A's face. Tallest x-height of the free monos and drawn for extended
+// reading rather than glanceable code — the reason 15px body copy holds up.
+const terminal = JetBrains_Mono({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-jb-mono",
   display: "swap",
 });
 
@@ -74,7 +88,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+      className={`${display.variable} ${sans.variable} ${mono.variable} ${terminal.variable}`}
     >
       {/* PROTOTYPE: `ground` (bloom + grain) removed so each take paints its own background. */}
       <body className="min-h-dvh font-sans">

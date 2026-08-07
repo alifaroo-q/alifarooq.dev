@@ -4,6 +4,7 @@
   --font-display: var(--font-instrument-serif), Georgia, serif;
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-terminal: var(--font-jb-mono), ui-monospace, monospace;
 
   /* Type scale — 1.25 minor third off a 16px base */
   --text-nameplate: clamp(3.25rem, 9vw, 5.5rem);
@@ -114,4 +115,105 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* ==========================================================================
+   PROTOTYPE — Take A (terminal / brutalist)
+   Scoped to `.take-a` so the other takes are untouched.
+
+   Every colour is a variable and nothing sets colour inline. That is what
+   makes the signature interaction work: `.a-row:hover` REDEFINES the
+   variables, so every descendant inverts together instead of leaving grey
+   text stranded on a light ground (measured 3.36:1 before this — a fail).
+   Contrast of every pair below is verified; see the ticket for the table.
+   ========================================================================== */
+
+.take-a {
+  color-scheme: dark;
+
+  --a-bg: #0a0a0b;
+  --a-bg-raised: #111113;
+  --a-line: #26262b;
+  --a-line-strong: #3a3a42;
+
+  --a-fg: #edece9; /* 16.75:1 on bg */
+  --a-fg-2: #a3a19c; /*  7.67:1 on bg — body copy */
+  --a-fg-3: #807d77; /*  4.82:1 on bg — labels only, never body */
+  --a-accent: #f2b544; /* 10.81:1 on bg */
+
+  /* The inverted set. Note the accent resolves to ink: amber on this light
+     ground measures 1.55:1, so the artifact link must change colour, not
+     just background. */
+  --a-inv-bg: #edece9;
+  --a-inv-fg: #0a0a0b;
+  --a-inv-fg-2: #46443f; /* 8.23:1 on the light ground */
+  --a-inv-fg-3: #5c594f;
+  --a-inv-line: #c8c6c1;
+
+  background-color: var(--a-bg);
+  color: var(--a-fg);
+  font-family: var(--font-terminal);
+  /* Slashed zero and no ligatures — this is a face for reading, not a code editor. */
+  font-variant-ligatures: none;
+  font-feature-settings: "zero" 1;
+}
+
+/* Rows and panels that invert wholesale on hover/focus. */
+.a-row {
+  transition:
+    background-color 140ms linear,
+    border-color 140ms linear;
+}
+
+.a-row:hover,
+.a-row:focus-visible {
+  --a-fg: var(--a-inv-fg);
+  --a-fg-2: var(--a-inv-fg-2);
+  --a-fg-3: var(--a-inv-fg-3);
+  --a-accent: var(--a-inv-fg);
+  --a-line: var(--a-inv-line);
+  --a-line-strong: var(--a-inv-fg-2);
+
+  background-color: var(--a-inv-bg);
+  color: var(--a-inv-fg);
+}
+
+/* The default focus ring is invisible on near-black, so it is stated. */
+.take-a :where(a, button):focus-visible {
+  outline: 2px solid var(--a-accent);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
+/* Inverted rows take an ink ring — an amber ring on the light ground is the
+   same 1.55:1 problem as the link text. */
+.a-row:focus-visible {
+  outline-color: var(--a-inv-fg);
+}
+
+/* Sticky header would otherwise eat the top of an anchored section. */
+.take-a :target,
+.take-a [id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Keyboard escape hatch past the header. */
+.a-skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 60;
+}
+
+.a-skip:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 0.625rem 1rem;
+  background: var(--a-accent);
+  color: var(--a-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-row {
+    transition: none;
+  }
 }
