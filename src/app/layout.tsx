@@ -1,25 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Instrument_Serif } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const display = Instrument_Serif({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
-
-const sans = IBM_Plex_Sans({
+// 400 and 500 only. The 700 was dropped: nothing on the site used a bold
+// utility, so it was a font file shipped on every page load for nothing.
+// Adding a weight back is a one-line change and should argue for itself.
+//
+// Naming the weights also pins them. JetBrains Mono is a variable font, so
+// omitting `weight` would ship one file instead of two — but that file
+// carries 100 to 800, which quietly makes every dropped weight work again.
+// Two static cuts is the cost of the rule above having teeth.
+const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
   subsets: ["latin"],
-  variable: "--font-plex-sans",
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
-  weight: ["400", "500"],
-  subsets: ["latin"],
-  variable: "--font-plex-mono",
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -27,6 +21,9 @@ const siteUrl = "https://alifarooq.dev";
 const description =
   "Ali Farooq — full stack engineer building AI-powered backend systems, automation workflows, and integration-heavy products in TypeScript.";
 
+// Carried over from the scaffolding unchanged. The social card image and the
+// rest of the metadata belong to their own ticket; this only keeps what was
+// already working rather than deleting it and leaving a gap.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Ali Farooq — Full Stack Engineer",
@@ -46,14 +43,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfaf7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0b0d" },
-  ],
-};
-
-// Person entity so the page reads as a real profile rather than a soft 404.
+// Person entity, so the page reads as a real profile rather than a soft 404.
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -68,19 +58,28 @@ const personSchema = {
   ],
 };
 
+// Both grounds, so the browser chrome matches the page the reader gets.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#edece9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0b" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${display.variable} ${sans.variable} ${mono.variable}`}
-    >
-      <body className="ground min-h-dvh font-sans">
+    <html lang="en" className={jetbrainsMono.variable}>
+      <body className="min-h-dvh">
         <script
-          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD has no other insertion point, and the value is a local literal with no user input in it.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+          type="application/ld+json"
         />
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
         {children}
       </body>
     </html>

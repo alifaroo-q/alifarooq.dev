@@ -1,117 +1,138 @@
-const contact = [
-  { label: "hello@alifarooq.dev", href: "mailto:hello@alifarooq.dev" },
-  { label: "+92 316 790 2206", href: "tel:+923167902206" },
+/**
+ * The foundation's proof page.
+ *
+ * It exists to show that the tokens resolve on both grounds and nothing more —
+ * the home page itself is a later ticket. Every colour here comes from a
+ * token; not one is set inline. That is a correctness rule, not a style one:
+ * an inline colour beats the variables the row flip redefines, and leaves
+ * part of the subtree stranded on the wrong ground.
+ *
+ * The type is deliberately flat. Only body and label sizes are settled, so
+ * this page uses only those two rather than inventing a heading step at the
+ * call site.
+ */
+
+const facts = [
+  { term: "Role", detail: "Full stack engineer" },
+  { term: "Location", detail: "Lahore, Pakistan — remote" },
+  { term: "Availability", detail: "Open to work" },
 ];
 
-const profiles = [
-  { label: "GitHub", href: "https://github.com/alifaroo-q" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/itsalifarooq" },
+const grounds = [
+  { index: "01", name: "Page ground", note: "Set by the reader's system" },
+  { index: "02", name: "Opposite ground", note: "Reached by hovering a row" },
 ];
 
-const stack = ["TypeScript", "Node", "NestJS", "Hono", "OpenAI", "PostgreSQL"];
-
-/** Mono label in the left rail; stacks above its content on small screens. */
-function Row({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="grid gap-x-8 gap-y-2 sm:grid-cols-[7rem_1fr]">
-      <h2 className="font-mono text-[0.6875rem] tracking-[0.18em] uppercase text-[var(--text-3)] sm:pt-[0.2rem]">
-        {label}
-      </h2>
-      <div>{children}</div>
-    </div>
-  );
+/**
+ * The measure, centred. Hairlines run full-bleed rather than boxing content,
+ * so the rules start at the viewport edge and only the text is held in.
+ */
+function Measure({ children }: { children: React.ReactNode }) {
+  return <div className="mx-auto w-full max-w-measure px-6">{children}</div>;
 }
 
 export default function Home() {
   return (
-    <main className="relative mx-auto w-full max-w-3xl px-6 py-20 sm:px-10 sm:py-28">
-      <div className="reveal flex flex-col gap-14">
-        {/* Dated status line — honest, no countdown, no progress bar. */}
-        <p className="flex items-center gap-2.5 font-mono text-[0.6875rem] tracking-[0.18em] uppercase text-[var(--text-3)]">
-          <span
-            aria-hidden
-            className="inline-block size-1.5 rounded-full bg-[var(--accent)]"
-          />
-          Rebuilding - August 2026
-        </p>
+    <main id="main">
+      <header className="border-border border-b py-16">
+        <Measure>
+          <p className="text-foreground-label text-label uppercase">
+            Foundation
+          </p>
+          <h1 className="mt-6 font-medium">Ali Farooq</h1>
+          <p className="text-foreground-muted mt-4">
+            The toolchain and the theme, with a page bare enough to see them.
+          </p>
 
-        <header className="flex flex-col gap-6">
-          <h1 className="font-display text-[length:var(--text-nameplate)] leading-[0.92] tracking-[-0.02em]">
-            Ali Farooq
-          </h1>
+          <dl className="mt-10 grid gap-2 sm:grid-cols-[8rem_1fr]">
+            {facts.map((fact) => (
+              <div className="contents" key={fact.term}>
+                <dt className="text-foreground-label text-label pt-1 uppercase">
+                  {fact.term}
+                </dt>
+                <dd>{fact.detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </Measure>
+      </header>
 
-          {/* The 10-second payload: role, then stack, both scannable. */}
-          <div className="flex flex-col gap-3">
-            <p className="text-xl sm:text-2xl">Full stack engineer</p>
-            <ul className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs text-[var(--text-3)]">
-              {stack.map((item, i) => (
-                <li key={item} className="flex items-center gap-3">
-                  {item}
-                  {i < stack.length - 1 && (
-                    <span
-                      aria-hidden
-                      className="text-[color-mix(in_oklab,var(--text-3)_55%,var(--page))]"
-                    >
-                      /
+      <section aria-labelledby="grounds">
+        <Measure>
+          <h2
+            className="text-foreground-label text-label pt-16 pb-6 uppercase"
+            id="grounds"
+          >
+            The two grounds
+          </h2>
+        </Measure>
+
+        <ul>
+          {grounds.map((ground) => (
+            <li className="border-border border-t" key={ground.index}>
+              <a
+                className="flip-ground block bg-background text-foreground"
+                href="#grounds"
+              >
+                <Measure>
+                  <div className="flex gap-6 py-5">
+                    {/* The index numbers a row for the eye. A screen reader
+                        already has the list. */}
+                    <span aria-hidden="true" className="text-foreground-label">
+                      {ground.index}
                     </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+                    <span className="flex-1">
+                      {ground.name}
+                      <span
+                        aria-hidden="true"
+                        className="text-foreground-label px-2"
+                      >
+                        /
+                      </span>
+                      <span className="text-foreground-muted">
+                        {ground.note}
+                      </span>
+                    </span>
+                    <span aria-hidden="true" className="text-accent">
+                      &rarr;
+                    </span>
+                  </div>
+                </Measure>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="border-border border-t" />
+      </section>
+
+      <section aria-labelledby="states">
+        <Measure>
+          <h2
+            className="text-foreground-label text-label pt-16 uppercase"
+            id="states"
+          >
+            States
+          </h2>
+
+          <div className="border-error-line bg-error-bg mt-6 border p-4">
+            <p className="text-error">
+              An error reads in its own colour on its own tint. The tint only
+              ever sits on the page ground, never on a raised surface.
+            </p>
           </div>
-        </header>
 
-        <div className="flex max-w-[62ch] flex-col gap-5 text-[1.0625rem] leading-[1.65] text-[var(--text-2)]">
-          <p className="text-pretty">
-            I build AI-powered backend systems, automation workflows, and
-            integration-heavy products, the kind where the interesting problem
-            is everything that happens after the happy path.
+          <p className="text-foreground-disabled mt-6">
+            Disabled text is a named colour, not a percentage of a live one.
           </p>
-          <p className="text-pretty">
-            This site is being rebuilt in the open. Case studies and open source
-            write-ups are on the way; until then, the fastest way to reach me is
-            directly.
+
+          <p className="mt-6 pb-16">
+            <a className="text-accent underline" href="#main">
+              A link takes the accent
+            </a>
+            , which belongs to the ground rather than to the theme.
           </p>
-        </div>
-
-        <div className="flex flex-col gap-8 border-t border-[var(--line)] pt-10">
-          <Row label="Contact">
-            <address className="flex flex-col items-start gap-2 font-mono text-sm not-italic">
-              {contact.map((item) => (
-                <a key={item.label} href={item.href} className="link">
-                  {item.label}
-                </a>
-              ))}
-            </address>
-          </Row>
-
-          <Row label="Elsewhere">
-            <nav className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-sm">
-              {profiles.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="link"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          </Row>
-        </div>
-
-        <footer className="font-mono text-[0.6875rem] tracking-[0.14em] uppercase text-[var(--text-3)]">
-          alifarooq.dev
-        </footer>
-      </div>
+        </Measure>
+      </section>
     </main>
   );
 }
