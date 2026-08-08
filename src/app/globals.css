@@ -1,117 +1,309 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-@theme {
-  --font-display: var(--font-instrument-serif), Georgia, serif;
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+/* The theme is chosen by the reader's system, not by a toggle (#11, #8).
+   shadcn components are written against a `.dark` class, so this one line
+   points that class at the media query. Without it every `dark:` utility in
+   a component added later is dead code that looks alive. */
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
-  /* Type scale — 1.25 minor third off a 16px base */
-  --text-nameplate: clamp(3.25rem, 9vw, 5.5rem);
+/* ==========================================================================
+   Fixed tokens — the same in both themes.
+
+   `static`, not bare `@theme`. Bare `@theme` drops any token that no
+   utility class references, and it cannot see a `var()` lookup inside
+   hand-written CSS. The row flip below is exactly that: raw CSS reading
+   six variables. `static` emits them all regardless.
+   ========================================================================== */
+@theme static {
+  /* One face, both roles. #10 chose JetBrains Mono for the tallest x-height
+     of the free monospaces, and set the whole site in it. */
+  --font-sans: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Square corners are the direction, not a default (#10). */
+  --radius: 0;
+
+  /* Body is 15px at 1.7. The label size is a floor — nothing is set smaller. */
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.7;
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.45;
+  --text-label--letter-spacing: 0.14em;
+
+  /* Monospace needs a shorter measure than a sans face. */
+  --container-measure: 54ch;
+
+  /* The sticky header's height, so anchored content can clear it. */
+  --spacing-header: 3.5rem;
 }
 
+/* ==========================================================================
+   The two grounds.
+
+   The site has exactly two: `#0a0a0b` and `#edece9`. Each is the other's
+   inversion in both directions, so the inverted set of one theme is the
+   page set of the other. That is why there are two grounds here and not
+   four (#21).
+
+   THE RULE, and it governs everything below:
+   the accent belongs to the ground, not to the theme. On a dark ground it
+   is amber; on a light ground it is ink. A flip swaps the ground, so it
+   swaps the accent. Amber on `#edece9` measures 1.55:1 — a fail — and this
+   is the rule that keeps it off light ground without a per-case exception.
+
+   Every ratio in the comments is computed, not eyeballed.
+   ========================================================================== */
+
+/* Light is the default branch; dark is the override. */
 :root {
   color-scheme: light dark;
 
-  --page: #fbfaf7;
-  --line: #e4e1d9;
-  --text: #16161a;
-  --text-2: #55555e;
-  --text-3: #6e6e77;
-  --accent: #8a5a16;
+  --background: #edece9;
+  --background-raised: #e3e1dc; /* 1.11:1 — a second ground step, no shadow */
+
+  --foreground: #0a0a0b; /* 16.75:1 */
+  --foreground-muted: #46443f; /*  8.23:1 — body copy */
+  --foreground-label: #5c594f; /*  5.93:1 — labels only, never body */
+
+  --border: #c8c6c1; /* 1.44:1 */
+  --border-strong: #b8b5ae; /* 1.73:1 */
+
+  --accent: #0a0a0b; /* 16.75:1 — ink, because the ground is light */
+  --accent-foreground: #edece9;
+
+  /* Three roles, so a field can go wrong in border and message at once
+     without either being invented at the call site (#20). */
+  --error: #b3261e; /* 5.53:1 */
+  --error-line: #c04a3c; /* 4.15:1 — clears SC 1.4.11's 3:1 */
+  --error-bg: #f4dbd6; /* --error on it is 4.96:1 */
+
+  /* A token pair, not an opacity. 50% of a ramp this tight lands under any
+     usable floor and cannot be checked; a named colour can. Both clear 3:1
+     on the page ground and on the raised one. */
+  --foreground-disabled: #827f77; /* 3.39:1 page, 3.06:1 raised */
+  --action-disabled: #d4d1cb; /* 1.29:1 — recedes behind --border */
+
+  /* The opposite ground, reached by a flip. On light that is the dark set,
+     reused exactly — no softened dark, which would be a second signature. */
+  --inverted-background: #0a0a0b;
+  --inverted-background-raised: #111113;
+  --inverted-foreground: #edece9;
+  --inverted-foreground-muted: #a3a19c;
+  --inverted-foreground-label: #807d77;
+  --inverted-border: #26262b;
+  --inverted-border-strong: #3a3a42;
+  --inverted-accent: #f2b544; /* 10.81:1 — amber, because the ground is dark */
+  --inverted-accent-foreground: #0a0a0b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --page: #0b0b0d;
-    --line: #212126;
-    --text: #ececee;
-    --text-2: #a8a8ae;
-    --text-3: #8a8a92;
-    --accent: #e8b24c;
+    --background: #0a0a0b;
+    --background-raised: #111113; /* 1.05:1 */
+
+    --foreground: #edece9; /* 16.75:1 */
+    --foreground-muted: #a3a19c; /*  7.67:1 — body copy */
+    --foreground-label: #807d77; /*  4.82:1 — labels only, never body */
+
+    --border: #26262b; /* 1.31:1 */
+    --border-strong: #3a3a42; /* 1.76:1 */
+
+    --accent: #f2b544; /* 10.81:1 */
+    --accent-foreground: #0a0a0b;
+
+    --error: #f2705c; /* 6.83:1 page, 6.51:1 raised */
+    --error-line: #a8483c; /* 3.45:1 page, 3.28:1 raised */
+    --error-bg: #2a120e; /* --error on it is 6.08:1 */
+
+    --foreground-disabled: #6b6862; /* 3.56:1 page, 3.40:1 raised */
+    --action-disabled: #332f2c; /* 1.49:1 — recedes behind --border-strong */
+
+    /* On dark the opposite ground is the light set. */
+    --inverted-background: #edece9;
+    --inverted-background-raised: #e3e1dc;
+    --inverted-foreground: #0a0a0b;
+    --inverted-foreground-muted: #46443f;
+    --inverted-foreground-label: #5c594f;
+    --inverted-border: #c8c6c1;
+    --inverted-border-strong: #b8b5ae;
+    --inverted-accent: #0a0a0b; /* ink, because the flipped ground is light */
+    --inverted-accent-foreground: #edece9;
   }
 }
 
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ==========================================================================
+   Names, pointed at the grounds above. shadcn's names live here too.
+
+   THE RULE FOR THIS BLOCK, and it is a correctness rule:
+   an alias belongs here, NEVER in `:root`. A `var()` written in `:root` is
+   resolved against `:root` and the answer is then inherited as a plain
+   colour — writing `--ring: var(--accent)` up there would freeze the ring on
+   the page ground, and the row flip below could never move it. Aliased here
+   instead, the `var()` is substituted into the utility itself and resolves
+   on whatever element uses it, so it follows the flip. This bit the ring,
+   `--primary`, `--card`, `--muted-foreground`, `--input` and `--destructive`
+   at once, silently, and only inside a flipped row.
+
+   `inline` for the same reason: a utility compiles to `var(--foreground)`
+   rather than to a copied hex, so it follows the media query too.
+
+   No `static` here, and it is not an oversight. `static` exists to stop a
+   token being dropped when only hand-written CSS reads it — the hazard the
+   fixed block at the top of this file has, because the focus ring reads
+   `--radius` and the scroll offset reads `--spacing-header` and no utility
+   touches either. The colours are different: they are declared in the plain
+   `:root` rules above, which Tailwind never tree-shakes, so what follows
+   only generates utility names.
+   ========================================================================== */
+@theme inline {
+  --color-background: var(--background);
+  --color-background-raised: var(--background-raised);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-label: var(--foreground-label);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-error: var(--error);
+  --color-error-line: var(--error-line);
+  --color-error-bg: var(--error-bg);
+  --color-foreground-disabled: var(--foreground-disabled);
+  --color-action-disabled: var(--action-disabled);
+
+  --color-inverted-background: var(--inverted-background);
+  --color-inverted-background-raised: var(--inverted-background-raised);
+  --color-inverted-foreground: var(--inverted-foreground);
+  --color-inverted-foreground-muted: var(--inverted-foreground-muted);
+  --color-inverted-foreground-label: var(--inverted-foreground-label);
+  --color-inverted-border: var(--inverted-border);
+  --color-inverted-border-strong: var(--inverted-border-strong);
+  --color-inverted-accent: var(--inverted-accent);
+  --color-inverted-accent-foreground: var(--inverted-accent-foreground);
+
+  /* shadcn's names. `--primary` is its FILL token, so amber fill with ink
+     text on it is fine — the 1.55:1 failure is amber as TEXT on the light
+     ground. Pointing it at the accent means the ground rule already answers
+     it: ink on light, amber on dark, and no separate warning to remember. */
+  --color-card: var(--background-raised);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--background-raised);
+  --color-popover-foreground: var(--foreground);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-secondary: var(--background-raised);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--background-raised);
+  --color-muted-foreground: var(--foreground-muted);
+  --color-destructive: var(--error);
+  --color-destructive-foreground: var(--background);
+  --color-input: var(--border-strong);
+  --color-ring: var(--accent);
+
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
 }
 
-body {
-  background-color: var(--page);
-  color: var(--text);
-}
-
-/* Atmosphere: a single faint bloom behind the nameplate, plus film grain.
-   Both are decorative and static — no SC 2.2.2 exposure. */
-.ground::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    60rem 40rem at 18% 12%,
-    color-mix(in oklab, var(--accent) 11%, transparent),
-    transparent 70%
-  );
-}
-
-.ground::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* One orchestrated load reveal. Opt-in, so reduced-motion is the default state. */
-.reveal > * {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .reveal > * {
-    opacity: 0;
-    animation: rise 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@layer base {
+  * {
+    @apply border-border outline-ring;
   }
-  .reveal > *:nth-child(1) { animation-delay: 0.05s; }
-  .reveal > *:nth-child(2) { animation-delay: 0.14s; }
-  .reveal > *:nth-child(3) { animation-delay: 0.23s; }
-  .reveal > *:nth-child(4) { animation-delay: 0.32s; }
-  .reveal > *:nth-child(5) { animation-delay: 0.41s; }
+
+  html {
+    @apply font-sans;
+    /* A face for reading, not a code editor: no ligatures, and a slashed
+       zero so a zero cannot be read as a letter O. */
+    font-variant-ligatures: none;
+    font-feature-settings: "zero" 1;
+  }
+
+  /* Thinned glyphs are right for light-on-dark and exactly wrong for
+     dark-on-light, so this is scoped rather than set on `html` outright.
+     It is also what pays for the light theme's optical weight without
+     loading a third font weight. */
+  @media (prefers-color-scheme: dark) {
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground text-body;
+  }
+
+  /* Anything anchored has to clear the sticky header. */
+  :where([id]) {
+    scroll-margin-top: calc(var(--spacing-header) + 1.5rem);
+  }
+
+  /* The default ring is invisible on near-black, so it is stated. It reads
+     the accent, which belongs to the ground — so inside a flipped row it
+     becomes ink without a second rule. */
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: var(--radius);
+  }
 }
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.75rem);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
+/* ==========================================================================
+   The signature interaction.
 
-/* Link treatment: rule thickens and takes the accent on hover. */
-.link {
-  text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.3em;
+   A row flips to the OPPOSITE ground, whichever theme is active: dark theme,
+   the row goes light; light theme, the row goes dark.
+
+   It redefines the variables rather than setting colours on the row, so the
+   whole subtree flips together. Setting colour at the leaves instead is what
+   left grey text stranded on a light ground at 3.36:1 — a fail — and any
+   later "just set the colour here" edit brings it back.
+   ========================================================================== */
+.flip-ground {
   transition:
-    text-decoration-color 180ms ease,
-    text-decoration-thickness 180ms ease,
-    color 180ms ease;
+    background-color 140ms linear,
+    border-color 140ms linear;
 }
 
-.link:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 2px;
+.flip-ground:hover,
+.flip-ground:focus-visible,
+.flip-ground:focus-within {
+  --background: var(--inverted-background);
+  --background-raised: var(--inverted-background-raised);
+  --foreground: var(--inverted-foreground);
+  --foreground-muted: var(--inverted-foreground-muted);
+  --foreground-label: var(--inverted-foreground-label);
+  --border: var(--inverted-border);
+  --border-strong: var(--inverted-border-strong);
+  --accent: var(--inverted-accent);
+  --accent-foreground: var(--inverted-accent-foreground);
+
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
-.link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 2px;
+/* Keyboard escape hatch past the header. Its fill is the accent and its text
+   is the accent's foreground, so it obeys the ground rule in both themes:
+   ink on amber at 10.81:1, paper on ink at 16.75:1. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 60;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 0.625rem 1rem;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-ground {
+    transition: none;
+  }
 }
