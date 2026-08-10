@@ -2,6 +2,7 @@ import { allCaseStudies } from "content-collections";
 import { Portrait } from "@/components/portrait";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
+import { cn } from "@/lib/utils";
 
 /**
  * The home page.
@@ -58,6 +59,76 @@ const person = {
   // Short and year-free, so a link pasted into an application does not go
   // stale. The file itself is #32's.
   resumeHref: "/resume.pdf",
+};
+
+/**
+ * The open-source block (#7, #29).
+ *
+ * Entirely non-technical, and it carries no mechanism — not because a hiring
+ * manager could not follow one, but because the mechanism may only appear
+ * below a link. That is what makes the case-study split mechanically safe:
+ * if this block cannot explain how anything works, nothing can leak upward
+ * into the case study that shares its subject.
+ *
+ * The weight is uneven on purpose. Three equal cards re-assert the pipeline
+ * story visually — a reader counts three boxes and infers a sequence before
+ * reading a word — and the claim here is the opposite one: a conviction held
+ * twice, not a production line. Equal weight would also promise three clicks
+ * when only `drizzle-tx` has a page to click into.
+ *
+ * So: the conviction leads, `drizzle-tx` is a row, and the two that started it
+ * sit beneath as a pair. The `retrofit` line is the whole of what the home
+ * page says about the repeat. The argument for it — two implementations of the
+ * same type resolving the same question in opposite directions, four months
+ * apart — is a named section on the detail page, where a reader has agreed to
+ * that level of detail.
+ *
+ * No npm scope appears here, and none may (#22). The packages are cited by
+ * repo name and GitHub URL. A scope is how you GET the code; the URL is where
+ * the argument for it lives. "Published on npm" as a bare fact is allowed, and
+ * it is what carries `result-kit-lint`, whose entire pitch is that it is
+ * tooling somebody can actually run.
+ */
+const openSource = {
+  // #14's pinned conviction specimen, stated once. `result-kit`'s pitch used
+  // to end by restating it almost word for word; that clause is cut here, on
+  // the precedent #14 set when it cut the About line for restating the
+  // positioning sentence. Saying it twice in one screen reads as padding.
+  conviction:
+    "Failure should be part of what a function returns, not something you find out about in production.",
+  retrofit: "The same conviction, re-derived rather than reused.",
+
+  featured: {
+    name: "drizzle-tx",
+    // #7's pitch as #8 amended it. It lost "22-module" because that number is
+    // the case study's, and the case study's home-page heading is literally
+    // "22 modules, one transaction boundary" — the same fact twice in one
+    // scroll reads as padding rather than emphasis.
+    pitch:
+      "The same idea where it cost the most: automatic transaction handling across a service too large to thread a handle through, on a database layer that only knows how to undo work when something throws.",
+    href: "/open-source/drizzle-tx",
+    // Names what is behind the click, the way the work rows name their
+    // diagram, rather than asking for the click on trust.
+    label: "Read how it holds →",
+  },
+
+  origin: [
+    {
+      name: "result-kit",
+      pitch:
+        "Where it started: a TypeScript library that makes failure part of what a function returns.",
+      href: "https://github.com/alifaroo-q/result-kit",
+    },
+    {
+      name: "result-kit-lint",
+      // #14's rewrite, which split the sentence at its em-dash.
+      pitch:
+        "A convention nobody enforces is a convention that decays. Lint rules that fail the build when a result goes unchecked.",
+      href: "https://github.com/alifaroo-q/result-kit-lint",
+    },
+  ],
+
+  published: "Both are published on npm.",
 };
 
 /**
@@ -247,13 +318,76 @@ export default function Home() {
           ))}
         </section>
 
-        {/* OPEN SOURCE — the slot, in its settled position. The conviction
-            lead, the featured repo and the paired origin are #29's, along
-            with the drizzle-tx page they point at. The label is fixed here
+        {/* OPEN SOURCE — in its settled position. The label is fixed here
             because the order is: evidence reads better after the claims it
-            backs, and this is where those claims end. */}
+            backs, and this is where those claims end. The copy and the
+            weighting are in `openSource` above. */}
         <SectionHead id="open-source" label="Open source" />
-        <section aria-labelledby="open-source" />
+        <section aria-labelledby="open-source">
+          {/* The conviction, and the one clause the retrofit gets up here. */}
+          <div className="px-6 pt-14 pb-12 md:px-10">
+            <p className="max-w-measure text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
+              {openSource.conviction}
+            </p>
+            <p className="mt-5 max-w-measure text-foreground-muted">
+              {openSource.retrofit}
+            </p>
+          </div>
+
+          {/* The feature. A row, like the work rows, because it is the same
+              kind of promise: one click, one page. It is the only thing in
+              this section that flips the ground, which is the section's
+              weighting done structurally rather than stated. */}
+          <a
+            className="flip-ground block border-border border-y bg-background px-6 py-8 text-foreground md:px-10 md:py-10"
+            href={openSource.featured.href}
+          >
+            <h3 className="font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
+              {openSource.featured.name}
+            </h3>
+            <p className="mt-4 max-w-measure text-foreground-muted">
+              {openSource.featured.pitch}
+            </p>
+            <p className="mt-5 text-accent">{openSource.featured.label}</p>
+          </a>
+
+          {/* The paired origin, beneath and quieter. The cells are not links:
+              three clickable boxes would be the three equal cards this block
+              exists to avoid, so the repo URL inside each one carries the
+              click and the pair keeps its weight. */}
+          <div className="grid md:grid-cols-2">
+            {openSource.origin.map((repo, i) => (
+              <div
+                className={cn(
+                  "px-6 py-8 md:px-10",
+                  i === 0 && "border-border border-b md:border-r md:border-b-0",
+                )}
+                key={repo.name}
+              >
+                <h3 className="font-medium text-lg">{repo.name}</h3>
+                <p className="mt-3 max-w-measure text-foreground-muted text-sm">
+                  {repo.pitch}
+                </p>
+                <p className="mt-4">
+                  <a
+                    className="text-sm underline underline-offset-[0.2em] hover:text-accent"
+                    href={repo.href}
+                  >
+                    {repo.href.replace("https://", "")}
+                  </a>
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* The registry as a bare fact, never a scope string (#22). It is
+              the one signal a repo link does not carry, and `result-kit-lint`
+              is the pitch that needs it: tooling nobody can install is a
+              convention with a README. */}
+          <p className="border-border border-t px-6 py-6 text-foreground-label text-sm md:px-10">
+            {openSource.published}
+          </p>
+        </section>
 
         {/* ABOUT — after the work, not before it. Nobody scrolled for
             biography. */}

@@ -348,6 +348,26 @@
   opacity: 0.24;
 }
 
+/* The template's other fill is TEXT, and text cannot take the drawing's ratio
+   (#29).
+
+   A shape at 0.24 is a shape you can still make out. An index entry at 0.24 is
+   1.92:1 on the dark ground and 1.72:1 on the light one, and SC 1.4.3 asks for
+   4.5:1 of anything a reader is meant to read. AA is a ship blocker, so the
+   index dims to 0.6 instead: 6.33:1 and 4.98:1, both clear. Recomputed from
+   the tokens above, like every other ratio in this file.
+
+   What that costs is the gap between the current entry and the rest, and the
+   two grounds pay it differently. On dark the gap is hue rather than
+   luminance: amber against near-white measures 1.71:1 and is still obvious.
+   On light the accent IS the foreground colour, so the only thing marking the
+   current entry is that the others receded — 3.37:1, and it is why the index
+   cannot simply decline to dim. Raising this number past 0.6 puts the light
+   ground below 3:1 and the tracking stops saying anything there. */
+[data-tracking] [data-section-index] [data-part][data-state="dim"] {
+  opacity: 0.6;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flip-ground {
     transition: none;

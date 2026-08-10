@@ -73,9 +73,11 @@ const DESKTOP = "(min-width: 64rem)";
  * second column of argument (#26).
  *
  * The parts the section in view is not talking about dim; the parts it is
- * talking about take the accent. The mapping is the SVG's own
+ * talking about take the accent. The mapping is the part's own
  * `data-sections`, so nothing here knows what a state machine is and no
- * lookup table sits between the asset and the prose.
+ * lookup table sits between the pinned column and the prose. That is also why
+ * the same observer drives a section index with no edit (#29): a part is an
+ * element with two data attributes, not a shape in a drawing.
  *
  * Three things are load-bearing:
  *
@@ -112,8 +114,12 @@ export function SectionTracking({
       const sections = Array.from(
         root.querySelectorAll<HTMLElement>("[data-section]"),
       );
+      // A part is whatever the pinned column marked as one. On a case study
+      // those are groups inside the SVG; on `/open-source/` they are the
+      // entries of the section index (#29). Nothing below this line knows
+      // which, and neither fill imports anything from here.
       const parts = Array.from(
-        root.querySelectorAll<SVGElement>("[data-part]"),
+        root.querySelectorAll<HTMLElement | SVGElement>("[data-part]"),
       );
       if (sections.length === 0 || parts.length === 0) return;
 
