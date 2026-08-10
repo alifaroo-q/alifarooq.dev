@@ -230,12 +230,31 @@ can see them. Lighthouse reports them in the "third party" column, and they
 gate nothing — a vendor changing their file must not be able to block a
 merge here.
 
-### The one step that needs a person at a dashboard
+### Two steps that need a person at a dashboard
 
-**Make `Byte budget, LCP, CLS and WCAG 2.2 AA` a required status check** under
-Settings → Branches → `main`. A job triggered by `deployment_status` posts its
-result against the commit, but nothing makes a pull request wait for it until
-that box is ticked. Until it is, both gates report and neither blocks.
+1. **Make `Byte budget, LCP, CLS and WCAG 2.2 AA` a required status check**
+   under Settings → Branches → `main`. A job triggered by `deployment_status`
+   posts its result against the commit, but nothing makes a pull request wait
+   for it until that box is ticked. Until it is, both gates report and neither
+   blocks.
+
+2. **Let the job reach the preview.** Vercel's **Deployment Protection** puts
+   every preview behind a Vercel login, and a login page is what axe and
+   Lighthouse would then measure. The byte count is unaffected — it reads
+   build output and never opens a page. Pick one:
+
+   - **Open previews.** Project → Settings → Deployment Protection → Vercel
+     Authentication → **Only Preview Deployments: off**. This is the simpler
+     choice for this site: the content is a public portfolio, and Vercel
+     already serves previews with `x-robots-tag: noindex`.
+   - **Keep them shut and hand the job a key.** On the same screen, under
+     **Protection Bypass for Automation**, generate the secret, then add it as
+     the repository secret `VERCEL_AUTOMATION_BYPASS_SECRET` (Settings →
+     Secrets and variables → Actions). The scripts put it on every URL rather
+     than in a header, because axe drives a browser and cannot send one.
+
+   With neither done, the job stops and says so — it does not pass by
+   measuring a login screen.
 
 ### Running them by hand
 

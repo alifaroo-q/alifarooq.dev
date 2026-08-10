@@ -33,6 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
+      # Only needed if previews stay behind Vercel's own login. Unset, nothing
+      # is appended to any URL and the checks hit the preview directly.
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
     steps:
       # The deployment's own commit, not the branch head. A branch that moved

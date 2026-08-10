@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { kb, routesFromSitemap } from "./site-routes.mjs";
+import { kb, routesFromSitemap, withBypass } from "./site-routes.mjs";
 
 /**
  * Both post-deploy checks measure whatever this returns, so a quiet mistake
@@ -43,5 +43,24 @@ describe("kb", () => {
   it("reads to one decimal, so a column of them lines up", () => {
     expect(kb(150 * 1024)).toBe("150.0 KB");
     expect(kb(1536)).toBe("1.5 KB");
+  });
+});
+
+describe("withBypass", () => {
+  it("leaves the URL alone when previews are open", () => {
+    const url = withBypass(new URL("https://preview.test/work/one"), undefined);
+    expect(url.href).toBe("https://preview.test/work/one");
+  });
+
+  it("carries the token on the URL, because a browser cannot send a header", () => {
+    const url = withBypass(new URL("https://preview.test/work/one"), "s3cret");
+    expect(url.searchParams.get("x-vercel-protection-bypass")).toBe("s3cret");
+    expect(url.searchParams.get("x-vercel-set-bypass-cookie")).toBe("true");
+  });
+
+  it("does not change the URL it was handed", () => {
+    const original = new URL("https://preview.test/");
+    withBypass(original, "s3cret");
+    expect(original.search).toBe("");
   });
 });
