@@ -54,6 +54,13 @@
    is the rule that keeps it off light ground without a per-case exception.
 
    Every ratio in the comments is computed, not eyeballed.
+
+   THE ONE SANCTIONED EXCEPTION: `src/lib/og-card.tsx` writes these values
+   inline. It renders a PNG through Satori, which has no cascade, no
+   variables and no media queries, so a token cannot reach it and there is
+   nothing an inline value could beat. The card is also fixed dark and never
+   flips, so the accent stays amber and the rule above is kept rather than
+   waived. Nothing else may copy a value out of this file (#16, #33).
    ========================================================================== */
 
 /* Light is the default branch; dark is the override. */

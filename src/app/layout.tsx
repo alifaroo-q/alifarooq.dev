@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { rootMetadata } from "@/lib/metadata";
 import "./globals.css";
 
 // 400 and 500 only. The 700 was dropped: nothing on the site used a bold
@@ -17,46 +18,27 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://alifarooq.dev";
+/**
+ * The home description, verbatim from #16 (152 characters).
+ *
+ * It **deliberately gives up the positioning sentence**, which #8 called the
+ * obvious site-level description. At 195 characters that sentence gets cut
+ * after its first clause, throwing away two of the three — and since the
+ * sentence IS the page's table of contents, a card showing one third of it is
+ * worse than a card that does not attempt it.
+ */
 const description =
-  "Ali Farooq — full stack engineer building AI-powered backend systems, automation workflows, and integration-heavy products in TypeScript.";
+  "I'm a backend engineer who designs for the failure case first. Three case studies on where that mattered, and the open-source work that came out of it.";
 
-// Carried over from the scaffolding unchanged. The social card image and the
-// rest of the metadata belong to their own ticket; this only keeps what was
-// already working rather than deleting it and leaving a gap.
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: "Ali Farooq — Full Stack Engineer",
-  description,
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Ali Farooq — Full Stack Engineer",
-    description,
-    url: siteUrl,
-    siteName: "alifarooq.dev",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Ali Farooq — Full Stack Engineer",
-    description,
-  },
-};
-
-// Person entity, so the page reads as a real profile rather than a soft 404.
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Ali Farooq",
-  url: siteUrl,
-  jobTitle: "Full Stack Engineer",
-  email: "mailto:hello@alifarooq.dev",
-  telephone: "+923167902206",
-  sameAs: [
-    "https://github.com/alifaroo-q",
-    "https://www.linkedin.com/in/itsalifarooq",
-  ],
-};
+/**
+ * `metadataBase`, the title template, and the home page's own `<head>` (#16).
+ *
+ * The template applies to child segments only, which is why the home title is
+ * `title.default` rather than a fourth literal of the name. `og:image` and
+ * `twitter:image` are not here: `opengraph-image.tsx` is the file convention
+ * that fills them, per route, so a case study cannot inherit the home card.
+ */
+export const metadata: Metadata = rootMetadata(description);
 
 // Both grounds, so the browser chrome matches the page the reader gets.
 export const viewport: Viewport = {
@@ -72,11 +54,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={jetbrainsMono.variable}>
       <body className="min-h-dvh">
-        <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD has no other insertion point, and the value is a local literal with no user input in it.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
-          type="application/ld+json"
-        />
         <a className="skip-link" href="#main">
           Skip to content
         </a>

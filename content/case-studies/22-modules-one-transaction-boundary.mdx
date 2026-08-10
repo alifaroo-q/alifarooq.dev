@@ -4,7 +4,7 @@ decision: "22 modules, one transaction boundary"
 constraint: "One booking wrote to four modules, and either all of it landed or none of it could. Threading a transaction handle through every call signature would have put the database into the shape of services that never touch it."
 artifactLabel: "See the module sketch →"
 order: 3
-description: "A backend of twenty-two modules where one write crossed four of them, and the transaction that had to hold across them did not belong in any call signature."
+description: "One operation spanned 22 modules that had no business knowing about each other. Threading a transaction handle through every call signature was not an option."
 ---
 
 ## The problem

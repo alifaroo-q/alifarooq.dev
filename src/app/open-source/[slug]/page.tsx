@@ -5,6 +5,7 @@ import { ContactFooter } from "@/components/contact-footer";
 import { DetailShell } from "@/components/detail-shell";
 import { MdxContent } from "@/components/mdx-content";
 import { SectionIndex } from "@/components/section-index";
+import { pageMetadata } from "@/lib/metadata";
 
 /**
  * The open-source detail page — `/open-source/<slug>`, not `/oss` (#9, #16).
@@ -45,11 +46,14 @@ export async function generateMetadata({
 
   if (!doc) return {};
 
-  return {
+  // The repo name is the title, and `description` is both the meta
+  // description and the standfirst the page prints. One string in two places
+  // is the point here: the card and the page open with the same sentence.
+  return pageMetadata({
     title: doc.title,
     description: doc.description,
-    alternates: { canonical: `/open-source/${doc.slug}` },
-  };
+    path: `/open-source/${doc.slug}`,
+  });
 }
 
 export default async function OpenSourcePage({
