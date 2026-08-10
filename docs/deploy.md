@@ -62,6 +62,84 @@ One more rule, on the receiving side rather than the sending one:
    a new sending domain is the one that lands in spam, and the inbox is the
    system of record. The `CONTACT_BCC_EMAIL` mailbox needs the same rule.
 
+## Analytics
+
+Two counters run side by side. **Umami Cloud Hobby** carries the one question
+the site was built to answer, and **Vercel Web Analytics** stays on because it
+is free and is the fallback if Umami's free plan turns out to have a cap.
+
+### Steps that need a person at a dashboard
+
+1. **Sign up at `cloud.umami.is/signup`** and verify the email with the
+   six-digit code.
+2. **Select the EU data region.** It is a mandatory setup step and is not the
+   kind of thing to change later, so choose it deliberately. EU is the
+   stricter default and costs nothing.
+3. **Add `alifarooq.dev` as the website.** The free plan allows exactly one
+   website — `www` is a 308 to the apex, so one is enough, but a second domain
+   later is a paid step, not a free one.
+4. **Copy the website id** off the website's Edit screen into
+   `NEXT_PUBLIC_UMAMI_WEBSITE_ID` in Production, Preview and Development. The
+   repo does not use the tracking-code snippet from that screen — the script
+   is rendered by `src/components/analytics.tsx` — but the **host** in the
+   snippet is worth a glance. If it is not `cloud.umami.is`, change
+   `UMAMI_SCRIPT_URL` in `src/lib/analytics.ts` to match.
+5. **Build the funnel**, under the website's Funnel report:
+
+   | Step | Type | Value |
+   | --- | --- | --- |
+   | 1 | URL | `/` |
+   | 2 | URL | `/work/*` |
+   | 3 | Event | `contact_reached` |
+
+   Steps must be completed in this order, and navigation in between does not
+   break the sequence.
+
+6. **Set the funnel `Window` to 30 minutes.** It is a required field — the
+   longest gap allowed between two steps — and it is a real decision, so here
+   is the reasoning rather than the number alone. The sequence is one sitting:
+   land on the home page, open a case study, read it, reach the foot. The case
+   studies are long-form and a careful read is ten to fifteen minutes, so
+   anything under twenty would drop the readers the funnel most wants to
+   count. Thirty covers a full read and a pause, and still excludes the tab
+   left open until tomorrow, which is not the same visitor arriving at a
+   decision.
+
+7. **Walk the funnel once by hand** on the deployed site — home, then a case
+   study, then scroll to the contact section — and check all three steps
+   report. The Hobby plan has **no API**, so the dashboard is the only place
+   these numbers can be read, and this walk-through is the only verification
+   there is.
+
+### What is in the repo
+
+- `src/lib/analytics.ts` — the script URL and `trackContactReached()`.
+- `src/components/analytics.tsx` — both scripts, in the root layout.
+- `src/components/contact-form-slot.tsx` — the `IntersectionObserver` that
+  hydrates the form and fires `contact_reached`. One observer, two targets: a
+  lead box a viewport above the slot starts the download, and the slot itself
+  reports contact as reached. The event carries the page it fired on, without
+  which the funnel cannot tell a reader who arrived at contact from a case
+  study apart from one who scrolled past it on the home page. If the tracker
+  has not arrived yet — a reload parked at the footer, or a `#contact` link
+  followed straight in — the event waits up to three seconds for it rather
+  than being dropped.
+
+**No event is tested.** They are fire-and-forget, there is no readable result,
+and the free tier has no API to read them back.
+
+### No consent banner
+
+The reasoning is **no device access** under ePrivacy Art. 5(3), not "no
+cookies" and not Umami's own weaker claim. Umami's tracker writes nothing to
+the device — it reads one opt-out key, `umami.disabled`, that only a site
+owner sets — and Vercel derives its identifier server-side and discards it
+after 24 hours.
+
+**The flip condition:** the day anything writes an analytics id to
+`localStorage`, this decision is void and a banner is owed. That includes a
+tracker upgrade that turns caching on.
+
 ## Environment variables
 
 | Name | What it is |
