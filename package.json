@@ -11,7 +11,8 @@
     "start": "next start",
     "check": "biome check --write",
     "lint": "biome check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "pnpm content && tsc --noEmit",
+    "content": "node scripts/generate-content-types.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

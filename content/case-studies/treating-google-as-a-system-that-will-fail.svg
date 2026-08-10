@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 -6 716 276" fill="none" stroke="currentColor" aria-hidden="true">
+  <!--
+    Slot 1's checkable artifact: the Gmail connection state machine (#6, #17).
+
+    The rules this file is authored under are in the README beside it. What is
+    written here is only what is true of THIS drawing.
+
+    SECTION MAPPING. `data-sections` holds heading slugs, so #26 can derive the
+    key from the h2 itself and needs no lookup table:
+
+      the-problem   the two ways it breaks, and the two states it breaks into
+      the-decision  the machine that catches them, through to raising the alert
+      the-cost      the one edge that needs a person, and the state it leaves
+
+    A part can belong to more than one section. `state-invalid` is both where a
+    401 lands (the problem) and where the alert fires (the decision).
+
+    GEOMETRY. Three columns at x = 40 / 296 / 552, boxes 150 x 46, so every
+    horizontal gap is 106. That number is set by the labels, not by taste: the
+    boxes were 168 wide at first, which left gaps of 88, and measured in the
+    browser the three labels sitting in those gaps cleared the box beside them
+    by 9.1px, 4.2px and 1.7px. Under 2px reads as a collision.
+
+    Every edge leaves its box flush and stops 8 short of the next one, in both
+    directions — the arrowhead tip is the end of the path.
+
+    The viewBox is fitted to the ink rather than set to a round number. The
+    drawing runs x 40..736 and y 8..256; a 0 0 760 300 box left 44 units of
+    dead space below the graph and 9 above it, and the figure column paid for
+    both.
+
+    TYPE SIZE. 14 in the boxes and 12.5 on the edges, not the 13/10.5 this
+    started at. The drawing is scaled to the figure, and the figure caps at
+    40rem, so a user unit is 0.894 of a CSS pixel at the widest the column
+    ever goes. `--text-label` in globals.css is a floor at 11px with nothing
+    below it, and measured there: 10.5 rendered at 9.4px and 12 at 10.7px,
+    both under it. 12.5 renders at 11.2px and clears it.
+  -->
+
+  <!-- The states. Solid is a state where mail moves; dashed is a state where
+       it has stopped. Dashed rather than red: there is no hue in this file. -->
+  <g id="state-connected" data-part data-sections="the-decision">
+    <rect x="40" y="60" width="150" height="46" stroke-width="1.5" />
+    <text x="115" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">connected</text>
+  </g>
+  <g id="state-watch-expiring" data-part data-sections="the-decision">
+    <rect x="296" y="60" width="150" height="46" stroke-width="1.5" />
+    <text x="371" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">watch expiring</text>
+  </g>
+  <g id="state-renewing" data-part data-sections="the-decision">
+    <rect x="552" y="60" width="150" height="46" stroke-width="1.5" />
+    <text x="627" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">renewing</text>
+  </g>
+  <g id="state-invalid" data-part data-sections="the-problem the-decision">
+    <rect x="552" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
+    <text x="627" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">invalid</text>
+  </g>
+  <g id="state-disconnected" data-part data-sections="the-problem the-cost">
+    <rect x="296" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
+    <text x="371" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">disconnected</text>
+  </g>
+
+  <!-- The happy path, left to right, and the loop back over the top. -->
+  <g id="edge-ttl-threshold" data-part data-sections="the-decision">
+    <path d="M190,83 L288,83" stroke-width="1" />
+    <path d="M281,79 L288,83 L281,87" stroke-width="1.2" />
+    <text x="243" y="73" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">ttl &lt; 24h</text>
+  </g>
+  <g id="edge-renewal-job" data-part data-sections="the-decision">
+    <path d="M446,83 L544,83" stroke-width="1" />
+    <path d="M537,79 L544,83 L537,87" stroke-width="1.2" />
+    <text x="499" y="73" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">renewal job</text>
+  </g>
+  <g id="edge-renewed" data-part data-sections="the-decision">
+    <path d="M627,60 L627,28 L115,28 L115,52" stroke-width="1" />
+    <path d="M111,45 L115,52 L119,45" stroke-width="1.2" />
+    <text x="371" y="19" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">renewed</text>
+  </g>
+
+  <!-- The two ways it breaks. Both land in a dashed state. -->
+  <g id="edge-grant-revoked" data-part data-sections="the-problem">
+    <path d="M627,106 L627,202" stroke-width="1" />
+    <path d="M623,195 L627,202 L631,195" stroke-width="1.2" />
+    <text x="689" y="160" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">grant revoked</text>
+  </g>
+  <g id="edge-refresh-401" data-part data-sections="the-problem">
+    <path d="M163,106 L163,180 L579,180 L579,202" stroke-width="1" />
+    <path d="M575,195 L579,202 L583,195" stroke-width="1.2" />
+    <text x="371" y="171" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">refresh 401</text>
+  </g>
+
+  <!-- The alert belongs to the decision: raising it at once is the decision.
+       The return belongs to the cost, and it is routed out at x=70 so it
+       passes left of the refresh-401 drop at x=163 — no edge in this graph
+       crosses another. -->
+  <g id="edge-alert-raised" data-part data-sections="the-decision">
+    <path d="M552,233 L454,233" stroke-width="1" />
+    <path d="M461,229 L454,233 L461,237" stroke-width="1.2" />
+    <text x="499" y="223" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">alert raised</text>
+  </g>
+  <g id="edge-re-consent" data-part data-sections="the-cost">
+    <path d="M296,233 L70,233 L70,114" stroke-width="1" />
+    <path d="M66,121 L70,114 L74,121" stroke-width="1.2" />
+    <text x="183" y="251" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">re-consent</text>
+  </g>
+</svg>

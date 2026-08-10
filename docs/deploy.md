@@ -45,8 +45,23 @@ and every pull request. It deliberately does **not** build: Vercel builds
 every push and will not promote a failure, so a second build only doubles
 the minutes to re-prove something already blocked on.
 
-Promote this job to a full build if the diagram build-precondition starts
-failing in review rather than locally.
+`pnpm typecheck` runs `pnpm content` first, and that is load-bearing rather
+than tidy. `tsconfig.json` maps the bare specifier `content-collections` at
+`.content-collections/generated`, which is generated and gitignored, so a
+fresh checkout has no types for it and `tsc` fails on the import in
+`src/app/work/[slug]/page.tsx`. CI is always a fresh checkout. This is what
+broke the job when the content pipeline landed.
+
+Generating also runs the collection's `transform`, which is where the two
+content guarantees live — a missing diagram and a bad frontmatter field both
+fail there. So the job keeps those guarantees without being promoted to a
+full build. `scripts/generate-content-types.mjs` has to collect the builder's
+`_error` events and exit non-zero itself: `build()` resolves on a failed
+document and merely drops it, which would leave both guarantees green here
+and only red on Vercel.
+
+Promote this job to a full build only if something breaks that lives outside
+the collection's `transform`.
 
 The performance and accessibility checks are a **separate** job. They need a
 running site, so they run after deploy against the Vercel preview. That job
