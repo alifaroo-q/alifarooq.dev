@@ -1,7 +1,9 @@
 import { allCaseStudies } from "content-collections";
+import { ContactFooter } from "@/components/contact-footer";
 import { Portrait } from "@/components/portrait";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
+import { ACTION_CLASS, CONTACT_EMAIL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -55,7 +57,10 @@ const person = {
   location: "Karachi, Pakistan",
   availability: "Open to backend roles",
 
-  email: "hello@alifarooq.dev",
+  // The same string the footer prints, read from one place — the fold and the
+  // contact section both carry the address, and two literals of it is one edit
+  // away from a page that disagrees with itself.
+  email: CONTACT_EMAIL,
   // Short and year-free, so a link pasted into an application does not go
   // stale. The file itself is #32's.
   resumeHref: "/resume.pdf",
@@ -249,10 +254,7 @@ export default function Home() {
               summarise a page the reader can see. A fold with two claims has
               none. */}
           <div className="mt-12 flex flex-wrap gap-3">
-            <a
-              className="border border-accent px-5 py-2.5 text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
-              href={person.resumeHref}
-            >
+            <a className={ACTION_CLASS} href={person.resumeHref}>
               Download resume
             </a>
             <a
@@ -407,14 +409,10 @@ export default function Home() {
         </section>
       </main>
 
-      {/* CONTACT — the slot. The section itself is shared across every page
-          on the site and belongs to #30, which also owns the form and the
-          route behind it. It is a real section rather than a header mailto
-          because a mailto has no scroll depth, and #5's ordered funnel ends
-          on this one reaching the reader. */}
-      <footer>
-        <SectionHead id="contact" label="Contact" />
-      </footer>
+      {/* CONTACT — the shared footer, full rather than compact. This is the
+          one page a reader can arrive at without having read an argument to
+          its end, so it is the one that still has something to introduce. */}
+      <ContactFooter />
     </>
   );
 }

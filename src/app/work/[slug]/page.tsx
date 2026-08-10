@@ -2,6 +2,7 @@ import { allCaseStudies } from "content-collections";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArtifactFigure } from "@/components/artifact-figure";
+import { ContactFooter } from "@/components/contact-footer";
 import { DetailShell } from "@/components/detail-shell";
 import { MdxContent } from "@/components/mdx-content";
 
@@ -50,20 +51,27 @@ export default async function CaseStudyPage({
   if (!caseStudy) notFound();
 
   return (
-    <DetailShell
-      backHref="/#work"
-      backLabel="Work"
-      eyebrow={caseStudy.sector}
-      heading={caseStudy.decision}
-      reference={
-        <ArtifactFigure
-          artifactLabel={caseStudy.artifactLabel}
-          svg={caseStudy.artifactSvg}
-        />
-      }
-      standfirst={caseStudy.constraint}
-    >
-      <MdxContent code={caseStudy.body} />
-    </DetailShell>
+    <>
+      <DetailShell
+        backHref="/#work"
+        backLabel="Work"
+        eyebrow={caseStudy.sector}
+        heading={caseStudy.decision}
+        reference={
+          <ArtifactFigure
+            artifactLabel={caseStudy.artifactLabel}
+            svg={caseStudy.artifactSvg}
+          />
+        }
+        standfirst={caseStudy.constraint}
+      >
+        <MdxContent code={caseStudy.body} />
+      </DetailShell>
+
+      {/* Compact, because this is the end of an argument the reader followed
+          on purpose — #8 called it the highest-intent moment on the site, and
+          the thing it needs least is another introduction. */}
+      <ContactFooter compact />
+    </>
   );
 }

@@ -5,11 +5,11 @@ on:
     branches: [main]
   pull_request:
 
-# Lint and typecheck only. Why this job does not build, and what would change
-# that, is in docs/deploy.md.
+# Lint, typecheck and the one test suite. Why this job does not build, and what
+# would change that, is in docs/deploy.md.
 jobs:
   check:
-    name: Lint and typecheck
+    name: Lint, typecheck and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -26,3 +26,8 @@ jobs:
       - run: pnpm lint
 
       - run: pnpm typecheck
+
+      # The contact route is the only code on the site with a decision in it,
+      # and this is the suite that covers it (#30). It needs no secrets: the
+      # Resend client is faked at the module edge.
+      - run: pnpm test
