@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ali Farooq - Backend Engineer</title>
+        <link rel="stylesheet" href="./resume.css" />
+    </head>
+
+    <!--
+      The resume source (#32). `pnpm resume:build` prints it to
+      `public/resume.pdf`; the header of `scripts/build-resume.mjs` says why
+      that runs locally and why the PDF is committed.
+
+      Every client name here is anonymised to the same standard as the site,
+      and a name is now an edit somebody can see in a diff. That is the whole
+      mechanism — there is no build-time check, because #6 ruled machinery for
+      a review that fires three times ever is not worth maintaining.
+
+      The three tiers this file owes the site (#15):
+        MUST AGREE      names, numbers, employer, dates, contact details.
+        MUST NOT CONTRADICT   the thesis.
+        FREE TO DIFFER  depth, ordering, tech lists, and every breadth item
+                        the site drops. This is why the resume may stay
+                        ATS-shaped and keyword-dense without importing the
+                        site's voice.
+
+      Where a case study exists, the anonymised label is the site's own eyebrow
+      VERBATIM, so both documents describe the same work in the same words.
+      Grep `content/case-studies/*.mdx` for `sector:` before changing one.
+    -->
+    <body>
+        <header>
+            <h1>ALI FAROOQ</h1>
+            <!--
+              #15's title. The old one said "Full-Stack Software Engineer"
+              while the site said backend engineer who designs for the failure
+              case first, which read as two different people — a tier-2 breach.
+              "Full-Stack" leaves the title and the breadth claim survives in
+              the body, where it is evidenced rather than asserted.
+            -->
+            <div class="headline">
+                Backend Engineer &middot; AI Workflow Automation and
+                Integrations
+            </div>
+            <!--
+              Five items, and five is the ceiling (#15). The npm link is
+              dropped: #22 bans the scope string on both surfaces, and the site
+              exists to make the open-source case better than a bare registry
+              link can. No GitHub link either — the site links GitHub twice, so
+              a second path to the same place costs a line and buys nothing.
+              `alifarooq.dev` is the one that had to be added: the whole
+              audience model is "recruiters land on the site from a resume",
+              and until now the resume half of that was not wired up.
+            -->
+            <div class="contact">
+                Karachi, Pakistan
+                <span class="sep">|</span>
+                <a href="mailto:hello@alifarooq.dev">hello@alifarooq.dev</a>
+                <span class="sep">|</span> +92&nbsp;316&nbsp;7902206
+                <span class="sep">|</span>
+                <a href="https://linkedin.com/in/itsalifarooq"
+                    >linkedin.com/in/itsalifarooq</a
+                >
+                <span class="sep">|</span>
+                <a href="https://alifarooq.dev">alifarooq.dev</a>
+            </div>
+        </header>
+
+        <section>
+            <h2>Summary</h2>
+            <!--
+              #15's settled string, verbatim. Two corrections are inside it:
+              "2+ years" was false arithmetic (Oct 2024 to Aug 2026 is 1y10m),
+              and the unsourced "about 40%" is gone rather than restated,
+              because a percentage nobody can trace to a dashboard is the first
+              thing a sharp interviewer pulls on (#6).
+            -->
+            <p class="summary">
+                Backend engineer with two years building AI-automation systems
+                in NestJS and TypeScript, designed for the failure case first:
+                tokens that expire, integrations that go quiet, payments that
+                must not capture twice. Takes features end to end &mdash;
+                PostgreSQL schema, BullMQ background jobs, third-party
+                integrations (Gmail, Vapi, Stripe, AWS), and the Next.js
+                dashboard on top.
+            </p>
+        </section>
+
+        <section>
+            <h2>Experience</h2>
+            <div class="role">
+                <div class="role-head">
+                    <span class="role-title">Software Engineer</span>
+                    <span class="role-meta">Oct 2024 - Present</span>
+                </div>
+                <div class="role-sub">
+                    <span>Zenkoders</span>
+                    <span>Karachi, Pakistan</span>
+                </div>
+                <p class="role-lead">
+                    Delivered AI-automation and backend systems across multiple
+                    client products in healthcare, fintech, and SaaS. Won the
+                    company's <b>Excellence in Work</b> award for delivery.
+                </p>
+
+                <!--
+                  The label used to be the client's name plus the funding
+                  scheme it works under, sitting directly above "7,000+ inbound
+                  leads a month" — #6 forbids combining sector detail with
+                  scale figures, and the scheme was the giveaway: the
+                  population of providers running AI voice calling AND Gmail
+                  automation inside it is roughly one. Naming the market one
+                  level up fixes the breach by itself, so the lead figure
+                  survives intact.
+                -->
+                <div class="ws-label">
+                    A healthcare services provider
+                    <span class="ctx">&middot; AI automation suite</span>
+                </div>
+                <ul>
+                    <li>
+                        Built an AI voice-calling and booking platform linking
+                        Pipedrive CRM to Vapi voice agents through BullMQ
+                        queues. It processes
+                        <b>7,000+ inbound leads a month</b> and books
+                        appointments using holiday and leave-aware Google
+                        Calendar scheduling.
+                        <span class="tech"
+                            >(NestJS, Next.js, TanStack Query,
+                            PostgreSQL/Prisma, AWS RDS)</span
+                        >
+                    </li>
+                    <li>
+                        Built a Gmail automation and AI email-drafting system
+                        for <b>100+ consultants</b> handling
+                        <b>40 to 50 client messages a day</b>, with OAuth token
+                        and watch renewal, full-sync recovery queues, and
+                        retrieval-augmented (RAG) drafting verified through
+                        Tavily for compliance-safe replies.
+                        <span class="tech"
+                            >(NestJS, Drizzle, BullMQ, Gmail API, OpenAI)</span
+                        >
+                    </li>
+                    <!--
+                      The second `40%`. Downgraded to #15's shape claim rather
+                      than kept, because no baseline can be named out loud.
+                      `R&D tax-incentive` stays — it names a workflow, not a
+                      client — and the funding scheme goes with the names.
+                    -->
+                    <li>
+                        Designed document-extraction pipelines that turn
+                        unstructured PDFs and images into validated,
+                        schema-typed data using vision LLMs and confidence-aware
+                        section reduction, cutting manual form-filling
+                        substantially across intake and R&amp;D tax-incentive
+                        workflows, and automated the financial reporting into
+                        formatted Google Sheets.
+                        <span class="tech"
+                            >(AWS S3/SQS/Lambda, OpenAI, Zod)</span
+                        >
+                    </li>
+                </ul>
+
+                <!--
+                  Three client names became the three anonymised descriptions,
+                  so what used to be the context line is now the label itself
+                  and the `.ctx` slot has nothing left to say. The first is the
+                  site's eyebrow verbatim; the other two come from #15's table,
+                  which is where they were ruled on for the first time — #6
+                  never saw them.
+                -->
+                <div class="ws-label">
+                    A virtual-phone-number &amp; SMS platform, a restaurant
+                    platform and a community platform
+                </div>
+                <ul>
+                    <li>
+                        Built a virtual-number and SMS SaaS with a wallet and
+                        ledger system (hold, capture, release, plus overdraft
+                        protection), secured by a four-layer RLS and JWT-claim
+                        access model over a third-party provider API.
+                        <span class="tech"
+                            >(Supabase, Drizzle, Next.js 16)</span
+                        >
+                    </li>
+                    <li>
+                        Built backend platforms using CQRS, RBAC, and i18n, plus
+                        real-time chat and notification features (Socket.IO,
+                        unread-count APIs), documented with Swagger and Scalar.
+                        <span class="tech"
+                            >(NestJS, Prisma, TypeORM, Redis)</span
+                        >
+                    </li>
+                </ul>
+
+                <div class="ws-label">
+                    Across all products
+                    <span class="ctx">&middot; reliability &amp; delivery</span>
+                </div>
+                <ul>
+                    <li>
+                        Improved reliability with structured logging, idempotent
+                        queue processors, test suites for schedulers, auth, and
+                        sessions, and ORM migrations; automated GitHub Actions
+                        deployments to EC2 and expanded CI/CD across several
+                        client codebases.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!--
+          Projects entries are UNDATED, and #23 turned that into an argument:
+          Experience is one employer with a clean `Oct 2024 — Present`, so
+          anything dated beside it reads as an overlapping second range. An
+          undated entry asserts no overlap at all, which is why the freelance
+          work lands here.
+        -->
+        <section>
+            <h2>Projects</h2>
+
+            <!--
+              #15's table supplies the label, word for word — the entries
+              below take their titles from #23 instead, which is why the two
+              read in different cases. Each is quoted from the ticket that
+              settled it. The seniority signal survives anonymisation completely intact,
+              which is the general shape of why this cost less than it looked
+              like it would. #23 rejected dropping this entry to make room, on
+              exactly that ground: it is the only one showing leadership of
+              people.
+            -->
+            <div class="project">
+                <div class="proj-head">
+                    <span class="proj-name"
+                        >A property-management SaaS</span
+                    >
+                    <span class="proj-tag">Lead full-stack developer</span>
+                </div>
+                <div class="proj-body">
+                    Multi-tenant platform for property managers to onboard
+                    residents, dispatch maintenance tickets to technicians, and
+                    handle staff roles and billing. Lead developer on a
+                    five-engineer team: built Stripe subscription billing,
+                    real-time ticket dispatch with live accept and decline
+                    updates, and CSV bulk-import wizards for residents and
+                    properties modeled as reducer state machines, on a
+                    queue-backed backend.
+                </div>
+                <div class="proj-tech">
+                    <b>Tech:</b> Turborepo, NestJS, BullMQ, Redis, Next.js 16,
+                    React 19, Stripe, Supabase, PostgreSQL
+                </div>
+            </div>
+
+            <!--
+              The site's own eyebrow for the case study that argues about
+              this same backend, word for word — grep `sector:` in
+              `content/case-studies/`. `Solo project`
+              stays as the role line: #23 ruled the two words state team size
+              rather than ownership, which is what #6's ownership rule asks
+              for, and the body scopes the claim to the backend, where it is
+              precisely true.
+            -->
+            <div class="project">
+                <div class="proj-head">
+                    <span class="proj-name"
+                        >A multi-tenant workshop-management SaaS</span
+                    >
+                    <span class="proj-tag">Solo project</span>
+                </div>
+                <div class="proj-body">
+                    SaaS that lets automotive workshops manage jobs, estimates,
+                    invoices, inventory, and staff across multiple sites.
+                    Solo-built the entire backend: a tiered RBAC permission
+                    engine, about 22 domain modules, Drizzle ORM with a
+                    Unit-of-Work transaction layer, and CI/CD to a self-hosted
+                    VPS. Designed a Backend-for-Frontend cookie proxy that keeps
+                    cross-origin auth working under Chrome's third-party-cookie
+                    deprecation.
+                </div>
+                <div class="proj-tech">
+                    <b>Tech:</b> NestJS 11, PostgreSQL, Drizzle, AWS S3, Next.js
+                    16, TanStack Query, Zod
+                </div>
+            </div>
+
+            <!--
+              #23's new entry, strings verbatim. It leads on the input nobody
+              controls — a Word document published by a government office that
+              owes you nothing — because that ordering makes the entry actively
+              support the site's "designs for the failure case first" thesis
+              rather than merely avoid contradicting it.
+
+              The anonymisation is #23's, and it reverses what that ticket
+              opened suspecting: `local` goes, because combined with "Karachi,
+              Pakistan" in the header it narrows to one city's firms; `law
+              firm` goes one level up to `a legal services firm`; and
+              `government` STAYS, because it describes a public data source
+              rather than the client, and cutting it would remove the entry's
+              whole point.
+            -->
+            <div class="project">
+                <div class="proj-head">
+                    <span class="proj-name"
+                        >Trademark Register System &middot; Legal Services
+                        Firm</span
+                    >
+                    <span class="proj-tag">Solo project</span>
+                </div>
+                <div class="proj-body">
+                    Desktop application replacing a Microsoft Access system for
+                    a legal services firm, with a web port in progress. Parses
+                    government trademark reports published as Word documents
+                    into a shared PostgreSQL register &mdash; an upstream format
+                    with no API, no schema, and no notice when it changes.
+                    Desktop client and web portals read the same register.
+                </div>
+                <div class="proj-tech">
+                    <b>Tech:</b> C#, .NET, ASP.NET Core, Next.js, PostgreSQL
+                </div>
+            </div>
+
+            <!--
+              Three repos, one entry, titled by the conviction (#23). Two
+              siblings would be read by a scanner as "wrote two small
+              libraries", where #7's settled framing is one conviction applied
+              twice. The merge is also what paid for the entry above it, on a
+              page that is length-bound.
+
+              `drizzle-tx` loses solo billing here despite being the site's
+              featured exhibit with the only detail page. Named as a cost and
+              accepted: the uneven weighting is the site's argument, and the
+              site still makes it.
+
+              No npm scope string, on either surface, ever (#22). The bare fact
+              "Published on npm" is the permitted form, and it sits in the role
+              line — the same slot `Solo project` occupies — because it
+              recovers exactly the credibility signal the banned
+              `npmjs.com/package/...` line used to carry.
+            -->
+            <div class="project">
+                <div class="proj-head">
+                    <span class="proj-name"
+                        >result-kit, result-kit-lint &amp; drizzle-tx
+                        &middot; Open-Source TypeScript Libraries</span
+                    >
+                    <span class="proj-tag">Published on npm</span>
+                </div>
+                <div class="proj-body">
+                    One conviction applied twice: model failure as a value
+                    instead of throwing through the service layer.
+                    <code>result-kit</code> provides the Result type and a
+                    fluent async pipeline whose generic inference holds across
+                    deep chains; <code>result-kit-lint</code> makes the compiler
+                    enforce it, failing the build when a result goes unchecked.
+                    <code>drizzle-tx</code> applies the same idea where the ORM
+                    fights back &mdash; Spring-style implicit transaction
+                    propagation for Drizzle on Node's AsyncLocalStorage,
+                    inverting Result back to a throw at exactly one rollback
+                    boundary.
+                </div>
+                <div class="proj-links">
+                    <a href="https://github.com/alifaroo-q/result-kit"
+                        >github.com/alifaroo-q/result-kit</a
+                    >
+                    <span class="sep">&middot;</span>
+                    <a href="https://github.com/alifaroo-q/result-kit-lint"
+                        >github.com/alifaroo-q/result-kit-lint</a
+                    >
+                    <span class="sep">&middot;</span>
+                    <a href="https://github.com/alifaroo-q/drizzle-tx"
+                        >github.com/alifaroo-q/drizzle-tx</a
+                    >
+                </div>
+                <div class="proj-tech">
+                    <b>Tech:</b> TypeScript, Drizzle ORM, AsyncLocalStorage,
+                    ESLint, Vitest, Changesets
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Technical Skills</h2>
+            <div class="skill-row">
+                <span class="skill-cat">Languages</span
+                ><span class="skill-list"
+                    >TypeScript, JavaScript, Python, SQL, Java, C#, HTML,
+                    CSS</span
+                >
+            </div>
+            <div class="skill-row">
+                <span class="skill-cat">Backend</span
+                ><span class="skill-list"
+                    >NestJS, Node.js, Hono, Express, REST APIs, CQRS,
+                    Microservices, BullMQ, WebSockets, Socket.IO</span
+                >
+            </div>
+            <div class="skill-row">
+                <span class="skill-cat">Frontend</span
+                ><span class="skill-list"
+                    >React 19, Next.js 16, TanStack Query and Table, Zustand,
+                    React Hook Form, Zod, Tailwind CSS, shadcn/ui, Radix</span
+                >
+            </div>
+            <div class="skill-row">
+                <span class="skill-cat">Data and Storage</span
+                ><span class="skill-list"
+                    >PostgreSQL, Prisma, Drizzle, TypeORM, Redis, Supabase
+                    (RLS)</span
+                >
+            </div>
+            <div class="skill-row">
+                <span class="skill-cat">AI and Automation</span
+                ><span class="skill-list"
+                    >OpenAI, Vapi, Vercel AI SDK, LangChain, RAG, Vision and
+                    Document Extraction, Prompt Engineering, Claude Code,
+                    Cursor</span
+                >
+            </div>
+            <div class="skill-row">
+                <span class="skill-cat">Cloud and DevOps</span
+                ><span class="skill-list"
+                    >AWS (S3, SES, SQS, Lambda, EC2, RDS, IAM, CloudWatch),
+                    Docker, GitHub Actions, CI/CD, Turborepo</span
+                >
+            </div>
+            <div class="skill-row">
+                <span class="skill-cat">Practices</span
+                ><span class="skill-list"
+                    >Testing (Unit tests with Vitest, E2E tests with test
+                    Database), JWT and OAuth, RBAC, Swagger and Scalar,
+                    Structured Logging, Agile, Git</span
+                >
+            </div>
+        </section>
+
+        <section>
+            <h2>Education</h2>
+            <div class="edu-head">
+                <span class="edu-school">DHA Suffa University</span>
+                <span class="edu-meta"
+                    >Oct 2020 - Jul 2024 &middot; Karachi, Pakistan</span
+                >
+            </div>
+            <div class="edu-degree">B.S. in Computer Software Engineering</div>
+            <div class="edu-honor">
+                <b>Gold Medalist</b>, graduated top of batch
+            </div>
+        </section>
+    </body>
+</html>
