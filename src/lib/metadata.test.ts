@@ -1,6 +1,11 @@
 import { allCaseStudies, allOpenSources } from "content-collections";
 import { describe, expect, it } from "vitest";
-import { HOME_TITLE, pageMetadata, rootMetadata } from "./metadata";
+import {
+  HOME_TITLE,
+  pageMetadata,
+  rootMetadata,
+  titleWithSuffix,
+} from "./metadata";
 import { SITE_URL } from "./site";
 
 /**
@@ -86,13 +91,24 @@ describe("the strings the head prints", () => {
   it.each(authored)(
     "$name: the title does not restate the name",
     ({ title }) => {
-      // The suffix adds it. #16 also wants each case-study `decision` inside a
-      // 40 to 55 character band so the suffixed title clears the ~60-character
-      // cut, and two of the three shipped strings sit outside it — 36 and 60.
-      // That band is not asserted here: `decision` is #6's settled copy and is
-      // the h1, the home heading and the slug's source, so shortening one to
-      // pass a head-level rule is a copy decision, not a metadata one.
+      // The suffix adds it.
       expect(title).not.toContain("Ali Farooq");
+    },
+  );
+
+  it.each(authored)(
+    "$name: the suffixed title survives the ~60-character cut",
+    ({ title }) => {
+      // #16 wrote this as a 40 to 55 character band on `decision`, but the
+      // band was only ever a proxy. What matters is the string a search
+      // result shows, suffix included — and asserting that stops the band
+      // being mistaken for a rule about copy: `22 modules, one transaction
+      // boundary` is 36 characters and was never the problem.
+      //
+      // #6 shortened one heading from 60 to 47 to get inside this, and the
+      // slug was renamed with it. Anything longer now fails here rather than
+      // in a search result nobody is watching.
+      expect(titleWithSuffix(title).length).toBeLessThanOrEqual(60);
     },
   );
 });
