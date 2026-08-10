@@ -9,20 +9,42 @@ description: "A healthcare services provider's mail automation, built to notice 
 
 ## The problem
 
-The automation read a shared inbox, classified what came in, and pushed the result into the CRM the team worked out of. On a good day nobody thought about it.
+Each consultant connected their own Gmail. The automation read what came in, sorted it, and pushed the result into Pipedrive, the CRM the team worked out of. On a good day nobody thought about it.
 
-A bad day looked exactly like a quiet day. Mail stopped being processed, no error was raised, and the first person to notice was whoever eventually asked why a lead had gone cold. By then the gap was measured in days.
+A bad day looked exactly like a quiet day, and it looked that way for one person at a time. One mailbox stopped being read while every other one kept moving, so nothing looked wrong anywhere. The first person to notice was whoever eventually asked why a lead had gone cold, and by then the gap was days wide.
 
 ## The decision
 
 I stopped treating the Google connection as infrastructure and started treating it as a state machine whose failure states I had to name.
 
-Every connection carries an explicit state and a deadline. A watch has a known expiry, so the renewal is scheduled ahead of it rather than after a failure. A refresh that comes back 401 moves the connection to invalid instead of retrying into a wall. Invalid raises an alert straight away, because the only fix is a person re-consenting.
+Every connection carries an explicit state and a deadline. A watch stops after seven days unless it is registered again, and the response says when. So the renewal is scheduled against that date rather than run after a failure: the job wakes every six hours and takes any watch due inside the next twenty-four. A renewal gets four tries before the deadline, and one bad run costs nothing.
 
-The diagram beside this is that machine. Solid boxes are states where mail moves. The two dashed ones are states where it does not, and the only way out of the last of them is a person.
+A refresh that comes back `invalid_grant` marks the connection dead in the same write that records why and when. Nothing retries into a wall, and the status the team reads stops saying connected. The fix is a person re-consenting, so the system's job is to make the dead state impossible to miss, not to keep trying.
+
+The diagram beside this is that machine. Solid boxes are states where mail moves. The dashed one is the state where it does not, and the only way out of it is a person. There is one dead state rather than one per failure: the row stores the reason beside the flag, and a check constraint stops a row being half-connected.
+
+## When the cursor is too old
+
+A live watch is not the same as a system that is caught up.
+
+A webhook says only that something changed in the mailbox. To learn what, the code asks Gmail for the history since the last id it stored, and that id does not last. Google will not promise how long: the API reference says a `historyId` is "typically valid for at least a week, but in some rare circumstances may be valid for only a few hours". An id past its life returns 404.
+
+So 404 is not something to retry. It means the mailbox moved on without us and the gap can no longer be read. The code names it `history_cursor_stale` and answers with a full sync — read the mailbox from the start, register a fresh watch, and take the new id from the watch response.
+
+Two rules keep the catch-up straight. While a full sync is queued or running, webhooks for that mailbox are dropped, so the catch-up never races the normal path over the same message. And the new cursor and the "last good webhook" stamp are written in one transaction, so the system cannot come to believe it is further ahead than it is.
+
+The renewal job meets the same problem from the other side. If it finds a watch that expired before it got there, renewing is not enough — mail arrived in that gap and no webhook ever came — so it renews and queues a full sync as well.
+
+This is also what a dropped webhook costs. The system stores a cursor, not a message, so the next webhook asks for everything since the last id it kept, and the missed mail comes back with the new. A lost notification costs minutes. It only costs mail if it is lost for so long that the cursor itself ages out, which is the same 404 as before.
 
 ## The cost
 
-The recovery machinery was written before any of these failures had happened in production, and most of it has still never fired. That is the trade: the work is paid up front, against outages that stay invisible until they get expensive.
+Most of this was written before any of it had happened.
 
-I would make the same call again. The alternative is a system whose failure mode is silence, and silence is the one signal nobody escalates.
+The renewal turned out to run every day, so that part paid for itself at once. The full sync after a stale cursor has fired a handful of times, and each one was a mailbox that would otherwise have gone quiet with nobody watching. The disconnect path has never run — no consultant has revoked access yet — and it has sat there ready since the first week.
+
+That is the trade. The work is paid up front, and part of the bill is for a failure that has not arrived.
+
+One gap is still open. Every mailbox records when it was last read, and an admin page shows it, but nothing compares that time against now on a schedule. The data to spot a quiet mailbox is all there. Reading it is still a person opening a page.
+
+I would make the same call again. The other option is a system whose failure shows up as silence, and silence is the one signal nobody escalates.
