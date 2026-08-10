@@ -13,7 +13,15 @@
  *
  * This runs on hast rather than on mdast: a wrapper is an element, and mdast
  * has no node for one that survives to HTML.
+ *
+ * It also hands back the list of sections it made, to whoever asks for it. The
+ * `/open-source/` page's pinned column is that list (#29), and it has to be
+ * the SAME list the observer watches — a second pass over the MDX to find the
+ * headings again is a second place for the two to disagree.
  */
+
+/** One `##` heading: the string a reader sees, and the key the observer uses. */
+export type Section = { slug: string; title: string };
 
 type HastNode = {
   type: string;
@@ -37,20 +45,24 @@ function slugOf(heading: string) {
     .replace(/^-|-$/gu, "");
 }
 
-export function rehypeSections() {
+export function rehypeSections(options?: { collect?: Section[] }) {
   return (tree: HastRoot) => {
     const grouped: HastNode[] = [];
     let open: HastNode | undefined;
 
     for (const child of tree.children) {
       if (child.type === "element" && child.tagName === "h2") {
+        const title = textOf(child);
+        const slug = slugOf(title);
+        options?.collect?.push({ slug, title });
+
         open = {
           type: "element",
           tagName: "section",
           // Written as the attribute rather than as a camelCased property:
           // `data-section` is what the observer selects on, and what the
           // rendered markup has to read for a reader viewing source.
-          properties: { "data-section": slugOf(textOf(child)) },
+          properties: { "data-section": slug },
           children: [],
         };
         grouped.push(open);

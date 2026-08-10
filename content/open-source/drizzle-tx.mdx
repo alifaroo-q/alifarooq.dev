@@ -1,0 +1,60 @@
+---
+title: "drizzle-tx"
+description: "Implicit transaction propagation on an ORM whose only rollback trigger is a throw. The library inverts its own no-throw contract at exactly one boundary, and reassembles it on the other side."
+---
+
+## The wall
+
+A booking crossed four modules of twenty-two, and either all of it landed or none of it could. That is a transaction, and a transaction is a handle on a connection. The plain way to give four modules the same handle is to pass it in, and the parameter then spreads until the database sits in the signature of services that never touch it.
+
+So the handle has to travel with the request instead of with the arguments. Node has one mechanism for that: `AsyncLocalStorage`. The transaction client goes into a store bound to the async scope of the work, and a repository asks for the current one rather than being handed it. Presence of a store is the whole answer to "am I in a transaction" — there is no flag beside it that could disagree.
+
+The store is written once and never mutated, and it is entered with `run()` only. `enterWith` is forbidden by the library's own rules, because it leaks the store into whatever the caller does next.
+
+## Why the ORM makes it hard
+
+Drizzle rolls back when the callback you gave it throws. That is the only trigger it has. Return normally and it commits.
+
+The library had already decided that failures are values and that it never throws for a condition it models. Those two facts collide exactly once: the value that means "undo this" is a return, and a return is what commits.
+
+There were three ways out. Make callers throw, which hands the contract back. Issue `ROLLBACK` directly, which means fighting the ORM for control of a connection it owns and bookkeeping it does. Or invert at one boundary and pay for it there.
+
+## The inversion
+
+`Result` goes in, a throw crosses the ORM, a `Result` comes out. One function turns an `err` into a `RollbackSignal` carrying the payload, which is the only place the no-throw contract is broken. The same boundary catches that signal and re-materialises `err(payload)`. Nothing else in the engine throws, and no throw escapes it.
+
+The interesting part is what happens when the rollback itself fails. The domain error is recorded before the signal is thrown. If the connection dies during `ROLLBACK`, the value that reaches the catch is no longer the signal — it is the driver's error, and the reason the transaction was being undone has been shadowed by the reason the undo failed.
+
+So it is carried out. The caught value is classified into a structured failure, and the shadowed error rides on it as `lostDomainError`. The caller gets both: why the work was rejected, and why the database could not honour the rejection. A double fault reports as two facts instead of one.
+
+## Making the compiler hold the line
+
+`REQUIRES_NEW` runs its work on a second pooled connection while the parent still holds its own. Its outcome has already committed or rolled back independently, so returning it from the outer function would quietly make the outer transaction hang on a result that is no longer live.
+
+The type refuses it. `Independent<T, E>` is a `Result` carrying a phantom property keyed by a unique symbol, and the transactional work function returns `NonIndependent<T, E>`, a `Result` whose phantom must be absent. `return inner` fails to compile. `settle(inner)` strips the brand and is the deliberate opt-in that says an inner failure should take the outer transaction down with it.
+
+Both are types. The brand has no runtime representation, `settle` is the identity function, and the shipped code is what it would have been without either.
+
+## Where I disagreed with myself
+
+There are two implementations of `Result` in my repos, and they resolve the same question in opposite directions.
+
+Here, `ok()` returns `Result<T, never>`. The `never` on the unused side is load-bearing: a work function that only ever returns `ok(...)` still infers its error channel as `never`, so `E | DrizzleTxError` collapses to `DrizzleTxError` instead of widening to `unknown`.
+
+In `result-kit`, written four months earlier, `ok()` returns the narrow `Ok<T>` — strictly more precise about the value in hand. Its own comment records what that costs: `Ok<T>` has no error member, so it offers `E` no inference site, and a transform over a bare `ok(1)` had nothing to infer from and fell back to `unknown`. `Result<T, unknown>` then assigns into no annotation at all. The fix was to default `E` to `never` where it surfaces, which is the same answer reached one hop later.
+
+Same author, same question, opposite resolutions, and both rationales written down at the time. I did not notice the disagreement until I read the two files side by side.
+
+## What I'd change
+
+The NestJS decorator resolves its `TransactionHost` through a process-global `Map`. A method decorator runs at class-definition time, with no access to the container, so the host registers itself when it is constructed and the decorator looks it up when the method is called. There is no other way to get from a decorator to a managed singleton.
+
+The map is keyed `'default'` and the last constructor wins. Two applications in one process and the second silently replaces the first. It is disclosed in the limitations and it has a decision record, and it is still a mutable global in fifteen hundred lines that are otherwise built to be seam-driven.
+
+The open question is heavier and I have it in the tracker. Implicit propagation is the thing this library exists for, and it is orthogonal to how a rollback is signalled — every comparable library throws, and every framework adapter on the roadmap has to build a bridge from results back to throws. The flip condition is written down: if the next two adapters turn out to be mostly bridge, then the contract is being paid for once in the core and charged again at every edge, and it flips to throw-first with results as an opt-in. Until an adapter demonstrates that, it stays as it is.
+
+## Try it
+
+The source and the decision records are in the repo: [github.com/alifaroo-q/drizzle-tx](https://github.com/alifaroo-q/drizzle-tx). Every claim on this page has a record behind it in `docs/adr`, including the ones I have since argued with.
+
+One caveat before you reach for it: installing requires a `drizzle-orm` release-candidate pin — see the README. The pin is honest rather than lazy. Widening it would claim support for a code path that has never been tested.
