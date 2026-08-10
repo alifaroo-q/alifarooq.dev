@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 -4 712 274" fill="none" stroke="currentColor" aria-hidden="true">
+  <!--
+    Slot 2's checkable artifact: the wallet ledger's transitions (#6, #17).
+
+    The rules this file is authored under are in the README beside it. What is
+    written here is only what is true of THIS drawing.
+
+    SECTION MAPPING. `data-sections` holds heading slugs, so #26 can derive the
+    key from the h2 itself and needs no lookup table:
+
+      the-problem   the two states the money must never reach
+      the-decision  the machine a wallet can be in, and the rules that hold it
+      the-cost      the two rules, which are the part that now lives in a
+                    migration rather than in service code
+
+    A part can belong to more than one section. The two refused edges carry all
+    three: they are how it goes wrong, they are the decision, and they are what
+    the decision costs.
+
+    DASHED. Slot 1 draws a state where mail has stopped with a dashed stroke.
+    Here dashed means the same kind of thing one step earlier: a state the
+    constraints will not let the database be written into. There is no hue in
+    this file either way.
+
+    GEOMETRY. Reused from slot 1 unchanged, because the two drawings sit on the
+    same site and a reader meets them minutes apart: three columns at
+    x = 40 / 296 / 552, boxes 150 x 46, so every horizontal gap is 106. Edges
+    leave their box flush and stop 8 short of the next one, and the arrowhead
+    tip is the end of the path.
+
+    The viewBox is fitted to the ink rather than set to a round number. The
+    drawing runs x 40..730 and y 10..256, and the widest thing on the right is
+    the "one capture" label, not a box: the type is JetBrains Mono, so a glyph
+    is 0.6 of the font size and the label is 82.5 wide against a box of 150.
+
+    THE LABELS ARE ASCII, and that is a rule rather than a habit. `layout.tsx`
+    asks for the latin subset, whose range does not carry U+2265, so a "≥" on
+    the overdraft edge would be drawn by whatever monospace the reader's
+    machine falls back to: a different shape at a different advance, mid-word,
+    and the 0.6 the geometry above is computed against stops holding for that
+    one glyph. Slot 1 writes `&amp;lt;` for the same reason.
+
+    TYPE SIZE. 14 in the boxes and 12.5 on the edges, as slot 1. The figure
+    caps at 40rem, so a user unit is 0.899 of a CSS pixel at the widest the
+    column goes: 12.5 renders at 11.2px and clears the 11px `--text-label`
+    floor in globals.css.
+  -->
+
+  <!-- The states a wallet can be in. Money is never subtracted: a charge opens
+       a hold, and the hold is captured or released. -->
+  <g id="state-available" data-part data-sections="the-decision">
+    <rect x="40" y="60" width="150" height="46" stroke-width="1.5" />
+    <text x="115" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">available</text>
+  </g>
+  <g id="state-held" data-part data-sections="the-decision">
+    <rect x="296" y="60" width="150" height="46" stroke-width="1.5" />
+    <text x="371" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">held</text>
+  </g>
+  <g id="state-captured" data-part data-sections="the-decision">
+    <rect x="552" y="60" width="150" height="46" stroke-width="1.5" />
+    <text x="627" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">captured</text>
+  </g>
+
+  <!-- The two states the constraints refuse to write. Dashed, never coloured. -->
+  <g id="state-overdrawn" data-part data-sections="the-problem">
+    <rect x="40" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
+    <text x="115" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">overdrawn</text>
+  </g>
+  <g id="state-double-capture" data-part data-sections="the-problem">
+    <rect x="552" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
+    <text x="627" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">double capture</text>
+  </g>
+
+  <!-- The path money actually takes, left to right, and the release back over
+       the top. -->
+  <g id="edge-hold" data-part data-sections="the-decision">
+    <path d="M190,83 L288,83" stroke-width="1" />
+    <path d="M281,79 L288,83 L281,87" stroke-width="1.2" />
+    <text x="239" y="73" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">hold</text>
+  </g>
+  <g id="edge-capture" data-part data-sections="the-decision">
+    <path d="M446,83 L544,83" stroke-width="1" />
+    <path d="M537,79 L544,83 L537,87" stroke-width="1.2" />
+    <text x="495" y="73" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">capture</text>
+  </g>
+  <g id="edge-release" data-part data-sections="the-decision">
+    <path d="M371,60 L371,28 L115,28 L115,52" stroke-width="1" />
+    <path d="M111,45 L115,52 L119,45" stroke-width="1.2" />
+    <text x="243" y="19" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">release</text>
+  </g>
+
+  <!-- The two writes that never land, each labelled with the rule that stops
+       it. The line is dashed because the transition does not happen; the head
+       is drawn inline in the same group, so it dims with its edge. -->
+  <g id="edge-refused-overdraft" data-part data-sections="the-problem the-decision the-cost">
+    <path d="M115,106 L115,202" stroke-width="1" stroke-dasharray="3 3" />
+    <path d="M111,195 L115,202 L119,195" stroke-width="1.2" />
+    <text x="177" y="160" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">balance &gt;= 0</text>
+  </g>
+  <g id="edge-refused-double" data-part data-sections="the-problem the-decision the-cost">
+    <path d="M627,106 L627,202" stroke-width="1" stroke-dasharray="3 3" />
+    <path d="M623,195 L627,202 L631,195" stroke-width="1.2" />
+    <text x="689" y="160" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">one capture</text>
+  </g>
+</svg>

@@ -1,0 +1,32 @@
+---
+sector: "A virtual-phone-number & SMS platform"
+decision: "Putting the money invariant in the database, not the service"
+constraint: "A double-capture is real money. An RLS gap is a breach. Neither is recoverable by apologising."
+artifactLabel: "See the ledger transitions →"
+order: 2
+description: "A wallet whose rules are enforced by the database, so a state where the numbers are wrong cannot be written at all."
+---
+
+## The problem
+
+People topped a wallet up and spent it on numbers and messages. A top-up cleared, a rental renewed, a batch of messages was billed, and refunds came back days later.
+
+All of that ran through service code, which is also where retries live. A retry that arrives after a timeout looks the same as a new request, so the same charge can be taken twice. The wallet is then wrong by a real amount, and nothing downstream ever notices on its own.
+
+Every one of those rows also belongs to one account out of many. A query that forgets to say which account is not a wrong number. It is one customer reading another customer's bill.
+
+## The decision
+
+I moved the rules the money depends on out of the service and into the database.
+
+Spending is not a subtraction. A charge opens a hold against the balance, and the hold is captured or released later. The balance cannot go below zero, because a check constraint says so. A hold can be captured once, because a unique key says so. A second capture stops being a case the service has to remember to guard and becomes a write that fails.
+
+Row-level security does the same job for the account boundary. Which account a row belongs to is enforced where the row lives, so a query that forgets the account returns nothing rather than something.
+
+The diagram beside this is that ledger. The solid states are the ones a wallet can be in. The two dashed ones are the states the constraints refuse to write, and the labels on the way into them are the rules that do the refusing.
+
+## The cost
+
+A rule in a migration is slower to change than a rule in a service. Changing one means a migration, a deploy ordered against it, and no way to ship the two halves at the same moment. Some rules ended up written twice, once in the database and once in the service, so the API could answer with something a caller can read instead of a constraint violation.
+
+I would make the same call again. Service code is where deadline pressure lands, and the rule that costs the most to get wrong is the one that should sit furthest from it.
