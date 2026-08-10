@@ -1,6 +1,7 @@
 import { allOpenSources } from "content-collections";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ContactFooter } from "@/components/contact-footer";
 import { DetailShell } from "@/components/detail-shell";
 import { MdxContent } from "@/components/mdx-content";
 import { SectionIndex } from "@/components/section-index";
@@ -62,19 +63,25 @@ export default async function OpenSourcePage({
   if (!doc) notFound();
 
   return (
-    <DetailShell
-      backHref="/#open-source"
-      backLabel="Open source"
-      // The eyebrow names the zone rather than the project. On a case study it
-      // is the client's sector, which is context the heading deliberately does
-      // not carry; here the heading is a repo name and the context a reader
-      // needs is which half of the site they are in.
-      eyebrow="Open source"
-      heading={doc.title}
-      reference={<SectionIndex sections={doc.sections} />}
-      standfirst={doc.description}
-    >
-      <MdxContent code={doc.body} />
-    </DetailShell>
+    <>
+      <DetailShell
+        backHref="/#open-source"
+        backLabel="Open source"
+        // The eyebrow names the zone rather than the project. On a case study it
+        // is the client's sector, which is context the heading deliberately does
+        // not carry; here the heading is a repo name and the context a reader
+        // needs is which half of the site they are in.
+        eyebrow="Open source"
+        heading={doc.title}
+        reference={<SectionIndex sections={doc.sections} />}
+        standfirst={doc.description}
+      >
+        <MdxContent code={doc.body} />
+      </DetailShell>
+
+      {/* Compact, on the same grounds as the case studies: one template, two
+          fills, and the footer is furniture rather than register (#17). */}
+      <ContactFooter compact />
+    </>
   );
 }

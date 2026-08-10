@@ -28,6 +28,40 @@ An agent cannot do these. Work through them once, in order.
 
 The apex is canonical and `www` redirects to it with a 308.
 
+## The contact form's four checks
+
+Two of them are in the repo and two are not. Both halves have to be in place
+or the form is protected by less than it looks.
+
+In the repo, and covered by `src/app/api/contact/route.test.ts`:
+
+1. **Honeypot** — a `company` field nobody can see and a form-filler fills.
+2. **Timing floor** — a submission faster than three seconds from the moment
+   the form loaded.
+
+At a dashboard, and nothing in the repo can tell whether they are done:
+
+3. **Vercel BotID.** The package is wired in three places — `next.config.ts`,
+   `instrumentation-client.ts` and the route's `checkBotId()`. Basic needs no
+   dashboard step and works on Hobby. **Deep Analysis is a paid plan feature
+   and is not enabled**: Project → Firewall → Configure is where it would go.
+   Outside production `checkBotId()` returns a human verdict and logs a
+   warning, so the check is only real once deployed.
+4. **One IP-keyed WAF rate-limit rule**, added under Project → Firewall. It
+   works only because step 3 in the list above left DNS unproxied — proxied,
+   every visitor arrives as a Cloudflare edge IP and the rule keys them all
+   together.
+
+## The inbox
+
+One more rule, on the receiving side rather than the sending one:
+
+- **An allowlist filter in the inbox, from day one.** Everything the form
+   sends arrives `From: contact@send.alifarooq.dev`, so one rule on that
+   address files it where it will be read. Without it the first message from
+   a new sending domain is the one that lands in spam, and the inbox is the
+   system of record. The `CONTACT_BCC_EMAIL` mailbox needs the same rule.
+
 ## Environment variables
 
 | Name | What it is |
@@ -40,8 +74,9 @@ The apex is canonical and `www` redirects to it with a 308.
 
 ## CI
 
-`.github/workflows/ci.yml` runs lint and typecheck on every push to `main`
-and every pull request. It deliberately does **not** build: Vercel builds
+`.github/workflows/ci.yml` runs lint, typecheck and the test suite on every
+push to `main` and every pull request. It deliberately does **not** build:
+Vercel builds
 every push and will not promote a failure, so a second build only doubles
 the minutes to re-prove something already blocked on.
 

@@ -303,6 +303,26 @@
 }
 
 /* ==========================================================================
+   The contact form's fields (#30).
+
+   `focus-within` on the field WRAPPER, borrowed from the TanStack DS as an
+   idea and not as code (#20). The input already states its own focus ring in
+   the base layer above; what this adds is the label moving with it, so the
+   thing being edited is marked at the top of the field rather than only at
+   its outline.
+
+   It reads the accent, which belongs to the ground — so it is amber on dark
+   and ink on light with no second rule, and it survives a flipped row.
+
+   It lives here rather than on the component for the reason the whole file
+   exists: colour is not set at a call site. `field.tsx` owns the field's
+   layout; this owns what focused looks like.
+   ========================================================================== */
+[data-slot="field"]:focus-within [data-slot="field-label"] {
+  color: var(--accent);
+}
+
+/* ==========================================================================
    Section tracking on the detail pages (#26).
 
    The diagram is the page's second column of argument: as a section reaches
