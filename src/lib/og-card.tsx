@@ -26,12 +26,18 @@ import { join } from "node:path";
  * to click.
  */
 
-/** #10's dark ground, and the four values that sit on it. */
-const GROUND = "#0a0a0b";
+/**
+ * #10's dark ground, and the four values that sit on it.
+ *
+ * `GROUND` and `ACCENT` are exported because the app icon spends the same two
+ * and is rendered by the same PNG renderer, which cannot read a CSS variable
+ * either. Two literals of the accent is a tab that stops matching the card.
+ */
+export const GROUND = "#0a0a0b";
 const FOREGROUND = "#edece9";
 const MUTED = "#a3a19c";
 const LABEL = "#807d77";
-const ACCENT = "#f2b544";
+export const ACCENT = "#f2b544";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
