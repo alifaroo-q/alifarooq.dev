@@ -1,0 +1,284 @@
+/*
+ * The resume's own stylesheet, deliberately unrelated to `src/app/globals.css`.
+ *
+ * #15 rejected rendering the resume through a Next.js route precisely so this
+ * file could exist: a route inherits the site's dark ground and JetBrains
+ * Mono, and a resume that reaches a recruiter looking like a terminal is a
+ * costume rather than a document. The resume's genre is not the site's genre.
+ *
+ * So none of the site's tokens reach here, and none of this reaches the site.
+ * The two documents agree on facts (#15 tier 1), not on looks (#15 tier 3).
+ */
+
+:root {
+  --ink: #1a1a1a;
+  --muted: #3d3d3d;
+  --accent: #1f3a5f; /* professional navy */
+  --rule: #d4d4d4;
+  --light: #6b7280;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* A4 at 17/18mm. #23 measured the page against this and it is the reason
+   the two library entries merged rather than sat side by side. */
+@page {
+  size: A4;
+  margin: 17mm 18mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  font-size: 10.5pt;
+  line-height: 1.32;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Header ---------- */
+header {
+  text-align: center;
+  margin-bottom: 13px;
+}
+h1 {
+  font-size: 20pt;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--accent);
+}
+.headline {
+  font-size: 10.5pt;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.2px;
+}
+.contact {
+  font-size: 9.3pt;
+  color: var(--light);
+  margin-top: 6px;
+}
+.contact a {
+  color: var(--light);
+  text-decoration: none;
+}
+.contact span.sep {
+  margin: 0 6px;
+  color: var(--rule);
+}
+
+/* ---------- Sections ---------- */
+section {
+  margin-top: 15px;
+}
+h2 {
+  font-size: 10.5pt;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  color: var(--accent);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.summary {
+  text-align: left;
+  color: var(--muted);
+}
+
+/* ---------- Experience ---------- */
+.role-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1px;
+}
+.role-title {
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--ink);
+}
+.role-meta {
+  font-size: 9.4pt;
+  font-weight: 600;
+  color: var(--light);
+  white-space: nowrap;
+}
+.role-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 9.6pt;
+  color: var(--light);
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+.role-lead {
+  color: var(--muted);
+  margin: 4px 0 2px;
+  text-align: left;
+}
+.role-lead b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.ws-label {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 10pt;
+  margin: 6px 0 1px;
+}
+.ws-label .ctx {
+  font-weight: 400;
+  color: var(--light);
+  font-style: italic;
+  font-size: 9.4pt;
+}
+
+ul {
+  list-style: none;
+  margin: 2px 0 0 0;
+}
+li {
+  position: relative;
+  padding-left: 14px;
+  margin-bottom: 3px;
+  text-align: left;
+}
+li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 5.5px;
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+li b,
+.summary b,
+.proj-body b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.tech {
+  color: var(--light);
+  font-style: italic;
+}
+
+/* ---------- Projects ---------- */
+.project {
+  margin-bottom: 7px;
+}
+.proj-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.proj-name {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 10.4pt;
+}
+.proj-tag {
+  font-size: 9pt;
+  color: var(--light);
+  font-style: italic;
+}
+.proj-body {
+  margin-top: 1px;
+  text-align: left;
+  color: var(--muted);
+}
+.proj-body code {
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--ink);
+}
+/* The repo URLs sit on their own line rather than in `.proj-tag`, because
+   #23's merged entry cites three of them and the tag slot holds one. The tag
+   slot now carries the role line for every entry instead — `Solo project`,
+   `Published on npm` — which is what made the merge fit. */
+.proj-links {
+  margin-top: 2px;
+  color: var(--light);
+  font-size: 9.2pt;
+}
+.proj-links a {
+  color: var(--light);
+  text-decoration: none;
+}
+.proj-links span.sep {
+  margin: 0 5px;
+  color: var(--rule);
+}
+.proj-tech {
+  margin-top: 2px;
+  color: var(--light);
+  font-size: 9.4pt;
+}
+.proj-tech b {
+  color: var(--muted);
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ---------- Skills ---------- */
+.skill-row {
+  margin-bottom: 4px;
+  display: flex;
+}
+.skill-cat {
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 130px;
+  flex-shrink: 0;
+}
+.skill-list {
+  color: var(--muted);
+}
+
+/* ---------- Education ---------- */
+.edu-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.edu-school {
+  font-weight: 700;
+  color: var(--ink);
+}
+.edu-meta {
+  font-size: 9.4pt;
+  color: var(--light);
+}
+.edu-degree {
+  color: var(--muted);
+  font-size: 9.8pt;
+}
+.edu-honor {
+  color: var(--muted);
+  font-size: 9.8pt;
+  margin-top: 1px;
+}
+.edu-honor b {
+  color: var(--accent);
+}
+
+section,
+.project,
+li,
+.role {
+  break-inside: avoid;
+}
