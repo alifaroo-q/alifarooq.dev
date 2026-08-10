@@ -188,6 +188,13 @@ It wakes on `deployment_status`, which is the only event that carries the
 preview URL. It runs for a successful **Preview** deployment and ignores
 Production.
 
+**So a commit pushed straight to `main` is never measured.** That push builds
+a Production deployment, the job ignores it, and both gates are simply absent
+— they do not fail, and nothing says they were skipped. The branch protection
+below cannot help either: there is no PR for it to hold. Anything that could
+move a gate — a new asset, a dependency, a route — has to arrive through a
+pull request, or be checked by hand with the commands at the end of this file.
+
 ### What it measures
 
 | Check | Number | Blocks? | How |
