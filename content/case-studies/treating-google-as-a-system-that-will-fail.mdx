@@ -1,0 +1,28 @@
+---
+sector: "A healthcare services provider"
+decision: "Treating Google as a system that will fail"
+constraint: "OAuth tokens expire, Gmail watches lapse, webhooks drop — and all of it happens silently. The automation had to detect its own blind spots before anyone downstream noticed the mail had stopped moving."
+artifactLabel: "See the state diagram →"
+order: 1
+description: "An automation on top of Gmail, built so that every way Google can go quiet is a state the system can see itself in."
+---
+
+## The problem
+
+The automation read a shared inbox, classified what came in, and pushed the result into the CRM the team worked out of. On a good day nobody thought about it.
+
+A bad day looked exactly like a quiet day. Mail stopped being processed, no error was raised, and the first person to notice was whoever eventually asked why a lead had gone cold. By then the gap was measured in days.
+
+## The decision
+
+I stopped treating the Google connection as infrastructure and started treating it as a state machine whose failure states I had to name.
+
+Every connection carries an explicit state and a deadline. A watch has a known expiry, so the renewal is scheduled ahead of it rather than after a failure. A refresh that comes back 401 moves the connection to invalid instead of retrying into a wall. Invalid raises an alert straight away, because the only fix is a person re-consenting.
+
+The diagram beside this is that machine. Solid boxes are states where mail moves. The two dashed ones are states where it does not, and the only way out of the last of them is a person.
+
+## The cost
+
+The recovery machinery was written before any of these failures had happened in production, and most of it has still never fired. That is the trade: the work is paid up front, against outages that stay invisible until they get expensive.
+
+I would make the same call again. The alternative is a system whose failure mode is silence, and silence is the one signal nobody escalates.
