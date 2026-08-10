@@ -5,6 +5,7 @@ import { ArtifactFigure } from "@/components/artifact-figure";
 import { ContactFooter } from "@/components/contact-footer";
 import { DetailShell } from "@/components/detail-shell";
 import { MdxContent } from "@/components/mdx-content";
+import { pageMetadata } from "@/lib/metadata";
 
 // Every case study is known at build time, so every one of them is prerendered
 // and nothing else is reachable: `dynamicParams = false` 404s an unknown slug
@@ -32,12 +33,18 @@ export async function generateMetadata({
   if (!caseStudy) return {};
 
   // `decision` is the heading, the h1 and the title — one string, so the tab
-  // and the page cannot drift (#9).
-  return {
+  // and the page cannot drift (#9). It runs 40 to 55 characters, which is what
+  // leaves room for the `— Ali Farooq` suffix inside the ~60-character cut.
+  //
+  // The description is the authored `description` field, NOT `constraint`.
+  // `constraint` runs ~250 characters and is written to be read UNDER the
+  // heading with the eyebrow already on screen; a share card has none of that
+  // context, and the string gets cut mid-sentence anyway (#16).
+  return pageMetadata({
     title: caseStudy.decision,
     description: caseStudy.description,
-    alternates: { canonical: `/work/${caseStudy.slug}` },
-  };
+    path: `/work/${caseStudy.slug}`,
+  });
 }
 
 export default async function CaseStudyPage({

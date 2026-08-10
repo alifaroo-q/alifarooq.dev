@@ -3,7 +3,15 @@ import { ContactFooter } from "@/components/contact-footer";
 import { Portrait } from "@/components/portrait";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
-import { ACTION_CLASS, CONTACT_EMAIL } from "@/lib/site";
+import {
+  ACTION_CLASS,
+  CONTACT_EMAIL,
+  OPEN_SOURCE_CONVICTION,
+  PERSON_NAME,
+  PERSON_ROLE,
+  PROFILE_URLS,
+  SITE_URL,
+} from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -27,7 +35,7 @@ import { cn } from "@/lib/utils";
  */
 
 const person = {
-  name: "Ali Farooq",
+  name: PERSON_NAME,
 
   /**
    * #8's positioning sentence, cut at its existing commas. Not a rewrite —
@@ -53,7 +61,7 @@ const person = {
   // read as proof: #8 kept every badge, stat and repo link out of the fold,
   // on the grounds that a fold which produces evidence for its own claim is
   // a fold that does not trust it. The page below is the proof.
-  role: "Backend engineer",
+  role: PERSON_ROLE,
   location: "Karachi, Pakistan",
   availability: "Open to backend roles",
 
@@ -99,8 +107,7 @@ const openSource = {
   // to end by restating it almost word for word; that clause is cut here, on
   // the precedent #14 set when it cut the About line for restating the
   // positioning sentence. Saying it twice in one screen reads as padding.
-  conviction:
-    "Failure should be part of what a function returns, not something you find out about in production.",
+  conviction: OPEN_SOURCE_CONVICTION,
   retrofit: "The same conviction, re-derived rather than reused.",
 
   featured: {
@@ -203,6 +210,32 @@ function Fact({
   );
 }
 
+/**
+ * The site's only structured data — `Person`, on this page and no other (#16).
+ *
+ * It is the one piece that ties the site to the name a recruiter types, and
+ * the reason it is here rather than in the root layout is that "on the home
+ * page" is the whole of the decision: a `Person` block repeated on five pages
+ * claims five people.
+ *
+ * `sameAs` carries both handles spelled out, because they do not match —
+ * `alifaroo-q` on GitHub, `itsalifarooq` on LinkedIn — so anyone deriving one
+ * from the other gets it wrong.
+ *
+ * No `email` and no `address`. Both are already visible to a human on this
+ * page, nothing renders the machine-readable copy, and the email version is a
+ * gift to scrapers. `BreadcrumbList` is not here either: it exists to render a
+ * trail Google will not show for a two-level, five-page site.
+ */
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: PERSON_NAME,
+  jobTitle: PERSON_ROLE,
+  url: SITE_URL,
+  sameAs: PROFILE_URLS,
+};
+
 export default function Home() {
   // Ordered by the collection's own field, not by filename or read order —
   // the row order is the order the positioning sentence promised, so it
@@ -211,6 +244,12 @@ export default function Home() {
 
   return (
     <>
+      <script
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD has no other insertion point, and the value is a local literal with no user input in it.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        type="application/ld+json"
+      />
+
       <SiteHeader name={person.name} resumeHref={person.resumeHref} />
 
       <main id="main">
