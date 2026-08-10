@@ -1,105 +1,115 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 -4 712 274" fill="none" stroke="currentColor" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 14 686 198" fill="none" stroke="currentColor" aria-hidden="true">
   <!--
-    Slot 2's checkable artifact: the wallet ledger's transitions (#6, #17).
+    Slot 2's checkable artifact: one capture, drawn as the two assets it is
+    written in. The rules this file is authored under are in the README beside
+    it. What is written here is only what is true of THIS drawing.
 
-    The rules this file is authored under are in the README beside it. What is
-    written here is only what is true of THIS drawing.
+    WHY THIS DRAWING AND NOT A STATE MACHINE. The essay's turn is that an
+    account holds a currency AND a scale, and that the sum-to-zero rule
+    partitions on the pair. A reader can be told the states a wallet moves
+    through in one sentence. The two bands cannot be told: the whole point is
+    that each row adds up to zero on its own, and that is a shape.
 
     SECTION MAPPING. `data-sections` holds heading slugs, so #26 can derive the
     key from the h2 itself and needs no lookup table:
 
-      the-problem   the two states the money must never reach
-      the-decision  the machine a wallet can be in, and the rules that hold it
-      the-cost      the two rules, which are the part that now lives in a
-                    migration rather than in service code
+      the-decision                 the money side of the capture, in cents
+      when-a-cent-is-too-coarse    the provider side, in millionths, and the
+                                   band labels that name the two scales
+      the-problem / the-cost       the refused edge, which is both the error
+                                   that was made and the guard that now costs
+                                   a duplicated rule
 
-    A part can belong to more than one section. The two refused edges carry all
-    three: they are how it goes wrong, they are the decision, and they are what
-    the decision costs.
+    A part can belong to more than one section. The refused edge carries three.
 
-    DASHED. Slot 1 draws a state where mail has stopped with a dashed stroke.
-    Here dashed means the same kind of thing one step earlier: a state the
-    constraints will not let the database be written into. There is no hue in
-    this file either way.
+    DASHED. As slot 1 and as the drawing this replaces: a write the constraints
+    will not let the database take. There is no hue in this file either way.
 
-    GEOMETRY. Reused from slot 1 unchanged, because the two drawings sit on the
-    same site and a reader meets them minutes apart: three columns at
-    x = 40 / 296 / 552, boxes 150 x 46, so every horizontal gap is 106. Edges
-    leave their box flush and stop 8 short of the next one, and the arrowhead
-    tip is the end of the path.
+    GEOMETRY. Reused from slot 1 unchanged, because the drawings sit on the
+    same site and a reader meets them minutes apart: columns at x = 40 / 296 /
+    552, boxes 150 x 46, so every horizontal gap is 106. Edges leave their box
+    flush and stop 8 short of the next one, and the arrowhead tip is the end of
+    the path. Rows are 110 apart, and each band label sits 14 above its row.
 
-    The viewBox is fitted to the ink rather than set to a round number. The
-    drawing runs x 40..730 and y 10..256, and the widest thing on the right is
-    the "one capture" label, not a box: the type is JetBrains Mono, so a glyph
-    is 0.6 of the font size and the label is 82.5 wide against a box of 150.
+    The viewBox is fitted to the ink. The drawing runs x 40..702 and y 18..200;
+    the widest label is "same currency and scale" at 172.5 against a 12.5 type
+    whose glyph is 0.6 of the font size, and it ends at 562.5, inside the
+    right-hand column's box edge.
 
     THE LABELS ARE ASCII, and that is a rule rather than a habit. `layout.tsx`
-    asks for the latin subset, whose range does not carry U+2265, so a "≥" on
-    the overdraft edge would be drawn by whatever monospace the reader's
-    machine falls back to: a different shape at a different advance, mid-word,
-    and the 0.6 the geometry above is computed against stops holding for that
-    one glyph. Slot 1 writes `&amp;lt;` for the same reason.
+    asks for the latin subset, so a "/" is safe but a "-" is the only dash to
+    use, and no glyph outside that range may appear mid-word: the 0.6 the
+    geometry is computed against stops holding for anything the fallback face
+    draws instead.
 
-    TYPE SIZE. 14 in the boxes and 12.5 on the edges, as slot 1. The figure
-    caps at 40rem, so a user unit is 0.899 of a CSS pixel at the widest the
-    column goes: 12.5 renders at 11.2px and clears the 11px `--text-label`
-    floor in globals.css.
+    TYPE SIZE. 14 in the boxes and 12.5 on edges and band labels, as slot 1.
+    The figure caps at 40rem, so a user unit is 0.899 of a CSS pixel at the
+    widest the column goes: 12.5 renders at 11.2px and clears the 11px
+    `--text-label` floor in globals.css.
   -->
 
-  <!-- The states a wallet can be in. Money is never subtracted: a charge opens
-       a hold, and the hold is captured or released. -->
-  <g id="state-available" data-part data-sections="the-decision">
-    <rect x="40" y="60" width="150" height="46" stroke-width="1.5" />
-    <text x="115" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">available</text>
-  </g>
-  <g id="state-held" data-part data-sections="the-decision">
-    <rect x="296" y="60" width="150" height="46" stroke-width="1.5" />
-    <text x="371" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">held</text>
-  </g>
-  <g id="state-captured" data-part data-sections="the-decision">
-    <rect x="552" y="60" width="150" height="46" stroke-width="1.5" />
-    <text x="627" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">captured</text>
+  <!-- The customer's side of one capture, in whole cents. Four entries over
+       two edges: the hold is released back, then the spend is posted. The
+       three accounts add up to zero without any help from the row below. -->
+  <g id="band-cents" data-part data-sections="when-a-cent-is-too-coarse">
+    <text x="40" y="30" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">USD/2 - cents</text>
   </g>
 
-  <!-- The two states the constraints refuse to write. Dashed, never coloured. -->
-  <g id="state-overdrawn" data-part data-sections="the-problem">
-    <rect x="40" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
-    <text x="115" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">overdrawn</text>
+  <g id="account-holds" data-part data-sections="the-decision">
+    <rect x="40" y="44" width="150" height="46" stroke-width="1.5" />
+    <text x="115" y="72" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">holds</text>
   </g>
-  <g id="state-double-capture" data-part data-sections="the-problem">
-    <rect x="552" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
-    <text x="627" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">double capture</text>
+  <g id="account-wallet" data-part data-sections="the-decision">
+    <rect x="296" y="44" width="150" height="46" stroke-width="1.5" />
+    <text x="371" y="72" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">wallet</text>
+  </g>
+  <g id="account-revenue" data-part data-sections="the-decision">
+    <rect x="552" y="44" width="150" height="46" stroke-width="1.5" />
+    <text x="627" y="72" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">revenue</text>
   </g>
 
-  <!-- The path money actually takes, left to right, and the release back over
-       the top. -->
-  <g id="edge-hold" data-part data-sections="the-decision">
-    <path d="M190,83 L288,83" stroke-width="1" />
-    <path d="M281,79 L288,83 L281,87" stroke-width="1.2" />
-    <text x="239" y="73" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">hold</text>
-  </g>
-  <g id="edge-capture" data-part data-sections="the-decision">
-    <path d="M446,83 L544,83" stroke-width="1" />
-    <path d="M537,79 L544,83 L537,87" stroke-width="1.2" />
-    <text x="495" y="73" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">capture</text>
-  </g>
   <g id="edge-release" data-part data-sections="the-decision">
-    <path d="M371,60 L371,28 L115,28 L115,52" stroke-width="1" />
-    <path d="M111,45 L115,52 L119,45" stroke-width="1.2" />
-    <text x="243" y="19" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">release</text>
+    <path d="M190,67 L288,67" stroke-width="1" />
+    <path d="M281,63 L288,67 L281,71" stroke-width="1.2" />
+    <text x="239" y="57" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">release</text>
+  </g>
+  <g id="edge-spend" data-part data-sections="the-decision">
+    <path d="M446,67 L544,67" stroke-width="1" />
+    <path d="M537,63 L544,67 L537,71" stroke-width="1.2" />
+    <text x="495" y="57" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">spend</text>
   </g>
 
-  <!-- The two writes that never land, each labelled with the rule that stops
-       it. The line is dashed because the transition does not happen; the head
-       is drawn inline in the same group, so it dims with its edge. -->
-  <g id="edge-refused-overdraft" data-part data-sections="the-problem the-decision the-cost">
-    <path d="M115,106 L115,202" stroke-width="1" stroke-dasharray="3 3" />
-    <path d="M111,195 L115,202 L119,195" stroke-width="1.2" />
-    <text x="177" y="160" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">balance &gt;= 0</text>
+  <!-- The provider's side of the same capture, in millionths of a dollar,
+       because the quote it came from has four decimal places and a cent
+       cannot hold it. Two entries over one edge, adding up to zero on their
+       own. -->
+  <g id="band-millionths" data-part data-sections="when-a-cent-is-too-coarse">
+    <text x="40" y="140" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">USD/6 - millionths</text>
   </g>
-  <g id="edge-refused-double" data-part data-sections="the-problem the-decision the-cost">
-    <path d="M627,106 L627,202" stroke-width="1" stroke-dasharray="3 3" />
-    <path d="M623,195 L627,202 L631,195" stroke-width="1.2" />
-    <text x="689" y="160" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">one capture</text>
+
+  <g id="account-provider-float" data-part data-sections="when-a-cent-is-too-coarse">
+    <rect x="40" y="154" width="150" height="46" stroke-width="1.5" />
+    <text x="115" y="182" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">provider float</text>
+  </g>
+  <g id="account-provider-cost" data-part data-sections="when-a-cent-is-too-coarse">
+    <rect x="296" y="154" width="150" height="46" stroke-width="1.5" />
+    <text x="371" y="182" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">provider cost</text>
+  </g>
+
+  <g id="edge-cost" data-part data-sections="when-a-cent-is-too-coarse">
+    <path d="M190,177 L288,177" stroke-width="1" />
+    <path d="M281,173 L288,177 L281,181" stroke-width="1.2" />
+    <text x="239" y="167" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">cost</text>
+  </g>
+
+  <!-- The write that never lands. An entry may not carry one asset and sit on
+       an account that holds another, so the two bands cannot reach each other
+       and neither can borrow from the other to look balanced. Dashed because
+       the transition does not happen; the head is drawn inline in the same
+       group so it dims with its edge. -->
+  <g id="edge-refused-cross-asset" data-part data-sections="the-problem when-a-cent-is-too-coarse the-cost">
+    <path d="M371,90 L371,146" stroke-width="1" stroke-dasharray="3 3" />
+    <path d="M367,139 L371,146 L375,139" stroke-width="1.2" />
+    <text x="390" y="122" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">same currency and scale</text>
   </g>
 </svg>

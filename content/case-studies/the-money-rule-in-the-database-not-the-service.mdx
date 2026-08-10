@@ -1,32 +1,54 @@
 ---
 sector: "A virtual-phone-number & SMS platform"
 decision: "The money rule in the database, not the service"
-constraint: "A double-capture is real money. An RLS gap is a breach. Neither is recoverable by apologising."
-artifactLabel: "See the ledger transitions →"
+constraint: "A cent is the wrong size for money you compute with. The error is a fraction of a penny, it enters the books as a fact, and nothing downstream ever raises a hand."
+artifactLabel: "See one capture, in two assets →"
 order: 2
-description: "On a virtual-phone-number platform, a double capture is real money and no apology fixes it. So the guard went where no future service could route around it."
+description: "On a virtual-phone-number platform, the loss that mattered was not money taken twice. It was money written down wrong by a fraction of a cent, where nobody was looking."
 ---
 
 ## The problem
 
-People topped a wallet up and spent it on numbers and messages. A top-up cleared, a rental renewed, a batch of messages was billed, and refunds came back days later.
+People topped a wallet up and spent it on numbers and messages. Top-ups cleared, rentals renewed, messages were billed, refunds came back days later.
 
-All of that ran through service code, which is also where retries live. A retry that arrives after a timeout looks the same as a new request, so the same charge can be taken twice. The wallet is then wrong by a real amount, and nothing downstream ever notices on its own.
+The loss I planned for was the loud one. All of that ran through service code, which is where retries live, and a retry that arrives after a timeout looks like a new request. Take the same charge twice and the wallet is wrong by a real amount.
 
-Every one of those rows also belongs to one account out of many. A query that forgets to say which account is not a wrong number. It is one customer reading another customer's bill.
+The loss that happened was quiet. 5sim, the number provider, quotes prices to four decimal places. We stored money in cents. A cost of $0.0769 was written down as 8c — a four percent error, going straight into the account we book the cost of goods against. Nobody was overcharged. No balance went negative. Every total added up, because a wrong number adds up with itself perfectly well. We found it before any of it ran against real money, which is luck, not a process.
+
+A third kind needs no rounding at all. Every row belongs to one account out of many, and a query that forgets to say which is not a wrong number. It is one customer reading another's bill.
 
 ## The decision
 
-I moved the rules the money depends on out of the service and into the database.
+I moved the rules the money depends on out of the service and into the database. Not the steps — those are still TypeScript, in one transaction. What went down are the rules that say no.
 
-Spending is not a subtraction. A charge opens a hold against the balance, and the hold is captured or released later. The balance cannot go below zero, because a check constraint says so. A hold can be captured once, because a unique key says so. A second capture stops being a case the service has to remember to guard and becomes a write that fails.
+Spending is not a subtraction. A charge opens a hold, and the hold is captured or released later. What is left to spend is the balance less what is held, and a customer's wallet cannot take that below zero, because a check constraint says so. A capture is written under a key built from the order id, and a unique constraint says the key is used once. A second capture stops being a case the service has to remember and becomes a write that fails.
 
-Row-level security does the same job for the account boundary. Which account a row belongs to is enforced where the row lives, so a query that forgets the account returns nothing rather than something.
+Every money event is a set of entries that has to add up to zero. That is checked at the end of the transaction, not row by row, because no row can see its siblings.
 
-The diagram beside this is that ledger. The solid states are the ones a wallet can be in. The two dashed ones are the states the constraints refuse to write, and the labels on the way into them are the rules that do the refusing.
+The account boundary is the one I did not move down, and that is worth saying plainly. Which account a row belongs to is checked in the query, written out by hand, once per read. The database has row-level security as well, but it guards a second door — the API a client can reach directly, not the path the app itself runs on. Two doors, two kinds of lock, and only one of them is the kind this essay is arguing for.
+
+## When a cent is too coarse
+
+The rounding sat in one line, where the provider's price came in: `BigInt(Math.round(major * 100))`. Multiply by a hundred, round, store cents. It is the line everybody writes.
+
+The error did not stay in the books. Markup is a share of cost, and a cost low enough to round to a cent leaves nothing to take a share of: half of one cent, in whole cents, is zero. The sale price came out equal to the cost, which the listing allows — it only refuses a price strictly below cost. So the number was offered, the customer bought it, we bought it from the provider, and only then did the floor further in refuse the order. The number was cancelled and the hold released. A rounding choice made at the door cost us a provider charge four steps later.
+
+The fix was not more decimal places. It was to stop assuming money has one size. An account now holds a currency and a scale together: money customers see is dollars at two places, provider cost is dollars at six, and the West African francs the payment gateway settles in have none at all — a franc has no smaller part. No single number of places suits all three, so the scale became part of what an account is.
+
+The zero-sum rule moved with it. Entries add up to zero per currency **and scale**. One capture is six entries — four in cents on the customer's side, two in millionths on the provider's — and neither half can borrow from the other to look balanced.
+
+What I trust here is not a test of the service. It is the tests that go around it. They write raw SQL into the ledger tables with no service code in the path, and check that the database still refuses: an entry whose scale its account does not use, a cancellation that crosses assets, a scale too fine to convert. Seventy-one test files run against a real Postgres rather than a stand-in. A rule you cannot get past by writing the SQL yourself is in the database. A rule you can is only in front of it.
 
 ## The cost
 
-A rule in a migration is slower to change than a rule in a service. Changing one means a migration, a deploy ordered against it, and no way to ship the two halves at the same moment. Some rules ended up written twice, once in the database and once in the service, so the API could answer with something a caller can read instead of a constraint violation.
+A rule in a migration is slower to change than a rule in a service. Changing one means a migration and a deploy ordered against it, with no way to ship both halves at once.
+
+Some rules ended up written twice, and the two times were not the same decision. Checkout reads the available balance and compares before writing — a check that can be stale by the time the write lands, kept so a customer gets a sentence they can read instead of a constraint violation. The admin path has a comment saying it considered that and refused: the floor lives where every money write passes through, so an over-large debit is turned down there. Two files, one rule, opposite calls.
+
+The other duplicate is not a copy. The rule that an entry match its account's asset began in TypeScript, and TypeScript only guards callers who go through it. Reading back over it with plain SQL in hand, I could walk around it. Both halves shipped together in the end, and the tests above exist because of what that reading found.
+
+The second door is where the one breach came from. Every signed-in user is granted read and write on every table there, and the only thing stopping them is that each table has row-level security turned on — so a table that ships without it is open to anyone with an account. That is not a worry, it happened. Two tables, one of them a cache holding raw provider cost, which is enough to work out our margin. The repair was turning it on. What stops it happening again is a test that asks Postgres which tables have it enabled and fails naming the ones that do not, plus a read-only check on the way to a deploy. Guards on the outside of the thing rather than in it — the same compromise as the hand-written account check, and I like it no better there.
+
+Then the gap I have not closed. The balance is stored and the ledger is the truth. A property test builds random histories and checks the two agree; in production, nothing does. A schema comment used to say a job reconciles them; there is no such job, and the comment now says that instead. Entries are append-only, every write goes through one function, and the constraint catches the sign, so drift is unlikely rather than impossible. Unlikely is not a guarantee, and I would rather write it here than have someone find it.
 
 I would make the same call again. Service code is where deadline pressure lands, and the rule that costs the most to get wrong is the one that should sit furthest from it.
