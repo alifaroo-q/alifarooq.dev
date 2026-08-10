@@ -9,6 +9,7 @@ import {
   OPEN_SOURCE_CONVICTION,
   PERSON_NAME,
   PERSON_ROLE,
+  PORTRAIT_SRC,
   PROFILE_URLS,
   SITE_URL,
 } from "@/lib/site";
@@ -222,6 +223,10 @@ function Fact({
  * `alifaroo-q` on GitHub, `itsalifarooq` on LinkedIn — so anyone deriving one
  * from the other gets it wrong.
  *
+ * `image` is the same file About renders, absolute because a relative path in
+ * structured data resolves against nothing a consumer can rely on. It is the
+ * one field that lets a result carry a face rather than a favicon.
+ *
  * No `email` and no `address`. Both are already visible to a human on this
  * page, nothing renders the machine-readable copy, and the email version is a
  * gift to scrapers. `BreadcrumbList` is not here either: it exists to render a
@@ -233,6 +238,7 @@ const personSchema = {
   name: PERSON_NAME,
   jobTitle: PERSON_ROLE,
   url: SITE_URL,
+  image: `${SITE_URL}${PORTRAIT_SRC}`,
   sameAs: PROFILE_URLS,
 };
 

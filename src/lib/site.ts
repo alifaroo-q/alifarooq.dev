@@ -44,6 +44,20 @@ export const PERSON_NAME = "Ali Farooq";
 export const PERSON_ROLE = "Backend engineer";
 
 /**
+ * The photograph, written once because two things print it.
+ *
+ * `Portrait` renders it in About, and the `Person` block hands the same file
+ * to a machine as `image` — the one field that lets a search result carry a
+ * face. A second literal of the path is a broken image the day the file is
+ * renamed, and only one of the two would show it.
+ *
+ * The file is square and 640px on a side. It is bigger than the 112px box on
+ * purpose: that is the retina copy, and it is also the size a knowledge panel
+ * wants. `next/image` serves the box a smaller one.
+ */
+export const PORTRAIT_SRC = "/profile-image.jpg";
+
+/**
  * The two profiles, spelled out (#16).
  *
  * They do not match — `alifaroo-q` on GitHub, `itsalifarooq` on LinkedIn — so
