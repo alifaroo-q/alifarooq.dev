@@ -1,0 +1,167 @@
+name: Budget and accessibility
+
+# The second job (#18, #34). It runs AFTER Vercel has deployed, against the
+# preview it just built, because two of the three checks need a running site.
+# The lint-and-typecheck job in `ci.yml` is untouched and still does not
+# build — that decision is in docs/deploy.md and this job does not disturb it.
+#
+# `deployment_status` is the only event that carries the preview URL. Vercel
+# sends one for every deployment; this job wakes for a successful Preview and
+# ignores everything else, including Production.
+on:
+  deployment_status:
+
+# One commit, one measurement. A push that lands while an older run is still
+# measuring makes that older run a report about code nobody is looking at.
+concurrency:
+  group: budget-${{ github.event.deployment.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  budget:
+    name: Byte budget, LCP, CLS and WCAG 2.2 AA
+    # `startsWith` in a workflow expression compares without case, and Vercel
+    # names the environment either `Preview` or `Preview – <project>`, so both
+    # land here and Production does not.
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment_status.environment, 'Preview')
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
+      # Only needed if previews stay behind Vercel's own login. Unset, nothing
+      # is appended to any URL and the checks hit the preview directly.
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      # The deployment's own commit, not the branch head. A branch that moved
+      # while Vercel was building would otherwise be measured against a
+      # preview built from something else.
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.deployment.sha }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Neither tool is a dependency of the site. They are installed here, in
+      # the only job that runs them, so they stay out of the Vercel install
+      # step — the same reasoning that keeps Puppeteer out of the resume
+      # generator. The runner already has Chrome and a matching chromedriver,
+      # so nothing downloads a browser.
+      - name: Install the two browser tools
+        env:
+          CHROMEDRIVER_SKIP_DOWNLOAD: "true"
+        run: npm install --global @axe-core/cli@4.12.1 lighthouse@12
+
+      # The byte budget is read from build output, so this job builds. This is
+      # the build `ci.yml` deliberately does not do.
+      - name: Build
+        run: pnpm build
+
+      - name: JS budget — blocking
+        id: js
+        continue-on-error: true
+        # `pipefail`, or `tee` swallows the exit code and the gate never
+        # fires. The report has to be written and the status has to survive.
+        run: |
+          set -o pipefail
+          node scripts/js-budget.mjs | tee js-budget.md
+
+      - name: LCP and CLS — reported
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node scripts/lighthouse-report.mjs "$PREVIEW_URL" | tee lighthouse.md
+
+      # Both themes, five routes, WCAG 2.2 AA. `CHROMEDRIVER_TEST_PATH` points
+      # axe at the runner's own chromedriver, which matches the runner's own
+      # Chrome — the one pairing that cannot drift apart.
+      - name: Accessibility — blocking
+        id: axe
+        continue-on-error: true
+        run: CHROMEDRIVER_TEST_PATH="$CHROMEWEBDRIVER/chromedriver" node scripts/a11y-scan.mjs "$PREVIEW_URL"
+
+      # #18 made LCP and CLS advisory and named the condition for changing
+      # that: reported over budget twice and shipped anyway. Nobody can see
+      # that happen in a log, so the numbers go where they are read.
+      - name: Report on the pull request
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
+          {
+            echo "<!-- budget-report -->"
+            echo "## Budget and accessibility"
+            echo
+            echo "Measured against [the preview]($PREVIEW_URL), commit \`${SHA:0:7}\`."
+            echo
+            cat js-budget.md 2>/dev/null || echo "### JS budget — did not run"
+            echo
+            cat lighthouse.md 2>/dev/null || echo "### LCP and CLS — did not run"
+          } > report.md
+
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -z "$pr" ]; then
+            echo "No pull request for $SHA — the summary is the whole report."
+            exit 0
+          fi
+
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/$pr/comments" \
+            --jq 'map(select(.body | startswith("<!-- budget-report -->"))) | .[0].id // empty')
+
+          if [ -n "$existing" ]; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" \
+              -F body=@report.md > /dev/null
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$pr/comments" \
+              -F body=@report.md > /dev/null
+          fi
+
+          # The one comment above is edited in place on every push, so it
+          # always shows the current numbers and never a history. That is
+          # right for the numbers and wrong for the breaches: #18's condition
+          # for making LCP and CLS block is "reported over budget TWICE and
+          # shipped anyway", and a reading that gets overwritten cannot be
+          # counted twice. So a breach also gets its own comment, which
+          # nothing edits and nothing replaces.
+          if grep -qE "OVER BUDGET|— FAIL" report.md; then
+            {
+              echo "### Over budget on \`${SHA:0:7}\`"
+              echo
+              grep -E "^(\*\*Over budget|Lighthouse mobile|### )" report.md | sed G
+              echo
+              echo "Left as its own comment on purpose: #18 promotes LCP and CLS"
+              echo "to blocking if a breach is reported twice and shipped anyway,"
+              echo "and that is only countable if the readings survive."
+            } > breach.md
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$pr/comments" \
+              -F body=@breach.md > /dev/null
+          fi
+
+      # The two gates, read back after the report is safely posted. Making the
+      # merge wait on this step rather than on the steps themselves is what
+      # keeps a red budget from also hiding the numbers that explain it.
+      - name: The blocking checks
+        run: |
+          failed=""
+          [ "${{ steps.js.outcome }}" = "success" ] || failed="$failed js-budget"
+          [ "${{ steps.axe.outcome }}" = "success" ] || failed="$failed accessibility"
+          if [ -n "$failed" ]; then
+            echo "Blocking checks failed:$failed"
+            exit 1
+          fi
+          echo "Within the byte budget, and clean on WCAG 2.2 AA."

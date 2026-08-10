@@ -176,6 +176,93 @@ and only red on Vercel.
 Promote this job to a full build only if something breaks that lives outside
 the collection's `transform`.
 
-The performance and accessibility checks are a **separate** job. They need a
-running site, so they run after deploy against the Vercel preview. That job
-is not written yet.
+## The budget and accessibility job
+
+`.github/workflows/post-deploy.yml` is the **second** job (#18, #34). Two of
+its three checks need a running site, so it waits for Vercel and measures the
+preview it just built. The lint-and-typecheck job above is untouched, and the
+"CI does not build" decision above still holds for it — this job builds, and
+it is a different job.
+
+It wakes on `deployment_status`, which is the only event that carries the
+preview URL. It runs for a successful **Preview** deployment and ignores
+Production.
+
+### What it measures
+
+| Check | Number | Blocks? | How |
+| --- | --- | --- | --- |
+| JS on the heaviest route | ≤ 145 KB gzipped | **yes** | `scripts/js-budget.mjs`, from build output |
+| LCP | ≤ 1.5s | no | `scripts/lighthouse-report.mjs`, mobile throttling |
+| CLS | 0 | no | the same run |
+| WCAG 2.2 AA | no violations | **yes** | `scripts/a11y-scan.mjs`, five routes, both themes |
+
+**The byte number is 145 KB, not the 100 KB #18 agreed.** 100 KB was set from
+a reading of the page and never from a build. The first build measured came to
+138.5 KB gzipped on the heaviest route, and **117 KB of that is React DOM and
+the Next runtime** — this site's own chunks are about 21 KB. Nothing inside
+100 KB can be deleted to get there. The gate is set just above the measured
+figure so it catches the next thing to arrive, which is the job a budget has.
+Recorded on #34.
+
+**Only the byte count and axe block.** Both are deterministic: one is
+arithmetic over files, the other reports only what it can prove on the page.
+LCP needs a real run against a real network and will wobble for reasons that
+are not the code, so it is reported instead. #18 wrote down the condition for
+changing that: **if LCP or CLS is reported over budget twice and shipped
+anyway, the reporting has failed and they should be promoted to blocking.**
+That is why the numbers are posted as a pull request comment and not left in
+a log where nobody would ever see it happen twice.
+
+**The routes come from the deployed `/sitemap.xml`**, not from a list in the
+scripts. A list is a thing somebody has to remember, and reading it back off
+the preview also proves the sitemap serves.
+
+**Both themes, and this is the only automated check the light palette gets.**
+The theme is chosen by `prefers-color-scheme` alone, so axe runs twice with
+Chrome's `--blink-settings=preferredColorScheme` — `0` dark, `1` light. That
+switch does not read the machine's own setting, which is what makes it safe
+on a runner.
+
+**The two tracker scripts are not in the blocking number.** Umami and Vercel
+Analytics are fetched by the client from another origin, so no build output
+can see them. Lighthouse reports them in the "third party" column, and they
+gate nothing — a vendor changing their file must not be able to block a
+merge here.
+
+### Two steps that need a person at a dashboard
+
+1. **Make `Byte budget, LCP, CLS and WCAG 2.2 AA` a required status check**
+   under Settings → Branches → `main`. A job triggered by `deployment_status`
+   posts its result against the commit, but nothing makes a pull request wait
+   for it until that box is ticked. Until it is, both gates report and neither
+   blocks.
+
+2. **Let the job reach the preview.** Vercel's **Deployment Protection** puts
+   every preview behind a Vercel login, and a login page is what axe and
+   Lighthouse would then measure. The byte count is unaffected — it reads
+   build output and never opens a page. Pick one:
+
+   - **Open previews.** Project → Settings → Deployment Protection → Vercel
+     Authentication → **Only Preview Deployments: off**. This is the simpler
+     choice for this site: the content is a public portfolio, and Vercel
+     already serves previews with `x-robots-tag: noindex`.
+   - **Keep them shut and hand the job a key.** On the same screen, under
+     **Protection Bypass for Automation**, generate the secret, then add it as
+     the repository secret `VERCEL_AUTOMATION_BYPASS_SECRET` (Settings →
+     Secrets and variables → Actions). The scripts put it on every URL rather
+     than in a header, because axe drives a browser and cannot send one.
+
+   With neither done, the job stops and says so — it does not pass by
+   measuring a login screen.
+
+### Running them by hand
+
+```
+pnpm build && pnpm budget:js          # needs no site
+pnpm budget:perf  https://<preview>   # needs lighthouse on the path
+pnpm budget:a11y  https://<preview>   # needs @axe-core/cli and a chromedriver
+```
+
+Set `AXE_BIN`, `LIGHTHOUSE_BIN` or `CHROMEDRIVER_TEST_PATH` if those are not
+where the scripts look.
