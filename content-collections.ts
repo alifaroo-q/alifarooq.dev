@@ -4,6 +4,7 @@ import { defineCollection, defineConfig } from "@content-collections/core";
 import { compile as compileMdx } from "@mdx-js/mdx";
 import remarkGfm from "remark-gfm";
 import { z } from "zod";
+import { rehypeSections } from "./src/lib/rehype-sections";
 
 // One MDX file per document, flat, slug from the filename (#9).
 const CASE_STUDY_DIR = "content/case-studies";
@@ -20,6 +21,11 @@ const CASE_STUDY_DIR = "content/case-studies";
  * `outputFormat: "function-body"` is what lets `run()` evaluate the result at
  * prerender time in a Server Component, with no browser-side `eval`.
  *
+ * The one rehype plugin groups the body into `<section>` elements at the h2s
+ * (#26). It is the pipeline's job and not the template's: the section is what
+ * the observer watches and what carries the minimum height, and neither can
+ * be attached to a heading that has no body element after it.
+ *
  * There is no syntax highlighter here yet. `rehype-pretty-code` writes two
  * palettes into the markup as inline `--shiki-*` values and needs a CSS rule
  * to pick one — a second colour system, unmeasured on either ground, which
@@ -31,6 +37,7 @@ async function compile(content: string) {
   const code = await compileMdx(content, {
     outputFormat: "function-body",
     remarkPlugins: [[remarkGfm, { singleTilde: false }]],
+    rehypePlugins: [rehypeSections],
   });
   return String(code);
 }
