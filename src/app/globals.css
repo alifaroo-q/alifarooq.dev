@@ -302,8 +302,60 @@
   color: var(--accent-foreground);
 }
 
+/* ==========================================================================
+   Section tracking on the detail pages (#26).
+
+   The diagram is the page's second column of argument: as a section reaches
+   the reading band, the parts it names take the accent and the rest recede.
+   The observer in `section-tracking.tsx` only toggles `data-state`; what
+   focused and dimmed LOOK like is settled here, once.
+
+   Two of these are correctness rules, not preferences:
+
+   - The focused part is `color`, INHERITED. The asset is stroked and filled
+     with `currentColor` and carries no hex, so it never learns it is being
+     highlighted — and because the accent belongs to the ground, a focused
+     part is amber on dark and ink on light with no second rule.
+   - Dimming is OPACITY, never a second grey. A grey is a colour, and a
+     colour set on the part would beat the variables `.flip-ground`
+     redefines and strand the drawing on the wrong ground. Opacity is a
+     ratio, so it survives a whole-row inversion.
+
+   0.24 is the dimmed step. Measured against the focused part it separates
+   5.64:1 on the dark ground and 9.73:1 on the light one — #26 quotes 5.66
+   and 9.77 for the same pair, which is the same measurement rounded from a
+   different composite; these two are recomputed from the tokens above — both well clear of
+   3:1, so the two states are told apart by more than a hint, and the dimmed
+   part still reads at 1.92:1 and 1.72:1 against its ground rather than
+   vanishing.
+
+   Neither state applies until `data-tracking` is set, which the observer does
+   only once it is live and only on desktop. Untracked, the diagram is whole.
+   The transition is not gated, because there is nothing to fade until one of
+   the two states is set.
+   ========================================================================== */
+[data-part] {
+  transition:
+    opacity 180ms linear,
+    color 180ms linear;
+}
+
+[data-tracking] [data-part][data-state="focus"] {
+  color: var(--accent);
+}
+
+[data-tracking] [data-part][data-state="dim"] {
+  opacity: 0.24;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flip-ground {
+    transition: none;
+  }
+
+  /* The dimming stays — it is the argument, not decoration. What goes is the
+     fade between the two states, which is the movement. */
+  [data-part] {
     transition: none;
   }
 }

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SectionTracking } from "@/components/section-tracking";
 
 /**
  * The detail-page shell — one template, two fills (#17).
@@ -15,10 +16,11 @@ import type { ReactNode } from "react";
  * slot with a section index (#29) — the column's job is always "where am I in
  * this argument", and only the fill changes.
  *
- * There is no tracking here. #26 adds the observer that dims the parts the
- * current section is not talking about; what this renders is the state that
- * ticket calls the real fallback — the complete machine, undimmed, for a
- * reader with no JavaScript or nothing scrolled yet.
+ * `SectionTracking` owns the `<main>` element because the observer needs one
+ * root over both columns: the sections it watches are in the prose and the
+ * parts it dims are in the reference slot. It renders nothing of its own and
+ * sets no colour — without JavaScript what is left is the complete machine,
+ * undimmed, which #26 calls the real fallback rather than a degraded state.
  */
 export function DetailShell({
   eyebrow,
@@ -61,24 +63,32 @@ export function DetailShell({
         </p>
       </div>
 
-      <main
+      <SectionTracking
         className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"
         id="main"
       >
-        {/* The prose. #17 also asks that each section carry a minimum height
-            on desktop, so that exactly one of them owns the reading band — a
-            short section beside a long one is what makes a tracked column
-            flicker. That rule needs the sections to be elements, which they
-            are not yet: the body is free-form MDX delimited by h2s. It lands
-            with the tracking in #26. */}
-        <div className="order-2 px-6 py-14 md:px-10 lg:order-1 lg:border-border lg:border-r">
+        {/* The prose. Its h2s are grouped into `<section>` elements by the
+            content pipeline, which is what the observer watches and what
+            carries the desktop minimum height.
+
+            The extra room at the foot is the other half of that spacing rule.
+            A section can only take the accent by owning the reading band, and
+            the LAST section can only reach the band if there is page left
+            below it. Measured at 1440x900 without it, this page scrolled 1089
+            and the handover to the final section wanted 1175 — so a reader
+            reached the end of the argument with the PREVIOUS section's parts
+            still lit, which is worse than no tracking. 33svh puts the
+            handover 154px inside the page. It is desktop-only, like the
+            tracking it exists for, and it is where the shared contact footer
+            will land. */}
+        <div className="order-2 px-6 py-14 md:px-10 lg:order-1 lg:border-border lg:border-r lg:pb-[33svh]">
           {children}
         </div>
 
         <div className="order-1 lg:order-2">
           <div className="lg:sticky lg:top-header">{reference}</div>
         </div>
-      </main>
+      </SectionTracking>
     </>
   );
 }

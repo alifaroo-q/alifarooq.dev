@@ -16,7 +16,7 @@ Two things fail `next build` rather than reaching a reader:
 The diagram is inlined at build time, so it inherits the page's colour. Author
 it with no hex values at all — a state that means "broken" is drawn with a
 dashed stroke, never a red one — and give every state and edge a stable `id`,
-which is what the section tracking will read. A drawing exported from a design
+which is what the section tracking reads. A drawing exported from a design
 tool will not have those ids.
 
 Each part is a `<g>` carrying three things:
@@ -27,7 +27,9 @@ Each part is a `<g>` carrying three things:
 - `data-sections` — a space-separated list of the `##` headings the part
   belongs to, lowercased and hyphenated. That list is the whole mapping: a
   part named by the section being read takes the accent, and the rest drop to
-  `0.24` opacity.
+  `0.24` opacity. A heading renamed in the MDX and not here quietly stops
+  matching, and the page then shows the whole diagram for that section rather
+  than a blank one — that is the symptom to look for.
 
 Three more asset rules, each of them a defect the prototype hit first:
 
