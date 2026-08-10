@@ -1,4 +1,6 @@
 # esbuild compiles content-collections.ts; pnpm blocks its postinstall by
 # default (ERR_PNPM_IGNORED_BUILDS), so it is approved explicitly.
-onlyBuiltDependencies:
-  - esbuild
+# `allowBuilds` is pnpm 11's spelling — the older `onlyBuiltDependencies` list
+# is read silently and has no effect.
+allowBuilds:
+  esbuild: true
