@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 -6 716 276" fill="none" stroke="currentColor" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 -6 686 276" fill="none" stroke="currentColor" aria-hidden="true">
   <!--
     Slot 1's checkable artifact: the Gmail connection state machine (#6, #17).
 
@@ -8,12 +8,18 @@
     SECTION MAPPING. `data-sections` holds heading slugs, so #26 can derive the
     key from the h2 itself and needs no lookup table:
 
-      the-problem   the two ways it breaks, and the two states it breaks into
-      the-decision  the machine that catches them, through to raising the alert
+      the-problem   the two ways it breaks, and the one state it breaks into
+      the-decision  the machine that catches them, and the dead state it names
       the-cost      the one edge that needs a person, and the state it leaves
 
-    A part can belong to more than one section. `state-invalid` is both where a
-    401 lands (the problem) and where the alert fires (the decision).
+    A part can belong to more than one section. `state-disconnected` is in all
+    three: it is where both failures land, it is the state the decision names,
+    and it is the state only a person can leave.
+
+    THERE IS ONE DEAD STATE, NOT TWO. The row stores `gmail_connected` plus a
+    `disconnect_reason` of `manual_disconnect` or `invalid_grant`, and a check
+    constraint holds the two together. `invalid` is a reason, so it is a label
+    on an edge here, never a box.
 
     GEOMETRY. Three columns at x = 40 / 296 / 552, boxes 150 x 46, so every
     horizontal gap is 106. That number is set by the labels, not by taste: the
@@ -25,9 +31,10 @@
     directions — the arrowhead tip is the end of the path.
 
     The viewBox is fitted to the ink rather than set to a round number. The
-    drawing runs x 40..736 and y 8..256; a 0 0 760 300 box left 44 units of
-    dead space below the graph and 9 above it, and the figure column paid for
-    both.
+    drawing runs x 40..702 and y 8..256; a round box left 44 units of dead
+    space below the graph and 9 above it, and the figure column paid for both.
+    Dropping the second dead state took the right edge from 736 to 702, so the
+    box came in with it.
 
     TYPE SIZE. 14 in the boxes and 12.5 on the edges, not the 13/10.5 this
     started at. The drawing is scaled to the figure, and the figure caps at
@@ -51,11 +58,7 @@
     <rect x="552" y="60" width="150" height="46" stroke-width="1.5" />
     <text x="627" y="88" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">renewing</text>
   </g>
-  <g id="state-invalid" data-part data-sections="the-problem the-decision">
-    <rect x="552" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
-    <text x="627" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">invalid</text>
-  </g>
-  <g id="state-disconnected" data-part data-sections="the-problem the-cost">
+  <g id="state-disconnected" data-part data-sections="the-problem the-decision the-cost">
     <rect x="296" y="210" width="150" height="46" stroke-width="1" stroke-dasharray="3 3" />
     <text x="371" y="238" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">disconnected</text>
   </g>
@@ -77,27 +80,24 @@
     <text x="371" y="19" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">renewed</text>
   </g>
 
-  <!-- The two ways it breaks. Both land in a dashed state. -->
-  <g id="edge-grant-revoked" data-part data-sections="the-problem">
-    <path d="M627,106 L627,202" stroke-width="1" />
-    <path d="M623,195 L627,202 L631,195" stroke-width="1.2" />
-    <text x="689" y="160" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">grant revoked</text>
+  <!-- The two ways it breaks. Both land in the one dashed state, and both
+       carry the same reason — what differs is which job finds it. The two
+       runs along y=180 are 163..340 and 402..627, so they share the line
+       without touching, and neither crosses the re-consent return below. -->
+  <g id="edge-webhook-invalid-grant" data-part data-sections="the-problem">
+    <path d="M163,106 L163,180 L340,180 L340,202" stroke-width="1" />
+    <path d="M336,195 L340,202 L344,195" stroke-width="1.2" />
+    <text x="252" y="171" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">webhook: invalid_grant</text>
   </g>
-  <g id="edge-refresh-401" data-part data-sections="the-problem">
-    <path d="M163,106 L163,180 L579,180 L579,202" stroke-width="1" />
-    <path d="M575,195 L579,202 L583,195" stroke-width="1.2" />
-    <text x="371" y="171" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">refresh 401</text>
+  <g id="edge-renewal-invalid-grant" data-part data-sections="the-problem">
+    <path d="M627,106 L627,180 L402,180 L402,202" stroke-width="1" />
+    <path d="M398,195 L402,202 L406,195" stroke-width="1.2" />
+    <text x="514" y="171" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">renewal: invalid_grant</text>
   </g>
 
-  <!-- The alert belongs to the decision: raising it at once is the decision.
-       The return belongs to the cost, and it is routed out at x=70 so it
-       passes left of the refresh-401 drop at x=163 — no edge in this graph
-       crosses another. -->
-  <g id="edge-alert-raised" data-part data-sections="the-decision">
-    <path d="M552,233 L454,233" stroke-width="1" />
-    <path d="M461,229 L454,233 L461,237" stroke-width="1.2" />
-    <text x="499" y="223" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">alert raised</text>
-  </g>
+  <!-- The return belongs to the cost. It is routed out at x=70 so it passes
+       left of the webhook drop at x=163 — no edge in this graph crosses
+       another. -->
   <g id="edge-re-consent" data-part data-sections="the-cost">
     <path d="M296,233 L70,233 L70,114" stroke-width="1" />
     <path d="M66,121 L70,114 L74,121" stroke-width="1.2" />
