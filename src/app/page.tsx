@@ -82,18 +82,17 @@ const about = [
 /**
  * Ties a clause of the positioning sentence to the work row that answers it.
  *
- * Decorative, and hidden from assistive technology on purpose: a screen
- * reader gets the sentence unbroken and then gets the rows in the same order,
- * which is the same argument without the visual crutch. Set at the label size
- * rather than below it — that size is a floor on this site, and a marker is
- * not the thing to make an exception for.
+ * The sentence and the row print the SAME string from here, because the whole
+ * device is that they match — two call sites formatting a number the same way
+ * by coincidence is one edit away from not matching. What differs is only how
+ * each carries it: a superscript inside prose, a column entry beside a row.
+ *
+ * Decorative, and hidden from assistive technology at both call sites: a
+ * screen reader gets the sentence unbroken and then gets the rows in the same
+ * order, which is the argument without the visual crutch.
  */
-function Marker({ n }: { n: number }) {
-  return (
-    <sup aria-hidden="true" className="ml-0.5 text-accent text-label">
-      {String(n).padStart(2, "0")}
-    </sup>
-  );
+function marker(n: number) {
+  return String(n).padStart(2, "0");
 }
 
 /** One row of the fold's micro-line, with a dotted leader out to its value. */
@@ -154,7 +153,15 @@ export default function Home() {
             {person.positioningClauses.map((clause, i) => (
               <span key={clause}>
                 {clause}
-                <Marker n={i + 1} />
+                {/* Set at the label size rather than below it. That size is a
+                    floor on this site, and a marker is not the thing to make
+                    an exception for. */}
+                <sup
+                  aria-hidden="true"
+                  className="ml-0.5 text-accent text-label"
+                >
+                  {marker(i + 1)}
+                </sup>
                 {i < person.positioningClauses.length - 1 ? " " : ""}
               </span>
             ))}
@@ -192,19 +199,24 @@ export default function Home() {
             cannot afford either. The label is "Work": "Case studies"
             announces a genre and primes the reader for marketing copy. */}
         <SectionHead id="work" label="Work" />
-        <div>
-          {work.map((caseStudy, i) => (
+        <section aria-labelledby="work">
+          {work.map((caseStudy) => (
             <a
               className="flip-ground group grid grid-cols-[2.5rem_1fr] gap-x-4 border-border border-b bg-background px-6 py-8 text-foreground md:grid-cols-[4rem_1fr] md:px-10 md:py-10"
               href={`/work/${caseStudy.slug}`}
               key={caseStudy.slug}
             >
-              {/* The same marker the sentence carried, pointing back. */}
+              {/* The same marker the sentence carried, pointing back — and
+                  read off the case study's own `order`, not off where it
+                  landed in the array. The row that answers clause two is the
+                  one the collection ordered second; a render index only
+                  agrees with that by accident, and stops agreeing the moment
+                  a study is added, dropped or reordered. */}
               <span
                 aria-hidden="true"
                 className="pt-1.5 text-accent text-label"
               >
-                {String(i + 1).padStart(2, "0")}
+                {marker(caseStudy.order)}
               </span>
               <div>
                 {/* The sector, one level up and never the scheme or the niche
@@ -233,7 +245,7 @@ export default function Home() {
               </div>
             </a>
           ))}
-        </div>
+        </section>
 
         {/* OPEN SOURCE — the slot, in its settled position. The conviction
             lead, the featured repo and the paired origin are #29's, along
@@ -241,11 +253,15 @@ export default function Home() {
             because the order is: evidence reads better after the claims it
             backs, and this is where those claims end. */}
         <SectionHead id="open-source" label="Open source" />
+        <section aria-labelledby="open-source" />
 
         {/* ABOUT — after the work, not before it. Nobody scrolled for
             biography. */}
         <SectionHead id="about" label="About" />
-        <section className="grid gap-8 px-6 py-14 md:grid-cols-[9rem_1fr] md:px-10">
+        <section
+          aria-labelledby="about"
+          className="grid gap-8 px-6 py-14 md:grid-cols-[9rem_1fr] md:px-10"
+        >
           <Portrait />
           <div className="max-w-measure space-y-4 text-foreground-muted">
             {about.map((line, i) => (
@@ -262,7 +278,9 @@ export default function Home() {
           route behind it. It is a real section rather than a header mailto
           because a mailto has no scroll depth, and #5's ordered funnel ends
           on this one reaching the reader. */}
-      <SectionHead id="contact" label="Contact" />
+      <footer>
+        <SectionHead id="contact" label="Contact" />
+      </footer>
     </>
   );
 }

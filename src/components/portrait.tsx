@@ -22,7 +22,7 @@ export function Portrait() {
   return (
     <div
       aria-hidden="true"
-      className="grid size-28 shrink-0 place-items-center border border-border-strong text-foreground-disabled"
+      className="grid size-28 shrink-0 place-items-center border border-border-strong text-foreground-label"
     >
       <svg
         aria-hidden="true"
