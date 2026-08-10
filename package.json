@@ -15,7 +15,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "content": "node scripts/generate-content-types.mjs",
-    "resume:build": "node scripts/build-resume.mjs"
+    "resume:build": "node scripts/build-resume.mjs",
+    "budget:js": "node scripts/js-budget.mjs",
+    "budget:perf": "node scripts/lighthouse-report.mjs",
+    "budget:a11y": "node scripts/a11y-scan.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
