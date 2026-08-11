@@ -19,7 +19,7 @@ describe("pageMetadata", () => {
   const page = pageMetadata({
     title: "22 modules, one transaction boundary",
     description: "One operation spanned 22 modules.",
-    path: "/work/22-modules-one-transaction-boundary",
+    path: "/work/the-handle-goes-in-the-signature",
   });
 
   it("leaves the bare title for the layout's template to suffix", () => {
@@ -37,7 +37,7 @@ describe("pageMetadata", () => {
 
   it("carries a self-canonical", () => {
     expect(page.alternates?.canonical).toBe(
-      "/work/22-modules-one-transaction-boundary",
+      "/work/the-handle-goes-in-the-signature",
     );
   });
 

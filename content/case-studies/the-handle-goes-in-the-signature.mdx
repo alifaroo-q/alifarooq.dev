@@ -1,0 +1,77 @@
+---
+sector: "A multi-tenant workshop-management SaaS"
+decision: "The handle goes in the signature"
+constraint: "One write crossed four owners and had to land whole. The transaction handle could travel in the arguments, where you can see it, or in the request, where you cannot. I put it in the arguments and paid for it in thirty-four files."
+artifactLabel: "See where the handle goes →"
+order: 3
+description: "A transaction handle can be hidden in the request or written into every signature. On a workshop-management backend I wrote it into the signatures, and a second bet in the same codebase told me why."
+---
+
+## The problem
+
+I was the sole engineer on the backend of a workshop-management product: bookings, job cards, parts, labour, checksheets, and the record each of those leaves behind. It is twenty-nine feature modules now. Each one owns its tables and its rules.
+
+Opening a job card reaches four owners. A job number is drawn from a shared numbering service. The business's default status is read from the job-status tables. The header and its lines are written. Any checksheet template marked "add to every new job" is stamped onto the job, and that belongs to the checksheet module. Last, a status-change event goes into the job's own history.
+
+All of it lands or none of it does, and the number is part of that. A number handed out and then thrown away is a gap in a sequence a garage prints on paper, so it is allocated inside the same write. A failed insert never burns one.
+
+That is a transaction, and a transaction on this driver is a handle on one connection. Four owners need the same handle, and there are two ways to give it to them. Pass it in, and every method that might take part in a write grows a parameter, and every method that calls one of those grows it too. Or put it where the request carries it, and let each module ask for the current one.
+
+## The decision
+
+I passed it in.
+
+The parameter is typed `DrizzleExecutor`, and it is named in thirty-four files across thirty-five method signatures. There is no `AsyncLocalStorage` in this codebase and no library holding one on my behalf. If a method takes part in somebody else's transaction, its signature says so.
+
+Two helpers keep the plumbing in one place rather than in every method. `resolveExecutor(executor)` returns the caller's handle if there is one and the base client if there is not. `runInTransaction(executor, fn)` joins the caller's transaction when it is given one and opens a new one when it is not. A repository method written against those two composes into a larger write without knowing whether it is the outermost.
+
+What the parameter bought is worth naming, because it is not only atomicity. The handle became the interface between modules. `ChecksheetRepository` exposes three static methods, each taking the executor first, and the job and estimate modules call them at four sites. Neither module injects the checksheet module or imports its provider. It calls a plain function and hands over the transaction. A module that reaches into another module's tables has to say so out loud, in an argument, at the call site — and the reach is countable because of it.
+
+The other way hides the same reach. A module that asks the request for the current handle can join a transaction it was never told about, and the call site reads the same either way.
+
+## When a contract is only a habit
+
+The same codebase makes the same kind of bet in a second place, and that one I can measure.
+
+Services here never throw for a failure they expect. They return `Result<T, E>`, and the controller is the only place a throw happens. To support that I wrote `ResultKit`, which lives in this codebase and is not the published library of a similar name: an abstract class of thirty-nine static methods over six hundred and fifty-six lines — `map`, `andThen`, `match`, `combine`, `tap`, `orElse`, `bimap`, `flatten`, `fromPromise`, `partition`, and the async twin of most of them.
+
+Six of the thirty-nine are ever called outside the kit. `fail` 915 times, `success` 695, `isFailure` 552, `isSuccess` 47, `failure` 29, `unwrap` 10. All six make a result or test one. Every method that composes two results is used zero times.
+
+Here is the shape the kit was written for:
+
+```ts
+return ResultKit.andThenAsync(
+  await this.resolvePerformedBy(...),
+  () => this.documentParty.resolve({ ... }),
+);
+```
+
+And here are the same two steps as `job.service.ts` has them, wrapped to fit this column. It is the shape every one of the five hundred and fifty-two sites takes:
+
+```ts
+const performedBy = await this.resolvePerformedBy(...);
+if (ResultKit.isFailure(performedBy))
+  return ResultKit.fail(performedBy.error);
+
+const party = await this.documentParty.resolve({ ... });
+if (ResultKit.isFailure(party))
+  return ResultKit.fail(this.mapPartyError(party.error));
+```
+
+The second one is longer and it won every time. I did not decide that. I noticed it two years later by counting.
+
+The half of the pattern that held is the half the compiler holds. `Result<T, E>` is a return type, so a caller cannot ignore it and stay compiling. The combinators are a suggestion about style, and a suggestion loses to four lines you can read without learning anything.
+
+That is the same test the transaction handle has to pass, and it is why the handle is in the signature. A parameter is not a habit. Nobody has to remember it, because the code does not build without it.
+
+## The cost
+
+The type does not check the thing the signature was meant to show. `DrizzleExecutor` is `DrizzleDatabase | DrizzleTransaction`, and nothing tells the two apart. Hand `runInTransaction` the base client and it runs your work with no transaction at all, no warning, no error. The parameter is honest about *whether a handle was passed* and silent about *whether it is a transaction*, and those are not the same question. Making them the same needs two types, and two types means the branch is written out at every one of those thirty-five sites.
+
+The shared handle also moves blame. `autoAttachToJob` runs inside the job's transaction, so anything it throws rolls back a job that was otherwise fine. It catches and logs instead, and the comment saying why is in the code because I hit it. A guest inside somebody else's transaction has to swallow its own failures or take the host down, and no signature says which of those it chose.
+
+Then the parameter itself. Thirty-five signatures is thirty-five edits the day the shape changes, and it spends the module boundaries I went to the trouble of drawing — a service that never touches the database still has the database in its arguments.
+
+That cost was real enough that on the next project I built the other answer: `drizzle-tx`, which carries the handle in the request and lets a repository ask for it. This app has not adopted it and I have not scheduled that. So the honest state is that I have both answers written down, I use the noisy one where the money is, and I have not gone back to test whether the quiet one would have held up under twenty-nine modules.
+
+I would pass it in again. The cost of the parameter is paid once per signature and you can see all of it. The cost of the hidden handle is paid on every reading of the code, by whoever is reading it, and by then I am not the one paying.

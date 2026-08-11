@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 40 592 334" fill="none" stroke="currentColor" aria-hidden="true">
+  <!--
+    Slot 3's checkable artifact: one transaction opened at the request, and the
+    handle drawn travelling into each owner it reaches.
+
+    The rules this file is authored under are in the README beside it. What is
+    written here is only what is true of THIS drawing.
+
+    SECTION MAPPING. `data-sections` holds heading slugs, so the tracking can
+    derive the key from the h2 itself and needs no lookup table:
+
+      the-problem                      the four owners, and the request that
+                                       reaches all of them at once
+      the-decision                     the boundary, plus the four handles
+                                       that carry it down
+      when-a-contract-is-only-a-habit  the handles alone — the section argues
+                                       that the half a compiler holds is the
+                                       half that survives, and the handle is
+                                       that half
+      the-cost                         the boundary, and the base client
+                                       arriving on the same parameter
+
+    WHAT THE DRAWING HAS TO SAY THAT THE PREVIOUS ONE DID NOT. The page it
+    illustrated claimed the handle stopped being an argument. In the code it
+    never did. So the handle is drawn: four arrows, each labelled, each landing
+    in a box. A boundary alone would repeat the old claim.
+
+    THE DASHED ARROW IS THE ONLY BROKEN STATE. `DrizzleExecutor` is
+    `DrizzleDatabase | DrizzleTransaction` and nothing separates them, so the
+    base client can arrive on the parameter that was meant to prove a
+    transaction. That is a defect and it is dashed, which is the same rule slot
+    1 and slot 2 use. Nothing else here is dashed: the other four arrows are
+    the design working.
+
+    GEOMETRY. Four owners 120 x 44 at a pitch of 140, so every gap is 20:
+    x = 40 / 180 / 320 / 460, centres at 100 / 240 / 380 / 520, top y = 210.
+    The spine sits at y = 150, inside the boundary and clear of its top edge by
+    32, and each handle drops 60 from it.
+
+    The boundary is inset 14 left and right of the four (26..594) and its label
+    sits under it. The base client sits below and outside, which is the whole
+    of what the dashed arrow says.
+
+    The viewBox is fitted to the ink, which runs x 26..594 and y 52..360.
+
+    TYPE SIZE. 13 in the boxes and 12.5 on the labels. The figure caps at
+    40rem, so at 592 user units wide a unit is 1.08 CSS pixels: 12.5 renders at
+    13.5, over the 11px `--text-label` floor in globals.css. The boxes are 120
+    wide, and "job + history" at 13 is the longest label in one: the type is
+    JetBrains Mono, so a glyph is 0.6 of the font size and thirteen come to
+    101.4, which leaves 9.3 each side.
+  -->
+
+  <!-- The request is where the transaction is opened, and it is the only place
+       one is opened. The head is drawn inline in the same group so it dims
+       with its edge. -->
+  <g id="entry" data-part data-sections="the-problem the-decision">
+    <rect x="232" y="52" width="176" height="40" stroke-width="1.5" />
+    <text x="320" y="77" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">one request</text>
+    <path d="M320,92 L320,114" stroke-width="1" />
+    <path d="M316,107 L320,114 L324,107" stroke-width="1.2" />
+  </g>
+
+  <!-- The four owners one job-card write reaches, left to right in the order
+       the write reaches them. -->
+  <g id="own-numbering" data-part data-sections="the-problem the-decision">
+    <rect x="40" y="210" width="120" height="44" stroke-width="1.5" />
+    <text x="100" y="237" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">numbering</text>
+  </g>
+  <g id="own-job-status" data-part data-sections="the-problem the-decision">
+    <rect x="180" y="210" width="120" height="44" stroke-width="1.5" />
+    <text x="240" y="237" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">job status</text>
+  </g>
+  <g id="own-checksheet" data-part data-sections="the-problem the-decision">
+    <rect x="320" y="210" width="120" height="44" stroke-width="1.5" />
+    <text x="380" y="237" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">checksheet</text>
+  </g>
+  <g id="own-job" data-part data-sections="the-problem the-decision">
+    <rect x="460" y="210" width="120" height="44" stroke-width="1.5" />
+    <text x="520" y="237" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">job + history</text>
+  </g>
+
+  <!-- The handle, four times, because it really is four times. The spine is
+       what the request holds; each drop is one parameter in one signature.
+       Labelling every drop rather than the spine is deliberate: the count is
+       the argument, and one label on the spine would hide it. -->
+  <g id="handles" data-part data-sections="the-decision when-a-contract-is-only-a-habit">
+    <path d="M100,150 L520,150" stroke-width="1" />
+    <path d="M100,150 L100,204" stroke-width="1" />
+    <path d="M96,197 L100,204 L104,197" stroke-width="1.2" />
+    <path d="M240,150 L240,204" stroke-width="1" />
+    <path d="M236,197 L240,204 L244,197" stroke-width="1.2" />
+    <path d="M380,150 L380,204" stroke-width="1" />
+    <path d="M376,197 L380,204 L384,197" stroke-width="1.2" />
+    <path d="M520,150 L520,204" stroke-width="1" />
+    <path d="M516,197 L520,204 L524,197" stroke-width="1.2" />
+    <text x="112" y="182" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">tx</text>
+    <text x="252" y="182" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">tx</text>
+    <text x="392" y="182" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">tx</text>
+    <text x="532" y="182" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">tx</text>
+  </g>
+
+  <!-- One boundary, opened at the request and closed there. -->
+  <g id="boundary" data-part data-sections="the-decision the-cost">
+    <rect x="26" y="114" width="568" height="154" stroke-width="1.5" />
+    <text x="180" y="286" text-anchor="middle" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">one transaction</text>
+  </g>
+
+  <!-- The defect. Same parameter, same type, no transaction. It is drawn
+       arriving from outside and crossing the boundary edge because that is
+       what it does: nothing on the way in checks which of the two it is. -->
+  <g id="base-client" data-part data-sections="the-cost">
+    <rect x="460" y="320" width="120" height="40" stroke-width="1" stroke-dasharray="4 4" />
+    <text x="520" y="344" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">base client</text>
+    <path d="M520,320 L520,260" stroke-width="1" stroke-dasharray="4 4" />
+    <path d="M516,267 L520,260 L524,267" stroke-width="1.2" />
+    <text x="446" y="300" text-anchor="end" font-size="12.5" opacity="0.72" fill="currentColor" stroke="none">same parameter</text>
+  </g>
+</svg>
