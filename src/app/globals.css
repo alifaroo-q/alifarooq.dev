@@ -32,8 +32,59 @@
   --text-label--line-height: 1.45;
   --text-label--letter-spacing: 0.14em;
 
-  /* Monospace needs a shorter measure than a sans face. */
-  --container-measure: 54ch;
+  /* THE MEASURE, and it is a LENGTH, not a character count.
+
+     It was `54ch` first, and that is the bug this token exists to name.
+     `ch` resolves against the ELEMENT'S OWN font-size, so one token made
+     six different widths on one page: 842px under the 26px lead, 713 under
+     the 22px intro, 583 under the standfirst, 486 under body, 454 under the
+     small print — and nothing at all on an `h2` or a `pre`, which carried no
+     cap and ran the full column. Every block began on the same left edge and
+     stopped somewhere else. Measured on the money case study at 1440: the
+     paragraphs ended at 526 and the headings at 622, a 96px step the reader
+     sees as a broken right margin.
+
+     A length fixes both halves at once. Blocks share one right edge, and a
+     bigger size simply runs FEWER characters — which is what a lead wants
+     anyway. A 26px lead set to the same count as 15px body is a wall.
+
+     34rem is 544px. In this face that is 60 characters of the 15px body, 50
+     of the 18px standfirst, 41 of the 22px intro and 35 of the 26px lead —
+     every one inside the 45–75 band, and the display sizes short where they
+     should be short. It also closes the gap the old number left: the reading
+     column is 663px wide, so 486 stranded 137px between the text and the
+     column rule while the left gutter was only 40.
+
+     WHERE IT GOES, and this is the correctness half: on the CONTAINER, never
+     on the block. A cap written on a paragraph is a cap the next block can
+     forget, which is exactly how the `h2` and the `pre` came to run past the
+     prose beside them. The one allowance is a block that stands alone with no
+     prose siblings — it is its own container, and a wrapper around one
+     paragraph says nothing a reader can see.
+
+     THE ONE EXCEPTION: the page title. An `h1` at 52px inside 544px is ten
+     characters a line. A title is display, not prose, and its line count is a
+     property of its own size, so it keeps a cap in `ch`. Nothing else may. */
+  --container-measure: 34rem;
+
+  /* The spacing scale. Five steps, chosen by ROLE, and nothing outside it.
+
+     Before this the prose picked from mt-3, mt-4, mt-5, mt-6, mt-8, mt-10,
+     mt-12 and mt-14 with no rule saying which, so the same relationship —
+     paragraph to paragraph — got a different gap in the MDX than it got on
+     the home page. A number picked at the call site is a number the next
+     call site guesses at.
+
+     Named by what the gap MEANS, so there is one answer per relationship and
+     a sixth step has to justify a sixth kind of relationship. The label pair
+     is in here because it was the clearest case of the drift: the same
+     label-then-heading pair got `mt-2` on the home page and `mt-3` on the
+     detail pages. */
+  --spacing-tight: 0.75rem; /* a label and the thing it labels */
+  --spacing-flow: 1.25rem; /* block to block inside one thought */
+  --spacing-figure: 1.5rem; /* around a code block, a table, a figure */
+  --spacing-group: 2.5rem; /* before a sub-heading — a new thought */
+  --spacing-section: 3.5rem; /* between top-level sections */
 
   /* The sticky header's height, so anchored content can clear it. */
   --spacing-header: 3.5rem;
@@ -241,6 +292,39 @@
 
   body {
     @apply bg-background text-foreground text-body;
+  }
+
+  /* ======================================================================
+     HOW LINES BREAK.
+
+     Flush left, ragged right, everywhere on the site. Justified is not a
+     taste call here and it is worth writing down why: justification needs
+     hyphenation to close its gaps, this face is MONOSPACED so every gap it
+     opens is a whole character wide, and the browser has no hyphenation
+     dictionary worth falling back on. What you get is rivers running down a
+     60-character column. Nothing on this site is ever set justified.
+
+     So the rag is what is left to control, and it is two different jobs.
+
+     `balance` evens the line lengths of a SHORT block, so a heading does not
+     leave one word alone on its second line. The spec stops honouring it past
+     about six lines, which is why it is scoped to the things that are short by
+     definition rather than put on everything.
+
+     `pretty` is the body rule. It only reconsiders the last few lines and
+     pulls a word back to stop a paragraph ending on one. The money case
+     study's standfirst ended on `hand.` — five characters — before this.
+
+     Neither is load-bearing. Where they are unsupported the browser wraps
+     normally and the page is the page it was. `pretty` costs more to lay out
+     than plain wrapping, which is affordable on prerendered prose and would
+     not be on a list that re-renders. */
+  :where(h1, h2, h3, h4, figcaption, dt) {
+    text-wrap: balance;
+  }
+
+  :where(p, li, blockquote, dd) {
+    text-wrap: pretty;
   }
 
   /* Anything anchored has to clear the sticky header. */

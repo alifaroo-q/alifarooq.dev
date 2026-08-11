@@ -50,7 +50,7 @@ export function SectionIndex({
           globals.css gives this subtree its own. */}
       <ol
         aria-labelledby={labelId}
-        className="mt-6 max-w-[34rem] space-y-3"
+        className="mt-figure max-w-measure space-y-tight"
         data-section-index=""
       >
         {sections.map((section, i) => (

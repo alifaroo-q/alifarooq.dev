@@ -269,7 +269,7 @@ export default function Home() {
             {person.name}
           </h1>
 
-          <p className="mt-10 max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
+          <p className="mt-group max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
             {person.positioningLead}{" "}
             {person.positioningClauses.map((clause, i) => (
               <span key={clause}>
@@ -288,7 +288,7 @@ export default function Home() {
             ))}
           </p>
 
-          <dl className="mt-12 max-w-md space-y-1.5">
+          <dl className="mt-group max-w-md space-y-1.5">
             <Fact detail={person.role} term="role" />
             <Fact detail={person.location} term="based" />
             <Fact detail={person.availability} live term="status" />
@@ -298,7 +298,7 @@ export default function Home() {
               already the table of contents, and a second line under it would
               summarise a page the reader can see. A fold with two claims has
               none. */}
-          <div className="mt-12 flex flex-wrap gap-3">
+          <div className="mt-group flex flex-wrap gap-3">
             <a className={ACTION_CLASS} href={person.resumeHref}>
               Download resume
             </a>
@@ -336,7 +336,7 @@ export default function Home() {
               >
                 {marker(caseStudy.order)}
               </span>
-              <div>
+              <div className="max-w-measure">
                 {/* The sector, one level up and never the scheme or the niche
                     (#6). It carries the context a hiring manager scans for —
                     did he work in a domain like mine — at almost no visual
@@ -347,10 +347,10 @@ export default function Home() {
                 {/* The decision IS the heading. A slot that surveys a project
                     reads as documentation; one that names a decision reads as
                     judgment, which is what is being assessed. */}
-                <h3 className="mt-2 max-w-[30ch] font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
+                <h3 className="mt-tight font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
                   {caseStudy.decision}
                 </h3>
-                <p className="mt-4 max-w-measure text-foreground-muted">
+                <p className="mt-flow text-foreground-muted">
                   {caseStudy.constraint}
                 </p>
                 {/* The diagram stays off this page. It is the strongest asset
@@ -359,7 +359,7 @@ export default function Home() {
                     removes the only real reason to click. Naming it turns
                     that withholding into a promise, where "Read the case
                     study" asks for the click on trust alone. */}
-                <p className="mt-5 text-accent">{caseStudy.artifactLabel}</p>
+                <p className="mt-flow text-accent">{caseStudy.artifactLabel}</p>
               </div>
             </a>
           ))}
@@ -373,12 +373,14 @@ export default function Home() {
         <section aria-labelledby="open-source">
           {/* The conviction, and the one clause the retrofit gets up here. */}
           <div className="px-6 pt-14 pb-12 md:px-10">
-            <p className="max-w-measure text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
-              {openSource.conviction}
-            </p>
-            <p className="mt-5 max-w-measure text-foreground-muted">
-              {openSource.retrofit}
-            </p>
+            <div className="max-w-measure">
+              <p className="text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
+                {openSource.conviction}
+              </p>
+              <p className="mt-flow text-foreground-muted">
+                {openSource.retrofit}
+              </p>
+            </div>
           </div>
 
           {/* The feature. A row, like the work rows, because it is the same
@@ -389,13 +391,15 @@ export default function Home() {
             className="flip-ground block border-border border-y bg-background px-6 py-8 text-foreground md:px-10 md:py-10"
             href={openSource.featured.href}
           >
-            <h3 className="font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
-              {openSource.featured.name}
-            </h3>
-            <p className="mt-4 max-w-measure text-foreground-muted">
-              {openSource.featured.pitch}
-            </p>
-            <p className="mt-5 text-accent">{openSource.featured.label}</p>
+            <div className="max-w-measure">
+              <h3 className="font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
+                {openSource.featured.name}
+              </h3>
+              <p className="mt-flow text-foreground-muted">
+                {openSource.featured.pitch}
+              </p>
+              <p className="mt-flow text-accent">{openSource.featured.label}</p>
+            </div>
           </a>
 
           {/* The paired origin, beneath and quieter. The cells are not links:
@@ -411,18 +415,20 @@ export default function Home() {
                 )}
                 key={repo.name}
               >
-                <h3 className="font-medium text-lg">{repo.name}</h3>
-                <p className="mt-3 max-w-measure text-foreground-muted text-sm">
-                  {repo.pitch}
-                </p>
-                <p className="mt-4">
-                  <a
-                    className="text-sm underline underline-offset-[0.2em] hover:text-accent"
-                    href={repo.href}
-                  >
-                    {repo.href.replace("https://", "")}
-                  </a>
-                </p>
+                <div className="max-w-measure">
+                  <h3 className="font-medium text-lg">{repo.name}</h3>
+                  <p className="mt-tight text-foreground-muted text-sm">
+                    {repo.pitch}
+                  </p>
+                  <p className="mt-flow">
+                    <a
+                      className="text-sm underline underline-offset-[0.2em] hover:text-accent"
+                      href={repo.href}
+                    >
+                      {repo.href.replace("https://", "")}
+                    </a>
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -444,7 +450,7 @@ export default function Home() {
           className="grid gap-8 px-6 py-14 md:grid-cols-[9rem_1fr] md:px-10"
         >
           <Portrait />
-          <div className="max-w-measure space-y-4 text-foreground-muted">
+          <div className="max-w-measure space-y-flow text-foreground-muted">
             {about.map((line, i) => (
               <p className={i === 0 ? "text-foreground" : undefined} key={line}>
                 {line}

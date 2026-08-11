@@ -52,13 +52,21 @@ export function DetailShell({
           </span>{" "}
           {backLabel}
         </a>
-        <p className="mt-10 text-label text-foreground-label uppercase">
+        <p className="mt-group text-label text-foreground-label uppercase">
           {eyebrow}
         </p>
-        <h1 className="mt-3 max-w-[24ch] font-medium text-[clamp(1.875rem,5.5vw,3.25rem)] leading-[1.1] tracking-tight">
+        {/* The title is the sanctioned exception to the measure: display, not
+            prose. At 52px inside the 544px reading column it would break every
+            ten characters, so its line count is set against its OWN size, in
+            `ch`. It is the only element on the site allowed to do this. */}
+        <h1 className="mt-tight max-w-[24ch] font-medium text-[clamp(1.875rem,5.5vw,3.25rem)] leading-[1.1] tracking-tight">
           {heading}
         </h1>
-        <p className="mt-6 max-w-measure text-[clamp(1rem,1.8vw,1.125rem)] text-foreground-muted leading-[1.6]">
+        {/* The standfirst is prose, and it takes the measure. It carries the
+            cap itself rather than through a wrapper because it has no prose
+            siblings up here — a container around one paragraph states a rule
+            nobody can break. */}
+        <p className="mt-figure max-w-measure text-[clamp(1rem,1.8vw,1.125rem)] text-foreground-muted leading-[1.6]">
           {standfirst}
         </p>
       </div>
@@ -82,7 +90,17 @@ export function DetailShell({
             tracking it exists for, and it is where the shared contact footer
             will land. */}
         <div className="order-2 px-6 py-14 md:px-10 lg:order-1 lg:border-border lg:border-r lg:pb-[33svh]">
-          {children}
+          {/* The measure lives HERE and nowhere below it. `mdx-content.tsx`
+              types every element the prose can produce and sets a width on
+              none of them, so a heading, a code block and a table cannot end
+              on different right edges — which is what they did while each
+              element carried its own cap and three of them had none.
+
+              It is a separate element from the padded column on purpose: a
+              max-width includes padding, so putting it on the column above
+              would take the 80px of gutter out of the measure and leave a
+              464px reading column. */}
+          <div className="max-w-measure">{children}</div>
         </div>
 
         <div className="order-1 lg:order-2">

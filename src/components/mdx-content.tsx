@@ -8,6 +8,17 @@ import * as runtime from "react/jsx-runtime";
  *
  * Code is unhighlighted on purpose — see the note in `content-collections.ts`.
  * It sits on the raised ground in the body colour, which is measured.
+ *
+ * **Nothing here sets a width.** The measure belongs to the column that holds
+ * this prose, in `detail-shell.tsx`, for the reason `globals.css` gives at
+ * `--container-measure`: a width written on a paragraph is a width the next
+ * element can forget, and every element here that forgot it — the `h2`, the
+ * `pre`, the `table` — ran 96px past the paragraphs beside it.
+ *
+ * **Every gap is a named step**, from the five in `globals.css`. `mt-flow`
+ * between blocks of one thought, `mt-figure` around a code block or a table,
+ * `mt-group` before an `h3` because that starts a new one, `mt-section`
+ * between sections. Nothing here picks a number.
  */
 const components = {
   /**
@@ -34,7 +45,7 @@ const components = {
    * a section's first child and so always takes its own `first:mt-0`.
    */
   section: (props: React.ComponentProps<"section">) => (
-    <section className="mt-14 first:mt-0 lg:min-h-[48svh]" {...props} />
+    <section className="mt-section first:mt-0 lg:min-h-[48svh]" {...props} />
   ),
   // No margin: the pipeline makes every h2 the first child of its own
   // section, and the section above owns the space between them.
@@ -42,20 +53,20 @@ const components = {
     <h2 className="text-label text-accent uppercase" {...props} />
   ),
   h3: (props: React.ComponentProps<"h3">) => (
-    <h3 className="mt-10 font-medium text-foreground" {...props} />
+    <h3 className="mt-group font-medium text-foreground" {...props} />
   ),
   p: (props: React.ComponentProps<"p">) => (
-    <p className="mt-5 max-w-measure text-foreground-muted" {...props} />
+    <p className="mt-flow text-foreground-muted" {...props} />
   ),
   ul: (props: React.ComponentProps<"ul">) => (
     <ul
-      className="mt-5 max-w-measure list-disc space-y-2 pl-5 text-foreground-muted marker:text-foreground-label"
+      className="mt-flow list-disc space-y-tight pl-5 text-foreground-muted marker:text-foreground-label"
       {...props}
     />
   ),
   ol: (props: React.ComponentProps<"ol">) => (
     <ol
-      className="mt-5 max-w-measure list-decimal space-y-2 pl-5 text-foreground-muted marker:text-foreground-label"
+      className="mt-flow list-decimal space-y-tight pl-5 text-foreground-muted marker:text-foreground-label"
       {...props}
     />
   ),
@@ -70,13 +81,13 @@ const components = {
   ),
   blockquote: (props: React.ComponentProps<"blockquote">) => (
     <blockquote
-      className="mt-5 max-w-measure border-border-strong border-l pl-5 text-foreground-muted"
+      className="mt-flow border-border-strong border-l pl-5 text-foreground-muted"
       {...props}
     />
   ),
   pre: (props: React.ComponentProps<"pre">) => (
     <pre
-      className="mt-6 overflow-x-auto border border-border bg-background-raised p-4 text-[0.8125rem] leading-[1.7]"
+      className="mt-figure overflow-x-auto border border-border bg-background-raised p-4 text-[0.8125rem] leading-[1.7]"
       {...props}
     />
   ),
@@ -84,7 +95,7 @@ const components = {
     <code className="text-[0.9em]" {...props} />
   ),
   table: (props: React.ComponentProps<"table">) => (
-    <div className="mt-6 overflow-x-auto">
+    <div className="mt-figure overflow-x-auto">
       <table className="w-full border-collapse text-left" {...props} />
     </div>
   ),
@@ -101,7 +112,7 @@ const components = {
     />
   ),
   hr: (props: React.ComponentProps<"hr">) => (
-    <hr className="mt-12 border-border" {...props} />
+    <hr className="mt-section border-border" {...props} />
   ),
 };
 

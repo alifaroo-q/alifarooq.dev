@@ -30,3 +30,31 @@ in it are correctness rules, not preferences:
 
 Every value in the site's design enters as a token, never as a class. Use
 `className` for layout; never override a component's colour or typography.
+
+## The measure and the rhythm
+
+Also in `src/app/globals.css`, and the same kind of rule — a width or a gap
+picked at the call site is the thing this section exists to stop.
+
+- **The measure is a LENGTH, and the CONTAINER holds it.**
+  `--container-measure` is `34rem`, and it goes on the element that wraps the
+  prose. Never on a paragraph. A width written on one block is a width the
+  next block can forget, and the forgetting is silent — while every element
+  carried its own cap, the `h2`, the `pre` and the `table` had none and ran
+  96px past the paragraphs beside them.
+- **Never a character count.** It was `54ch` once. `ch` resolves against the
+  element's own font-size, so one token made six widths on one page: 842px
+  under the 26px lead, down to 454px under the small print. Same left edge,
+  six right edges.
+- **The page title is the only exception.** An `h1` is display, not prose. Its
+  line count is a property of its own size, so it caps in `ch`. Nothing else
+  may.
+- **Flush left, ragged right, never justified.** The face is monospaced, so
+  every gap justification opens is a whole character wide, and the browser has
+  no hyphenation to close it. `balance` on short blocks, `pretty` on body
+  copy; both are set once in the base layer and neither is load-bearing.
+- **Five spacing steps, named by role**, and a gap comes from that set:
+  `tight` for a label and the thing it labels, `flow` between blocks of one
+  thought, `figure` around a code block or a table, `group` before a
+  sub-heading, `section` between sections. A sixth step has to justify a sixth
+  kind of relationship.

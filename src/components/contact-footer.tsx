@@ -32,35 +32,41 @@ export function ContactFooter({ compact = false }: { compact?: boolean }) {
           compact ? "py-10 md:py-12" : "py-14 md:py-16",
         )}
       >
-        {compact ? null : (
-          <p className="max-w-measure text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
-            A message about a role, a project, or anything on this page.
+        {/* One container, one width, for everything in the footer — the lead,
+            the address, the form and the notice. Each of the four carried its
+            own `max-w-measure` before, which is four chances to forget it and
+            four right edges the day one of them does. */}
+        <div className="max-w-measure">
+          {compact ? null : (
+            <p className="text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
+              A message about a role, a project, or anything on this page.
+            </p>
+          )}
+
+          <p className={compact ? undefined : "mt-group"}>
+            <a
+              className="underline underline-offset-[0.2em] hover:text-accent"
+              href={`mailto:${CONTACT_EMAIL}`}
+            >
+              {CONTACT_EMAIL}
+            </a>
           </p>
-        )}
 
-        <p className={cn("max-w-measure", compact ? undefined : "mt-8")}>
-          <a
-            className="underline underline-offset-[0.2em] hover:text-accent"
-            href={`mailto:${CONTACT_EMAIL}`}
-          >
-            {CONTACT_EMAIL}
-          </a>
-        </p>
+          <div className="mt-group">
+            <ContactFormSlot />
+          </div>
 
-        <div className="mt-10 max-w-measure">
-          <ContactFormSlot />
-        </div>
-
-        {/* #14's settled string, verbatim. It is two things a visitor is owed
+          {/* #14's settled string, verbatim. It is two things a visitor is owed
             under Art. 13 — what the message is for, and how long it is kept —
             and it is here instead of a consent checkbox and a `/privacy` page
             because nothing on this site stores a message anywhere but the
             inbox. The day something does, that trade stops holding. */}
-        <p className="mt-8 max-w-measure text-foreground-label text-sm">
-          Goes straight to my inbox. I use it to reply, and for nothing else. I
-          keep messages as long as the thread is useful — ask and I'll delete
-          yours.
-        </p>
+          <p className="mt-group text-foreground-label text-sm">
+            Goes straight to my inbox. I use it to reply, and for nothing else.
+            I keep messages as long as the thread is useful — ask and I'll
+            delete yours.
+          </p>
+        </div>
       </div>
     </footer>
   );

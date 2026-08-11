@@ -51,7 +51,7 @@ export function ArtifactFigure({
         />
       </div>
       <figcaption
-        className="mt-6 max-w-[46ch] text-foreground-label text-sm"
+        className="mt-figure max-w-measure text-foreground-label text-sm"
         id={captionId}
       >
         {captionFor(artifactLabel)}
