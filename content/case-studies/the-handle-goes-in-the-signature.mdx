@@ -9,7 +9,7 @@ description: "A transaction handle can be hidden in the request or written into 
 
 ## The problem
 
-I was the sole engineer on the backend of a workshop-management product: bookings, job cards, parts, labour, checksheets, and the record each of those leaves behind. It is twenty-nine feature modules now. Each one owns its tables and its rules.
+I was the sole engineer on the backend of a workshop-management product: bookings, job cards, parts, labour, checksheets, and the record each of those leaves behind. It is twenty-seven feature modules now. Each one owns its tables and its rules.
 
 Opening a job card reaches four owners. A job number is drawn from a shared numbering service. The business's default status is read from the job-status tables. The header and its lines are written. Any checksheet template marked "add to every new job" is stamped onto the job, and that belongs to the checksheet module. Last, a status-change event goes into the job's own history.
 
@@ -72,6 +72,6 @@ The shared handle also moves blame. `autoAttachToJob` runs inside the job's tran
 
 Then the parameter itself. Thirty-five signatures is thirty-five edits the day the shape changes, and it spends the module boundaries I went to the trouble of drawing — a service that never touches the database still has the database in its arguments.
 
-That cost was real enough that on the next project I built the other answer: `drizzle-tx`, which carries the handle in the request and lets a repository ask for it. This app has not adopted it and I have not scheduled that. So the honest state is that I have both answers written down, I use the noisy one where the money is, and I have not gone back to test whether the quiet one would have held up under twenty-nine modules.
+That cost was real enough that on the next project I built the other answer: `drizzle-tx`, which carries the handle in the request and lets a repository ask for it. This app has not adopted it and I have not scheduled that. So the honest state is that I have both answers written down, I use the noisy one where the money is, and I have not gone back to test whether the quiet one would have held up under twenty-seven modules.
 
 I would pass it in again. The cost of the parameter is paid once per signature and you can see all of it. The cost of the hidden handle is paid on every reading of the code, by whoever is reading it, and by then I am not the one paying.

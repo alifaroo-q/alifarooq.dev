@@ -5,11 +5,15 @@ description: "Automatic transaction handling for a service too large to thread a
 
 ## The wall
 
-A booking crossed four modules of twenty-two, and either all of it landed or none of it could. That is a transaction, and a transaction is a handle on a connection. The plain way to give four modules the same handle is to pass it in, and the parameter then spreads until the database sits in the signature of services that never touch it.
+Opening a job card reached four owners of twenty-seven, and either all of it landed or none of it could. That is a transaction, and a transaction is a handle on a connection. The plain way to give four owners the same handle is to pass it in, and the parameter then spreads until the database sits in the signature of services that never touch it.
 
-So the handle has to travel with the request instead of with the arguments. Node has one mechanism for that: `AsyncLocalStorage`. The transaction client goes into a store bound to the async scope of the work, and a repository asks for the current one rather than being handed it. Presence of a store is the whole answer to "am I in a transaction" — there is no flag beside it that could disagree.
+That is not a reason the handle has to go somewhere else. It is a bill, and on that codebase I paid it: the handle went in the arguments, written into every signature that takes part in a write, and I would do it again — [the case study says why](/work/the-handle-goes-in-the-signature). This library is the other answer to the same wall, built afterwards, on the next project. Neither page is going to tell you the loser was obvious.
+
+The other answer is to let the handle travel with the request instead of with the arguments. Node has one mechanism for that: `AsyncLocalStorage`. The transaction client goes into a store bound to the async scope of the work, and a repository asks for the current one rather than being handed it. Presence of a store is the whole answer to "am I in a transaction" — there is no flag beside it that could disagree.
 
 The store is written once and never mutated, and it is entered with `run()` only. `enterWith` is forbidden by the library's own rules, because it leaks the store into whatever the caller does next.
+
+That rule sets a price, and the library pays it in the open. Two primitives ship. `withTransaction(work)` takes a callback, so it can set the store, and propagation is implicit — that is the whole value on offer. `begin()` hands back a block-scoped handle for `await using`, and a block is not a callback, so it sets no store at all: inside one you thread `scope.tx` by hand. The nicer of the two gives up the thing the library exists for, and it ships anyway, with the caveat written above the example.
 
 ## Why the ORM makes it hard
 
