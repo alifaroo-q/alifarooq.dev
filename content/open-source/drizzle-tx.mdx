@@ -45,7 +45,7 @@ There are two implementations of `Result` in my repos, and they resolve the same
 
 Here, `ok()` returns `Result<T, never>`. The `never` on the unused side is load-bearing: a work function that only ever returns `ok(...)` still infers its error channel as `never`, so `E | DrizzleTxError` collapses to `DrizzleTxError` instead of widening to `unknown`.
 
-In `result-kit`, written four months earlier, `ok()` returns the narrow `Ok<T>` — strictly more precise about the value in hand. Its own comment records what that costs: `Ok<T>` has no error member, so it offers `E` no inference site, and a transform over a bare `ok(1)` had nothing to infer from and fell back to `unknown`. `Result<T, unknown>` then assigns into no annotation at all. The fix was to default `E` to `never` where it surfaces, which is the same answer reached one hop later.
+In [`result-kit`](/open-source/result-kit), written four months earlier, `ok()` returns the narrow `Ok<T>` — strictly more precise about the value in hand. Its own comment records what that costs: `Ok<T>` has no error member, so it offers `E` no inference site, and a transform over a bare `ok(1)` had nothing to infer from and fell back to `unknown`. `Result<T, unknown>` then assigns into no annotation at all. The fix was to default `E` to `never` where it surfaces, which is the same answer reached one hop later.
 
 Same author, same question, opposite resolutions, and both rationales written down at the time. I did not notice the disagreement until I read the two files side by side.
 

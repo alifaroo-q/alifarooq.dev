@@ -1,0 +1,90 @@
+---
+title: "result-kit"
+description: "A TypeScript library that makes failure part of what a function returns, and the decisions that shape cost — one of them argued with four months later, one of them still unmeasured."
+---
+
+## What throwing costs
+
+A function that throws tells you nothing in its type. Nothing in the signature says the call can fail, so nothing makes anybody decide what to do about it, and the caller finds out when it happens — on a good day in a test, on a bad day in production.
+
+That kind of failure is quiet by construction, and quiet is the expensive part. [A mail automation in this portfolio](/work/treating-google-as-a-system-that-will-fail) is a whole case study about the same shape one layer up: tokens expire and webhooks lapse, and a bad day looks exactly like a quiet day until somebody asks why a lead went cold.
+
+The answer is old and it is not mine: put the failure in the return type, so the compiler makes the caller deal with it. What is mine is the bill, and I had already paid part of it by hand. [Another codebase here](/work/the-handle-goes-in-the-signature) has an in-house version of this idea — not this library, a private one with the same intent — and it was measured: an abstract class of thirty-nine static methods over six hundred and fifty-six lines, of which six were ever called from outside. Every method that composed two results was used zero times.
+
+That is the question a library for this has to answer, and it is not which combinators to write. It is which half of the pattern the compiler holds. The other half is a suggestion about style, and a suggestion loses to four lines anybody can read without learning anything first.
+
+## Plain data, and the bill for it
+
+A `Result` is one of two objects: `ok` true with a value, or `ok` false with an error. No class. No methods. No hidden brand and no tag. Anything of that shape **is** one, whoever built it.
+
+That last part is a decision, not an accident, and it buys one guarantee: if the value and the error are JSON-safe, then the result survives a round trip through `JSON.stringify` and comes back usable with no re-wrapping. A result can be an HTTP response body, a queue message or a `postMessage` payload. A brand would have made the returning object no longer a valid result, which is the same hazard the class version has, moved to the type level.
+
+The typed error that rides in the error channel is held to the same rule: a plain object with four fields, never a class and never anything that extends `Error`, because an error that crosses a boundary has to survive the crossing too.
+
+The bill is immediate. A union with no methods cannot be chained, and chaining is what people actually want to write. Refusing methods on the value is what forced a second surface to exist at all.
+
+## Two surfaces, one implementation
+
+So there are two. A free-function core, where you call `map(result, fn)` — one signature, no curried twin — and a fluent wrapper behind its own entry point, where you write `ok(x).map(f)`. The wrapper delegates to the core. It is an envelope for the length of a chain, not a second codebase, and you leave it before you serialize anything.
+
+The core is the half that matters, because it is self-sufficient: import three functions and ship three functions. A library built on methods structurally cannot offer that — there the methods and the data are the same object, so importing the constructor drags the whole surface in. That is the entire argument for paying for two surfaces. Most people should use the wrapper and never think about it.
+
+The obvious third surface is `pipe`, and it was re-opened later with a spike rather than left to taste. It was declined, along with `flow` and the arity-detecting `dual` that would have made it worth having. The measurement is why: across three call sites, `pipe` was never the shortest spelling and never the flattest one with the fewest lambdas — the longest chain came to 336 characters and eight lambdas under `pipe`, against 255 and none under the wrapper. The reason it reads well elsewhere is `dual`, which gives every operation a data-last twin so each step drops in as a bare name. Without that mechanism, every step is a lambda, and what was on offer was the ergonomics minus the thing that produced them.
+
+`dual` was declined on its own account too, for the reason that shapes everything above: its mechanism is reading `arguments.length` at runtime to guess which way round the caller meant it.
+
+## The field I refused, and the day it came back
+
+The typed error has four fields and no `path`. A path is validation's concern, and putting it in the shared shape would have made every error in the system carry a field that means nothing to most of them.
+
+The first bill arrived from a distance. Zod's error formatters are entirely path-derived, so none of them ports to a shape with no path. That was recorded as a finding rather than a shortfall, and the formatters here are the library's own.
+
+The second bill arrived when a schema adapter had to exist anyway, and the path had to go somewhere. It went into the typed payload as an array of strings and numbers, normalized from whatever the validator handed over. That normalization was written from the Standard Schema types, which say a path segment is a property key — so a symbol looked like the exotic case, and a symbol was handled.
+
+It was not the exotic case. Valibot's path items include a `Map` key, which is typed as anything at all, and a `Set` key, which is `null`. A map keyed by big integers produced a failure whose payload contained a `BigInt`, and `JSON.stringify` on the whole result **threw** — the one guarantee this package sells, broken by the field I had refused, arriving through the door I left open for it. An object key was worse and quieter: retained by identity, it carried the caller's own graph into the payload, cycles and personal data included.
+
+The rule is now total instead of enumerated. A string passes through, a finite number passes through, and everything else becomes its own string form — lossy on purpose, because the alternative is a value that disappears without a diagnostic, which is the exact failure class the library exists to refuse.
+
+It was an adversarial review pass that found it. The tests written beside the implementation exercised objects and arrays, so they never reached a map key at all.
+
+## Where the inference broke
+
+`ok(1)` returns the narrow success half rather than a full result with `never` on the error side. Two things were written down for it: that it is strictly more precise, and that it still assigns into any result annotation.
+
+Both are true of the value in your hand. Neither survives one transform. The narrow half has no error member, so it offers the error type nowhere to be inferred from: a transform over a bare `ok(1)` had nothing to work with, fell back to `unknown`, and a result whose error is `unknown` assigns into no annotation at all. The note described a property of the constructor and read as a property of the value — it overstated itself by exactly the step that matters.
+
+The narrow return stayed. The fix was to default the error type to `never` wherever it reaches somewhere a user can see it, which is the honest answer, since a value built by `ok(1)` genuinely has no error channel.
+
+Four months later, in [drizzle-tx](/open-source/drizzle-tx), I made the same call the other way and had a good reason there too. That page owns the reversal; this one owns the choice.
+
+A second inference story ends stranger. Inside a generator-based do-block, returning a tagged object widens its tag, because a generator's return type is inferred from the bottom up and the surrounding type never reaches the constructor call. Five fixes were tried against the compiler; the one that works everywhere makes every array payload read-only and breaks any consumer expecting a normal array. The decision was to change nothing and document the caller-side pattern — a decision record whose outcome is that no code ships.
+
+## A convention nobody enforces
+
+A pattern the compiler does not hold decays, and this one decays in one specific way: nothing stops you calling a function that returns a result and dropping the value on the floor. Rust makes that an error. TypeScript does not.
+
+So there is a second repo, [result-kit-lint](https://github.com/alifaroo-q/result-kit-lint), and a rule called `must-use-result`. It ships to two hosts. The ESLint one is type-aware and follows a result through wrappers, aliases and unions. The Oxlint one cannot see types at all, so shipping it meant deciding whether a partial rule beats none.
+
+It was measured before it shipped. Against a consumer corpus, the syntax-level matchers caught nine of the eleven dropped results. The two misses are the ones no syntax-level rule can reach: a call whose result return is inferred with no annotation, and one whose return type hides behind another name. Both are named in the plugin's own README, because a linter that claims a reach it does not have is worse than no linter — you stop looking.
+
+The rule finds a result by its shape, never by importing the library, which is why the two repos stay apart and the core keeps its zero dependencies.
+
+The same instinct produced one more thing worth a sentence. The repo ships a hand-written brief for coding agents, and a test pins every root export into it. A stale README misleads a human who can watch the compiler disagree with it; a stale brief is handed to a model as ground truth.
+
+## What I have not measured
+
+Here is the strongest objection to the whole idea, and I do not yet have an answer to it.
+
+A failure that becomes a value stops throwing. Sentry hooks unhandled rejections and window errors. An OpenTelemetry span is marked as failed by a thrown exception. If those tools only see failures that throw, then a codebase that handles every result correctly may be producing no failure telemetry at all — and a team finds that out during an incident, which is the worst possible time to learn it.
+
+The work is open and the method is simple: run the same failure path twice, once thrown and once returned, point both at a collector and a Sentry-compatible sink, and write down what arrives. A negative result would collapse the largest thing on my roadmap for the price of an afternoon, and it has to be reported as loudly as a positive one.
+
+Until then, this is the honest version of the pitch: the type story holds up, and the operations story is unproven.
+
+## Try it
+
+The source and the decision records are at [github.com/alifaroo-q/result-kit](https://github.com/alifaroo-q/result-kit). Every claim above has a record behind it in `docs/adr`, including the ones later amended by the code.
+
+Two things to know before you reach for it. It is ESM-only — there is no CommonJS build, and a CommonJS consumer loads it through `require` of an ES module or a dynamic import.
+
+And the rework that produced the current shape has one break that is silent. `unwrapOrThrow` exists on both sides of it, takes a result first and an optional second argument on both sides, and type-checks cleanly after a find-and-replace. The old one threw an HTTP exception; the new one throws a plain `Error` — so a handled not-found becomes an unhandled server error, in production, with nothing at compile time to warn you. Every other break in that migration is loud. That one is at the top of the migration guide, not in its middle.

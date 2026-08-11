@@ -131,6 +131,13 @@ const openSource = {
       pitch:
         "Where it started: a TypeScript library that makes failure part of what a function returns.",
       href: "https://github.com/alifaroo-q/result-kit",
+      // #52. The cell keeps its repo link and gains a second line, because
+      // the cells are deliberately not links and the visible text is the URL
+      // with the protocol cut — pointing `href` inward would print a path
+      // where a domain belongs. The label is the featured row's habit at the
+      // quieter weight: name what is behind the click.
+      page: "/open-source/result-kit",
+      pageLabel: "Read the write-up →",
     },
     {
       name: "result-kit-lint",
@@ -428,6 +435,18 @@ export default function Home() {
                       {repo.href.replace("https://", "")}
                     </a>
                   </p>
+                  {/* The write-up, where one exists (#52). Below the repo
+                      link, not instead of it: the repo is what the cell
+                      promises, and the page is the thing a link to GitHub
+                      cannot signal — that there is an argument behind the
+                      name. */}
+                  {"page" in repo && (
+                    <p className="mt-tight">
+                      <a className="text-accent text-sm" href={repo.page}>
+                        {repo.pageLabel}
+                      </a>
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
