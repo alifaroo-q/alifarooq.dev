@@ -109,7 +109,7 @@ const openSource = {
   // the precedent #14 set when it cut the About line for restating the
   // positioning sentence. Saying it twice in one screen reads as padding.
   conviction: OPEN_SOURCE_CONVICTION,
-  retrofit: "The same conviction, re-derived rather than reused.",
+  retrofit: "Four months later I hit the same wall and answered it the other way.",
 
   featured: {
     name: "drizzle-tx",
@@ -118,7 +118,7 @@ const openSource = {
     // "22 modules, one transaction boundary" — the same fact twice in one
     // scroll reads as padding rather than emphasis.
     pitch:
-      "The same idea where it cost the most: automatic transaction handling across a service too large to thread a handle through, on a database layer that only knows how to undo work when something throws.",
+      "I let the handle travel with the request, so it stops showing up in signatures that never touch the database. Drizzle only undoes work when something throws. This library never throws.",
     href: "/open-source/drizzle-tx",
     // Names what is behind the click, the way the work rows name their
     // diagram, rather than asking for the click on trust.
@@ -129,7 +129,7 @@ const openSource = {
     {
       name: "result-kit",
       pitch:
-        "Where it started: a TypeScript library that makes failure part of what a function returns.",
+        "Where I started. I had built this by hand once already: thirty-nine static methods, and six of them were ever called from outside.",
       href: "https://github.com/alifaroo-q/result-kit",
       // #52. The cell keeps its repo link and gains a second line, because
       // the cells are deliberately not links and the visible text is the URL
@@ -137,13 +137,13 @@ const openSource = {
       // where a domain belongs. The label is the featured row's habit at the
       // quieter weight: name what is behind the click.
       page: "/open-source/result-kit",
-      pageLabel: "Read the write-up →",
+      pageLabel: "Why there are no classes in it →",
     },
     {
       name: "result-kit-lint",
       // #14's rewrite, which split the sentence at its em-dash.
       pitch:
-        "A convention nobody enforces is a convention that decays. Lint rules that fail the build when a result goes unchecked.",
+        "Lint rules that fail the build when a result goes unchecked. Without them, the convention holds for as long as I remember to keep it.",
       href: "https://github.com/alifaroo-q/result-kit-lint",
     },
   ],
@@ -165,8 +165,8 @@ const openSource = {
  * structure and same rhythm, so the page read as saying it twice.
  */
 const about = [
-  "Software engineer at Zenkoders since 2024, working on the backend of client products — which is why the work above is described without naming the clients.",
-  "The problems I keep being handed are the ones where being wrong is expensive.",
+  "I have been a software engineer at Zenkoders since 2024, on the backend of client products. That is why the work above never names a client.",
+  "The problems I get handed are the ones where being wrong is expensive.",
   "I'm in Karachi, and open to backend roles.",
 ];
 
@@ -190,7 +190,7 @@ const about = [
  * studies. The block is the smallest thing on the page on purpose.
  */
 const stack = {
-  line: "Most of what I build is TypeScript on Node, with Postgres below it and AWS around it. I use Next.js when the frontend is mine, and much of the recent work is LLM and agent work.",
+  line: "Most of it is TypeScript on Node, with Postgres underneath and AWS around it. Next.js when the frontend is mine. Lately, a lot of LLM and agent work.",
   href: "/stack",
   // Names what is behind the click, the habit the work rows and the featured
   // repo both keep, at the quietest weight on the page.
