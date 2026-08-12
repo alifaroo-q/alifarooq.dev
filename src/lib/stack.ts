@@ -146,6 +146,33 @@ export const STACK: StackItem[] = [
 ];
 
 /**
+ * The three strings the page and its share card both print (#16).
+ *
+ * They live here rather than in `page.tsx` because the card is a separate
+ * route and cannot import from a page module. Two literals of a headline is a
+ * card that previews under a heading the page stopped using — and the card is
+ * the copy nobody looks at again, so it is the one that would drift.
+ *
+ * `STACK_HEADING` is a sentence, not the word "Stack". Every other `h1` on the
+ * site is a claim; a one-word heading here would be the only label among them,
+ * and a label is what the twelve sentences below spend the page refusing to be.
+ *
+ * `STACK_STANDFIRST` is the bar, stated outright and without comparison — it
+ * is not defensive if it does not mention anybody else's list. It is also the
+ * meta description, so the card and the page open on the same sentence.
+ *
+ * `STACK_EYEBROW` names the zone rather than the contents, which is what the
+ * open-source pages do with theirs: the heading is already the claim, and what
+ * the reader needs from an eyebrow is which part of the site they are in.
+ */
+export const STACK_HEADING = "Twelve things I have had to live with.";
+
+export const STACK_STANDFIRST =
+  "Everything here is something I shipped and then had to live with. Twelve of them, and what each one cost.";
+
+export const STACK_EYEBROW = "Stack";
+
+/**
  * The completeness hedge, taken without the date that usually comes with it.
  *
  * The surveyed pages that handle this well carry both a hedge and an "updated

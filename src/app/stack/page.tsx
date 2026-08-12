@@ -3,7 +3,14 @@ import { ContactFooter } from "@/components/contact-footer";
 import { DetailShell } from "@/components/detail-shell";
 import { SectionIndex } from "@/components/section-index";
 import { pageMetadata } from "@/lib/metadata";
-import { BELOW_BAR, STACK, STACK_HEDGE } from "@/lib/stack";
+import {
+  BELOW_BAR,
+  STACK,
+  STACK_EYEBROW,
+  STACK_HEADING,
+  STACK_HEDGE,
+  STACK_STANDFIRST,
+} from "@/lib/stack";
 
 /**
  * `/stack` — the third fill of the one detail template (#17).
@@ -28,31 +35,15 @@ import { BELOW_BAR, STACK, STACK_HEDGE } from "@/lib/stack";
  */
 export const dynamic = "error";
 
-/**
- * The standfirst is the bar, stated outright and without comparison.
- *
- * It is not defensive if it does not mention anybody else's list. The site
- * argues for its own choices on every other page; a list that arrived
- * unexplained would be the one unargued block on it.
- */
-const STANDFIRST =
-  "Everything here is something I shipped and then had to live with. Twelve of them, and what each one cost.";
-
-/**
- * A sentence, not the word "Stack".
- *
- * Every other `h1` on the site is a claim — "The handle goes in the signature".
- * A one-word heading here would be the only label among them, and a label is
- * what the rest of the page spends twelve sentences refusing to be.
- */
-const HEADING = "Twelve things I have had to live with.";
-
 export function generateMetadata(): Metadata {
   return pageMetadata({
-    title: "Stack",
+    // The bare word here, not the heading. This is the browser tab and the
+    // search result, where the suffix already carries the name and a sentence
+    // would be truncated to its first clause.
+    title: STACK_EYEBROW,
     // The standfirst is the description. One string in two places, the same
     // rule the open-source pages follow: the card and the page open together.
-    description: STANDFIRST,
+    description: STACK_STANDFIRST,
     path: "/stack",
   });
 }
@@ -64,8 +55,8 @@ export default function StackPage() {
         // Back to About, because that is the only block that links here.
         backHref="/#about"
         backLabel="About"
-        eyebrow="Stack"
-        heading={HEADING}
+        eyebrow={STACK_EYEBROW}
+        heading={STACK_HEADING}
         reference={
           <SectionIndex
             id="stack-index"
@@ -77,7 +68,7 @@ export default function StackPage() {
             }))}
           />
         }
-        standfirst={STANDFIRST}
+        standfirst={STACK_STANDFIRST}
       >
         {STACK.map((item) => (
           /* The same `data-section` contract the MDX pipeline emits, written
