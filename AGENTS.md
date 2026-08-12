@@ -15,6 +15,9 @@ run, so anything this repo adds goes below it.
 
 - **Issue tracker** — `docs/agents/issue-tracker.md`. Issues, wayfinding and
   the `gh` account to use.
+- **Prose** — `docs/agents/prose.md`. How the copy sounds. Read it before
+  writing or editing any words a reader sees. The theme rules below govern
+  what the page looks like; that file governs what it says.
 
 ## The theme
 
