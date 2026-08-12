@@ -1,35 +1,35 @@
 ---
 title: "drizzle-tx"
-description: "Automatic transaction handling for a service too large to thread a handle through, on a database layer that only undoes work when something throws."
+description: "A transaction handle that travels with the request, so it stays out of every signature. Drizzle only undoes work when something throws, and this library returns failures as values. I had to bridge the two."
 ---
 
 ## The wall
 
 Opening a job card reached four owners of twenty-seven, and either all of it landed or none of it could. That is a transaction, and a transaction is a handle on a connection. The plain way to give four owners the same handle is to pass it in, and the parameter then spreads until the database sits in the signature of services that never touch it.
 
-That is not a reason the handle has to go somewhere else. It is a bill, and on that codebase I paid it: the handle went in the arguments, written into every signature that takes part in a write, and I would do it again — [the case study says why](/work/the-handle-goes-in-the-signature). This library is the other answer to the same wall, built afterwards, on the next project. Neither page is going to tell you the loser was obvious.
+That is a bill, and on that codebase I paid it. The handle went in the arguments, written into every signature that takes part in a write, and I would do it again. [The case study says why](/work/the-handle-goes-in-the-signature). This library is the other answer to the same wall, built afterwards, on the next project. Neither page will tell you the loser was obvious.
 
-The other answer is to let the handle travel with the request instead of with the arguments. Node has one mechanism for that: `AsyncLocalStorage`. The transaction client goes into a store bound to the async scope of the work, and a repository asks for the current one rather than being handed it. Presence of a store is the whole answer to "am I in a transaction" — there is no flag beside it that could disagree.
+The other answer is to let the handle travel with the request. Node has one mechanism for that: `AsyncLocalStorage`. The transaction client goes into a store bound to the async scope of the work, and a repository asks for the current one. Whether a store is present is the whole answer to "am I in a transaction". No flag sits beside it to disagree.
 
-The store is written once and never mutated, and it is entered with `run()` only. `enterWith` is forbidden by the library's own rules, because it leaks the store into whatever the caller does next.
+The store is written once and never mutated, and `run()` is the only way in. The library's own rules forbid `enterWith`, because it leaks the store into whatever the caller does next.
 
-That rule sets a price, and the library pays it in the open. Two primitives ship. `withTransaction(work)` takes a callback, so it can set the store, and propagation is implicit — that is the whole value on offer. `begin()` hands back a block-scoped handle for `await using`, and a block is not a callback, so it sets no store at all: inside one you thread `scope.tx` by hand. The nicer of the two gives up the thing the library exists for, and it ships anyway, with the caveat written above the example.
+That rule sets a price, and I pay it in the open. Two primitives ship. `withTransaction(work)` takes a callback, so it can set the store and propagation is implicit. That is the whole value on offer. `begin()` hands back a block-scoped handle for `await using`. A block is not a callback, so it sets no store, and inside one you thread `scope.tx` by hand. The nicer of the two gives up the thing the library exists for. It ships anyway, with the caveat written above the example.
 
 ## Why the ORM makes it hard
 
 Drizzle rolls back when the callback you gave it throws. That is the only trigger it has. Return normally and it commits.
 
-The library had already decided that failures are values and that it never throws for a condition it models. Those two facts collide exactly once: the value that means "undo this" is a return, and a return is what commits.
+I had already decided that failures are values and that the library never throws for a condition it models. Those two facts collide exactly once: the value that means "undo this" is a return, and a return is what commits.
 
-There were three ways out. Make callers throw, which hands the contract back. Issue `ROLLBACK` directly, which means fighting the ORM for control of a connection it owns and bookkeeping it does. Or invert at one boundary and pay for it there.
+I had three ways out. Make callers throw, which hands the contract back. Issue `ROLLBACK` directly, which means fighting the ORM for control of a connection it owns and bookkeeping it does. Or invert at one boundary and pay for it there.
 
 ## The inversion
 
-`Result` goes in, a throw crosses the ORM, a `Result` comes out. One function turns an `err` into a `RollbackSignal` carrying the payload, which is the only place the no-throw contract is broken. The same boundary catches that signal and re-materialises `err(payload)`. Nothing else in the engine throws, and no throw escapes it.
+`Result` goes in, a throw crosses the ORM, a `Result` comes out. One function turns an `err` into a `RollbackSignal` carrying the payload, which is the only place the no-throw contract is broken. The same boundary catches that signal and rebuilds `err(payload)`. Nothing else in the engine throws, and no throw escapes it.
 
-The interesting part is what happens when the rollback itself fails. The domain error is recorded before the signal is thrown. If the connection dies during `ROLLBACK`, the value that reaches the catch is no longer the signal — it is the driver's error, and the reason the transaction was being undone has been shadowed by the reason the undo failed.
+The interesting part is what happens when the rollback itself fails. The domain error is recorded before the signal is thrown. If the connection dies during `ROLLBACK`, the value that reaches the catch is the driver's error, so the reason for the undo is hidden by the reason the undo failed.
 
-So it is carried out. The caught value is classified into a structured failure, and the shadowed error rides on it as `lostDomainError`. The caller gets both: why the work was rejected, and why the database could not honour the rejection. A double fault reports as two facts instead of one.
+So I carry it out. The caught value is sorted into a structured failure, and the hidden error travels on it as `lostDomainError`. The caller gets both: why the work was rejected, and why the database could not honour the rejection. A double fault reports as two facts.
 
 ## Making the compiler hold the line
 
@@ -41,24 +41,24 @@ Both are types. The brand has no runtime representation, `settle` is the identit
 
 ## Where I disagreed with myself
 
-There are two implementations of `Result` in my repos, and they resolve the same question in opposite directions.
+There are two implementations of `Result` in my repos, and they answer the same question in opposite directions.
 
 Here, `ok()` returns `Result<T, never>`. The `never` on the unused side is load-bearing: a work function that only ever returns `ok(...)` still infers its error channel as `never`, so `E | DrizzleTxError` collapses to `DrizzleTxError` instead of widening to `unknown`.
 
-In [`result-kit`](/open-source/result-kit), written four months earlier, `ok()` returns the narrow `Ok<T>` — strictly more precise about the value in hand. Its own comment records what that costs: `Ok<T>` has no error member, so it offers `E` no inference site, and a transform over a bare `ok(1)` had nothing to infer from and fell back to `unknown`. `Result<T, unknown>` then assigns into no annotation at all. The fix was to default `E` to `never` where it surfaces, which is the same answer reached one hop later.
+In [`result-kit`](/open-source/result-kit), written four months earlier, `ok()` returns the narrow `Ok<T>` — strictly more precise about the value in hand. Its own comment records what that costs: `Ok<T>` has no error member, so it offers `E` no inference site, and a transform over a bare `ok(1)` had nothing to infer from and fell back to `unknown`. `Result<T, unknown>` then assigns into no annotation at all. The fix was to default `E` to `never` where it surfaces, which is the same answer I reached one hop later.
 
-Same author, same question, opposite resolutions, and both rationales written down at the time. I did not notice the disagreement until I read the two files side by side.
+Same author, same question, opposite answers, and I wrote down reasons for both at the time. I did not notice the disagreement until I read the two files side by side.
 
 ## What I'd change
 
 The NestJS decorator resolves its `TransactionHost` through a process-global `Map`. A method decorator runs at class-definition time, with no access to the container, so the host registers itself when it is constructed and the decorator looks it up when the method is called. There is no other way to get from a decorator to a managed singleton.
 
-The map is keyed `'default'` and the last constructor wins. Two applications in one process and the second silently replaces the first. It is disclosed in the limitations and it has a decision record, and it is still a mutable global in fifteen hundred lines that are otherwise built to be seam-driven.
+The map is keyed `'default'` and the last constructor wins. Two applications in one process and the second silently replaces the first. I disclose it in the limitations and it has a decision record. It is still a mutable global in fifteen hundred lines that are otherwise built to be seam-driven.
 
-The open question is heavier and I have it in the tracker. Implicit propagation is the thing this library exists for, and it is orthogonal to how a rollback is signalled — every comparable library throws, and every framework adapter on the roadmap has to build a bridge from results back to throws. That is no longer fully open, and this page trailed its own record for a month. The decision written down since is narrower than a flip: results stay the contract for the core and for anyone writing an adapter, and each app-facing edge is bridged to whatever its host already does — a tRPC procedure throws, a server action returns. Nobody outside the engine is charged for the model twice. What has not happened is the shipping: the only adapter that exists is the NestJS one, and it is result-native throughout, so a service author there still writes every check by hand.
+The open question is heavier, and I have it in the tracker. Implicit propagation is what this library exists for, and it is separate from how a rollback is signalled — every comparable library throws, and every framework adapter on the roadmap has to bridge from results back to throws. That is no longer fully open, and this page trailed its own record for a month. What I wrote down since is narrower than a flip. Results stay the contract for the core and for anyone writing an adapter, and each app-facing edge is bridged to whatever its host already does — a tRPC procedure throws, a server action returns. Nobody outside the engine pays for the model twice. What has not happened is the shipping. The only adapter that exists is the NestJS one, and it is result-native throughout, so a service author there still writes every check by hand.
 
 ## Try it
 
 The source and the decision records are in the repo: [github.com/alifaroo-q/drizzle-tx](https://github.com/alifaroo-q/drizzle-tx). Every claim on this page has a record behind it in `docs/adr`, including the ones I have since argued with.
 
-One caveat before you reach for it: installing requires a `drizzle-orm` release-candidate pin — see the README. The pin is honest rather than lazy. Widening it would claim support for a code path that has never been tested.
+One caveat before you reach for it. Installing requires a `drizzle-orm` release-candidate pin; see the README. Widening it would claim support for a code path nobody has tested.
