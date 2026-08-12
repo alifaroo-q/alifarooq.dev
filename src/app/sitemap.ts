@@ -24,6 +24,10 @@ import { SITE_URL } from "@/lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL },
+    // `/stack` is written out because it is not a document — it is a route
+    // backed by a typed array, so there is no collection to map over. It is
+    // the one committed entry, and the only one that can be forgotten.
+    { url: `${SITE_URL}/stack` },
     ...allCaseStudies.map((doc) => ({ url: `${SITE_URL}/work/${doc.slug}` })),
     ...allOpenSources.map((doc) => ({
       url: `${SITE_URL}/open-source/${doc.slug}`,

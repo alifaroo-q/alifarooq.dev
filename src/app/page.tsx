@@ -171,6 +171,33 @@ const about = [
 ];
 
 /**
+ * The stack line, and the only route to `/stack`.
+ *
+ * Three case studies argue in depth about a narrow slice — Postgres, Drizzle,
+ * one payment integration — and a reader finishing them cannot tell whether
+ * anything else has been shipped. Nothing on this site says AWS, Redis, a
+ * queue, Docker, or any of the LLM work. That is the gap this closes.
+ *
+ * It is a SENTENCE naming six, not a list naming twelve. Six is what a reader
+ * needs to place me; twelve nouns in one line stops being a sentence and
+ * becomes the list, which is the thing the separate page is for. The names are
+ * on this page rather than only behind the click for the plain reason that a
+ * reader who never clicks is most readers.
+ *
+ * It sits inside About, and it is a plain inline link rather than a row that
+ * flips the ground. That inversion is this site's signal for "a piece of work
+ * you can read"; spent here it would rank a reference list with the case
+ * studies. The block is the smallest thing on the page on purpose.
+ */
+const stack = {
+  line: "Most of it is TypeScript on Node, with Postgres underneath and AWS around it — Next.js when the frontend is mine, and a fair amount of LLM and agent work lately.",
+  href: "/stack",
+  // Names what is behind the click, the habit the work rows and the featured
+  // repo both keep, at the quietest weight on the page.
+  label: "The whole list, and what each one cost →",
+};
+
+/**
  * Ties a clause of the positioning sentence to the work row that answers it.
  *
  * The sentence and the row print the SAME string from here, because the whole
@@ -475,6 +502,17 @@ export default function Home() {
                 {line}
               </p>
             ))}
+
+            {/* The stack, after the biography and before the footer. A reader
+                who has got this far has already decided to care; putting a
+                line of nouns above the work would let it outrank three
+                arguments. */}
+            <p className="border-border border-t pt-flow">{stack.line}</p>
+            <p>
+              <a className="text-accent text-sm" href={stack.href}>
+                {stack.label}
+              </a>
+            </p>
           </div>
         </section>
       </main>

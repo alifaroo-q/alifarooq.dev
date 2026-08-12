@@ -32,16 +32,24 @@ import type { Section } from "@/lib/rehype-sections";
 export function SectionIndex({
   sections,
   id = "section-index",
+  label = "Sections",
 }: {
   sections: Section[];
   id?: string;
+  /**
+   * What the column is a list OF. It is a prop because `/stack` fills the same
+   * slot with a list of technologies, and calling those "Sections" would name
+   * the mechanism rather than the contents — the reader is looking at twelve
+   * names, not twelve headings.
+   */
+  label?: string;
 }) {
   const labelId = `${id}-label`;
 
   return (
     <div className="border-border border-b px-6 py-10 md:px-10 lg:border-b-0">
       <p className="text-foreground-label text-label uppercase" id={labelId}>
-        Sections
+        {label}
       </p>
 
       {/* `data-section-index` is what tells the stylesheet these parts are

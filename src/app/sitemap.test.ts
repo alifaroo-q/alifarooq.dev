@@ -17,6 +17,7 @@ describe("sitemap", () => {
   it("lists the home page and every document, and nothing else", () => {
     expect(entries.map((entry) => entry.url)).toEqual([
       SITE_URL,
+      `${SITE_URL}/stack`,
       ...allCaseStudies.map((doc) => `${SITE_URL}/work/${doc.slug}`),
       ...allOpenSources.map((doc) => `${SITE_URL}/open-source/${doc.slug}`),
     ]);
