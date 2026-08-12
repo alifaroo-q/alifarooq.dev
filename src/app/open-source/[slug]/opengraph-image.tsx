@@ -12,7 +12,7 @@ import { OPEN_SOURCE_CONVICTION, PERSON_NAME } from "@/lib/site";
  * and the conviction is the sentence that does that. No npm scope appears
  * here and none may (#22) — the repo is named, not installed.
  */
-export const alt = `Open source — ${PERSON_NAME}`;
+export const alt = `An open-source project by ${PERSON_NAME}`;
 export const size = ogSize;
 export const contentType = ogContentType;
 

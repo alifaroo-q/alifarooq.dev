@@ -39,7 +39,8 @@ export function ContactFooter({ compact = false }: { compact?: boolean }) {
         <div className="max-w-measure">
           {compact ? null : (
             <p className="text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
-              A message about a role, a project, or anything on this page.
+              Send me a message about a role, a project, or anything on this
+              page.
             </p>
           )}
 
@@ -63,8 +64,8 @@ export function ContactFooter({ compact = false }: { compact?: boolean }) {
             inbox. The day something does, that trade stops holding. */}
           <p className="mt-group text-foreground-label text-sm">
             Goes straight to my inbox. I use it to reply, and for nothing else.
-            I keep messages as long as the thread is useful — ask and I'll
-            delete yours.
+            I keep messages as long as the thread is useful. Ask and I'll delete
+            yours.
           </p>
         </div>
       </div>

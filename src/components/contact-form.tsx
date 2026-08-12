@@ -139,7 +139,7 @@ export function ContactForm() {
   if (status === "sent") {
     return (
       <p className="border border-border-strong px-5 py-4" role="status">
-        Sent. A reply will come from {CONTACT_EMAIL}.
+        Sent. I'll reply from {CONTACT_EMAIL}.
       </p>
     );
   }

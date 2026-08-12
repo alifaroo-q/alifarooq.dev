@@ -16,15 +16,15 @@ export const contactSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, "A name, so a reply can be addressed to someone.")
+    .min(2, "A name, so I know who I'm replying to.")
     .max(80, "Shorter than 80 characters."),
   email: z
-    .email("An address a reply can actually reach.")
+    .email("An address a reply can reach.")
     .max(160, "Shorter than 160 characters."),
   message: z
     .string()
     .trim()
-    .min(20, "A little more than this — 20 characters at least.")
+    .min(20, "A little more than this. 20 characters at least.")
     .max(4000, "Shorter than 4000 characters."),
 });
 
