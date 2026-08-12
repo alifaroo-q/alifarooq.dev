@@ -190,7 +190,7 @@ const about = [
  * studies. The block is the smallest thing on the page on purpose.
  */
 const stack = {
-  line: "Most of it is TypeScript on Node, with Postgres underneath and AWS around it — Next.js when the frontend is mine, and a fair amount of LLM and agent work lately.",
+  line: "Most of what I build is TypeScript on Node, with Postgres below it and AWS around it. I use Next.js when the frontend is mine, and much of the recent work is LLM and agent work.",
   href: "/stack",
   // Names what is behind the click, the habit the work rows and the featured
   // repo both keep, at the quietest weight on the page.

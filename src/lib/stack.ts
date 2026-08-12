@@ -70,7 +70,7 @@ export const STACK: StackItem[] = [
   {
     name: "TypeScript",
     slug: "typescript",
-    note: "Everything I write. The types stop at the boundary: a parsed response is typed and an unparsed one is a lie the compiler will agree with, so most of the value is in the handful of places that check.",
+    note: "I write everything in TypeScript. The types stop at the boundary. A parsed response has a true type. An unparsed one is a lie that the compiler accepts. Most of the value sits in the few places that examine the data.",
     proof: {
       href: "/open-source/result-kit",
       label: "What I do with the failure case →",
@@ -79,12 +79,12 @@ export const STACK: StackItem[] = [
   {
     name: "Node",
     slug: "node",
-    note: "The runtime under all of it. One thread is enough until a CPU-bound handler holds the loop, and then every unrelated request waits behind work that has nothing to do with it.",
+    note: "Node is the runtime under all of it. One thread is enough until a CPU-bound handler holds the loop. Then every other request waits behind work that it does not need.",
   },
   {
     name: "Postgres",
     slug: "postgres",
-    note: "The default store, and where I put the rules a service should not be trusted with. A constraint costs a migration every time the rule changes; it also turns a bug into a failed write instead of bad money.",
+    note: "Postgres is my default store. I put the rules there that a service must not own. Each constraint costs a migration when the rule changes. Each constraint also turns a bug into a failed write instead of bad money.",
     proof: {
       href: "/work/the-money-rule-in-the-database-not-the-service",
       label: "The money rule, in the database →",
@@ -93,27 +93,27 @@ export const STACK: StackItem[] = [
   {
     name: "Redis",
     slug: "redis",
-    note: "Cache and lock. The read was never the hard part — deciding what is allowed to be stale is, and a key with no owner is a key nobody will dare delete a year later.",
+    note: "I use Redis as a cache and as a lock. The read was never the hard part. The hard part is the decision about which data can be stale. A key with no owner is a key that nobody will delete a year later.",
   },
   {
     name: "Queues",
     slug: "queues",
-    note: "BullMQ on Redis, SQS on AWS, RabbitMQ where the routing earned it. A queue moves the failure rather than removing it: the job now fails where no user is watching, which makes retries and dead letters the feature and not the plumbing.",
+    note: "I use BullMQ on Redis, SQS on AWS, and RabbitMQ when the routing needs it. A queue moves the failure. It does not remove it. The job now fails where no user looks, so retries and dead letters are the feature.",
   },
   {
     name: "AWS",
     slug: "aws",
-    note: "EC2, S3, RDS, SQS, Lambda, CloudWatch, IAM. IAM is where the time goes, and a policy written wide enough to unblock a deploy is a policy nobody comes back to narrow.",
+    note: "I use EC2, S3, RDS, SQS, Lambda, CloudWatch, and IAM. IAM takes most of the time. A policy wide enough to unblock a deploy is a policy that nobody makes narrow again.",
   },
   {
     name: "Docker",
     slug: "docker",
-    note: "Compose locally, images in CI. It makes “works on my machine” a smaller lie rather than a dead one — the image is reproducible, the environment it reads at boot is not.",
+    note: "I use Compose on my machine and images in CI. Docker makes “works on my machine” a smaller lie, not a dead one. The image is repeatable. The environment that it reads at start is not.",
   },
   {
     name: "NestJS",
     slug: "nestjs",
-    note: "The structure most of the backend work sat in. Its container makes wiring cheap, which is exactly how a service ends up with twenty-seven modules that all reach the database and no single place that owns a transaction.",
+    note: "Most of the backend work sat inside NestJS. Its container makes the wiring cheap. That is how a service gets twenty-seven modules that all reach the database, and no single place that owns a transaction.",
     proof: {
       href: "/work/the-handle-goes-in-the-signature",
       label: "What that cost, and the fix →",
@@ -122,12 +122,12 @@ export const STACK: StackItem[] = [
   {
     name: "Next.js and React",
     slug: "next-react",
-    note: "Shipped and maintained, this site included. The cost is the boundary: every value crossing from server to client is serialised, and the mistake arrives looking like a rendering bug rather than the data-shape bug it is.",
+    note: "I shipped and maintained both, and this site is one of them. The cost is the boundary. The runtime serializes every value that moves from the server to the client. The mistake then looks like a render bug, not the data-shape bug that it is.",
   },
   {
     name: "Payments",
     slug: "payments",
-    note: "Stripe, and Fedapay for West African francs. Money is the case where retrying is not safe by default — the same webhook arrives twice, and the second one has to be provably free rather than probably harmless.",
+    note: "I use Stripe, and Fedapay for West African francs. Money is the case where a retry is not safe by default. The same webhook arrives twice. The second one must do nothing, and I must be able to prove it.",
     proof: {
       href: "/work/the-money-rule-in-the-database-not-the-service",
       label: "Why the rule left the service →",
@@ -136,12 +136,12 @@ export const STACK: StackItem[] = [
   {
     name: "LLMs and agents",
     slug: "llms",
-    note: "OpenAI models, LangChain and LlamaIndex, retrieval over pgvector and Pinecone. The model is the part that fails quietly: it returns something correctly shaped and wrong, so the work is the schema at the edge and the decision about what context to send at all.",
+    note: "I use OpenAI models, LangChain, LlamaIndex, and retrieval over pgvector and Pinecone. The model is the part that fails quietly. It returns an answer with the correct shape and the wrong content. The work is the schema at the edge, and the choice of what context to send.",
   },
   {
     name: "Observability",
     slug: "observability",
-    note: "Sentry for exceptions, Seq for structured logs. Logs earn their storage only when one request can be followed end to end — short of that you have a great deal of evidence about a system nobody can reconstruct.",
+    note: "I use Sentry for exceptions and Seq for structured logs. Logs earn their storage only when you can trace one request from end to end. Without that, you get much evidence about a system that nobody can rebuild.",
   },
 ];
 
@@ -165,10 +165,10 @@ export const STACK: StackItem[] = [
  * open-source pages do with theirs: the heading is already the claim, and what
  * the reader needs from an eyebrow is which part of the site they are in.
  */
-export const STACK_HEADING = "Twelve things I have had to live with.";
+export const STACK_HEADING = "Twelve tools, and what each one cost me.";
 
 export const STACK_STANDFIRST =
-  "Everything here is something I shipped and then had to live with. Twelve of them, and what each one cost.";
+  "I shipped every tool on this list. Then I kept each one in production long enough to learn what it costs.";
 
 export const STACK_EYEBROW = "Stack";
 
@@ -181,7 +181,7 @@ export const STACK_EYEBROW = "Stack";
  * it into an advertisement for how old the page is.
  */
 export const STACK_HEDGE =
-  "Not a complete list. It stops where the honest part stops.";
+  "This list is not complete. It stops where the honest part stops.";
 
 /**
  * What did not clear the bar, in one sentence.
@@ -197,4 +197,4 @@ export const STACK_HEDGE =
  * other.
  */
 export const BELOW_BAR =
-  "I have shipped Python without living with it long enough to claim it here, and I have seen Java and C# work up close without ever carrying either.";
+  "I shipped Python, but I did not keep it long enough to claim it here. I saw Java and C# at work, but I never owned either one.";
