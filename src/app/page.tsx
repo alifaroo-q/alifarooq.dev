@@ -109,7 +109,8 @@ const openSource = {
   // the precedent #14 set when it cut the About line for restating the
   // positioning sentence. Saying it twice in one screen reads as padding.
   conviction: OPEN_SOURCE_CONVICTION,
-  retrofit: "Four months later I hit the same wall and answered it the other way.",
+  retrofit:
+    "Four months later I hit the same wall and answered it the other way.",
 
   featured: {
     name: "drizzle-tx",
