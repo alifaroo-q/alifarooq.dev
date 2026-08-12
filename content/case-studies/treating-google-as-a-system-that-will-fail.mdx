@@ -1,10 +1,10 @@
 ---
 sector: "A healthcare services provider"
 decision: "Treating Google as a system that will fail"
-constraint: "OAuth tokens expire, Gmail watches lapse, webhooks drop — and all of it happens silently. The automation had to detect its own blind spots before anyone downstream noticed the mail had stopped moving."
+constraint: "A watch lapses after seven days. A token expires, a webhook drops, and none of it makes a noise. I had to make the automation notice its own blind spots before someone downstream asked why a lead had gone cold."
 artifactLabel: "See the state diagram →"
 order: 1
-description: "A healthcare services provider's mail automation, built to notice its own blind spots. Tokens expire and webhooks drop, and all of it happens quietly."
+description: "Mail automation for a healthcare provider, where a bad day looked exactly like a quiet one. I built it to notice its own blind spots, and the renewal job turned out to run every day."
 ---
 
 ## The problem
