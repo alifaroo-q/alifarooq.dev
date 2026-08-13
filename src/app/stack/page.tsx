@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactFooter } from "@/components/contact-footer";
+import { Cue } from "@/components/cue";
 import { DetailShell } from "@/components/detail-shell";
 import { SectionIndex } from "@/components/section-index";
 import { pageMetadata } from "@/lib/metadata";
@@ -96,7 +97,7 @@ export default function StackPage() {
             {item.proof ? (
               <p className="mt-flow">
                 <a className="text-accent text-sm" href={item.proof.href}>
-                  {item.proof.label}
+                  <Cue label={item.proof.label} />
                 </a>
               </p>
             ) : null}

@@ -11,10 +11,14 @@
 export function SectionHead({ id, label }: { id: string; label: string }) {
   return (
     <div className="flex items-baseline gap-4 border-border border-t px-6 py-3 md:px-10">
-      <h2 className="text-accent text-label uppercase" id={id}>
+      {/* The label arrives, and the rule draws out from under it. Two hooks
+          rather than one on the wrapper, because they are two different
+          motions and the second only reads as an underline if it starts where
+          the first one ends. Both are settled in `globals.css`. */}
+      <h2 className="text-accent text-label uppercase" data-reveal id={id}>
         {label}
       </h2>
-      <span aria-hidden="true" className="h-px flex-1 bg-border" />
+      <span aria-hidden="true" className="section-rule h-px flex-1 bg-border" />
     </div>
   );
 }

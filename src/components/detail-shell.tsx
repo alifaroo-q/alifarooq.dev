@@ -41,7 +41,14 @@ export function DetailShell({
 }) {
   return (
     <>
-      <div className="border-border border-b px-6 pt-12 pb-14 md:px-10 md:pt-16">
+      {/* Four slots again — back link, eyebrow, title, standfirst — so the head
+          of a detail page arrives the way the fold does, and a reader clicking
+          between the two does not meet two different pages. `globals.css`
+          settles the stagger. */}
+      <div
+        className="border-border border-b px-6 pt-12 pb-14 md:px-10 md:pt-16"
+        data-enter
+      >
         {/* Back to the section the reader came from, not the top of the page. */}
         <a
           className="group inline-block text-foreground-muted text-sm hover:text-accent"

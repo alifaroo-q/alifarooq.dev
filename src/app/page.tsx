@@ -1,5 +1,7 @@
 import { allCaseStudies } from "content-collections";
 import { ContactFooter } from "@/components/contact-footer";
+import { Cue } from "@/components/cue";
+import { Headline } from "@/components/headline";
 import { Portrait } from "@/components/portrait";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
@@ -238,6 +240,10 @@ function Fact({
           <span
             aria-hidden="true"
             className="inline-block size-1.5 self-center rounded-full bg-accent"
+            // The one thing on the site that moves without being asked to, and
+            // the reason it may is the same reason the dot exists: the line
+            // has to read as current. A slow breathe, settled in `globals.css`.
+            data-live
           />
         ) : null}
         {detail}
@@ -294,56 +300,102 @@ export default function Home() {
       <SiteHeader name={person.name} resumeHref={person.resumeHref} />
 
       <main id="main">
-        {/* THE FOLD — four slots: name, sentence, micro-line, action pair. */}
-        <section className="px-6 pt-20 pb-20 md:px-10 md:pt-28">
-          {/* The name is non-negotiable up here. A reader arriving from a
-              LinkedIn link needs to confirm within a second that they are in
-              the right place, which is why #10 did not adopt the runner-up
-              take's inverted fold. */}
-          <h1 className="font-medium text-[clamp(2.5rem,8vw,5rem)] leading-[0.95] tracking-tight">
-            {person.name}
-          </h1>
+        {/* THE FOLD, AND IT HOLDS THE SCREEN.
 
-          <p className="mt-group max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
-            {person.positioningLead}{" "}
-            {person.positioningClauses.map((clause, i) => (
-              <span key={clause}>
-                {clause}
-                {/* Set at the label size rather than below it. That size is a
-                    floor on this site, and a marker is not the thing to make
-                    an exception for. */}
-                <sup
-                  aria-hidden="true"
-                  className="ml-0.5 text-accent text-label"
-                >
-                  {marker(i + 1)}
-                </sup>
-                {i < person.positioningClauses.length - 1 ? " " : ""}
-              </span>
-            ))}
-          </p>
+            One viewport tall, less the header it sits under, so the first
+            thing a reader sees is the whole claim and NOTHING of the evidence.
+            The work rows start below the bottom edge — that is what makes them
+            arrive on the scroll rather than already be there, and it is why
+            this section owns a height at all. `svh` rather than `vh`: on a
+            phone `vh` is the tallest the viewport ever gets, so the first row
+            would be tucked under the browser chrome instead of under the fold.
 
-          <dl className="mt-group max-w-md space-y-1.5">
-            <Fact detail={person.role} term="role" />
-            <Fact detail={person.location} term="based" />
-            <Fact detail={person.availability} live term="status" />
-          </dl>
+            `min-h`, never `h`. A short landscape window makes the fold taller
+            than the screen rather than clipping the sentence, which is the
+            failure that matters.
 
-          {/* The action pair. No inventory line above it — the sentence is
-              already the table of contents, and a second line under it would
-              summarise a page the reader can see. A fold with two claims has
-              none. */}
-          <div className="mt-group flex flex-wrap gap-3">
-            <a className={ACTION_CLASS} href={person.resumeHref}>
-              Download resume
-            </a>
-            <a
-              className="border border-border-strong px-5 py-2.5 transition-colors hover:bg-foreground hover:text-background"
-              href={`mailto:${person.email}`}
-            >
-              Get in touch
-            </a>
+            Four slots inside — name, sentence, micro-line, action pair — and
+            `data-enter` staggers them in that order, which is the reading
+            order made briefly visible. The hook is on the CONTAINER because
+            the children take their delay from their position in it; a delay
+            written on a block is a delay the next block forgets. */}
+        <section className="flex min-h-[calc(100svh-var(--spacing-header))] flex-col px-6 py-14 md:px-10">
+          <div className="my-auto" data-enter>
+            {/* The name is non-negotiable up here. A reader arriving from a
+                LinkedIn link needs to confirm within a second that they are in
+                the right place, which is why #10 did not adopt the runner-up
+                take's inverted fold. */}
+            <Headline className="font-medium text-[clamp(2.5rem,8vw,5rem)] leading-[0.95] tracking-tight">
+              {person.name}
+            </Headline>
+
+            <p className="mt-group max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
+              {person.positioningLead}{" "}
+              {person.positioningClauses.map((clause, i) => (
+                <span key={clause}>
+                  {clause}
+                  {/* Set at the label size rather than below it. That size is
+                      a floor on this site, and a marker is not the thing to
+                      make an exception for. */}
+                  <sup
+                    aria-hidden="true"
+                    className="ml-0.5 text-accent text-label"
+                  >
+                    {marker(i + 1)}
+                  </sup>
+                  {i < person.positioningClauses.length - 1 ? " " : ""}
+                </span>
+              ))}
+            </p>
+
+            <dl className="mt-group max-w-md space-y-1.5">
+              <Fact detail={person.role} term="role" />
+              <Fact detail={person.location} term="based" />
+              <Fact detail={person.availability} live term="status" />
+            </dl>
+
+            {/* The action pair. No inventory line above it — the sentence is
+                already the table of contents, and a second line under it would
+                summarise a page the reader can see. A fold with two claims has
+                none. */}
+            <div className="mt-group flex flex-wrap gap-3">
+              <a className={ACTION_CLASS} href={person.resumeHref}>
+                Download resume
+              </a>
+              <a
+                className="border border-border-strong px-5 py-2.5 transition-colors hover:bg-foreground hover:text-background"
+                href={`mailto:${person.email}`}
+              >
+                Get in touch
+              </a>
+            </div>
           </div>
+
+          {/* The one line the held screen costs, and the reason it is cheap.
+
+              A fold that fills the viewport hides the evidence under it, so it
+              has to say that there IS evidence under it — otherwise a reader
+              who does not scroll has read a claim and left. It names the
+              section rather than saying "scroll", because the arrow already
+              says which way and the label is the only part carrying a fact.
+
+              Outside `data-enter` on purpose: the stagger is four slots and
+              this is not a fifth claim, it is the way out of the four.
+
+              It writes its own arrow rather than going through `Cue`. Every
+              cue on the site ends in `→` and nudges right on hover; this one
+              points DOWN, and a right-moving down arrow is two directions in
+              one gesture. The arrow is `aria-hidden` for the reason `Cue`
+              hides its own: the link already says where it goes. */}
+          <a
+            className="mt-group self-start text-foreground-label text-label uppercase hover:text-accent"
+            href="#work"
+          >
+            Work{" "}
+            <span aria-hidden="true" className="fold-cue inline-block">
+              ↓
+            </span>
+          </a>
         </section>
 
         {/* WORK — rows, never cards. A reader counts boxes and infers a
@@ -353,9 +405,14 @@ export default function Home() {
             announces a genre and primes the reader for marketing copy. */}
         <SectionHead id="work" label="Work" />
         <section aria-labelledby="work">
+          {/* Every row starts below the fold's bottom edge, so every row is
+              scrolled to rather than landed on. `data-reveal` scrubs each one
+              against its own progress up the screen — it runs on the scroll,
+              not alongside it, so it also runs backwards. */}
           {work.map((caseStudy) => (
             <a
               className="flip-ground group grid grid-cols-[2.5rem_1fr] gap-x-4 border-border border-b bg-background px-6 py-8 text-foreground md:grid-cols-[4rem_1fr] md:px-10 md:py-10"
+              data-reveal
               href={`/work/${caseStudy.slug}`}
               key={caseStudy.slug}
             >
@@ -394,7 +451,9 @@ export default function Home() {
                     removes the only real reason to click. Naming it turns
                     that withholding into a promise, where "Read the case
                     study" asks for the click on trust alone. */}
-                <p className="mt-flow text-accent">{caseStudy.artifactLabel}</p>
+                <p className="mt-flow text-accent">
+                  <Cue label={caseStudy.artifactLabel} />
+                </p>
               </div>
             </a>
           ))}
@@ -424,6 +483,7 @@ export default function Home() {
               weighting done structurally rather than stated. */}
           <a
             className="flip-ground block border-border border-y bg-background px-6 py-8 text-foreground md:px-10 md:py-10"
+            data-reveal
             href={openSource.featured.href}
           >
             <div className="max-w-measure">
@@ -433,7 +493,9 @@ export default function Home() {
               <p className="mt-flow text-foreground-muted">
                 {openSource.featured.pitch}
               </p>
-              <p className="mt-flow text-accent">{openSource.featured.label}</p>
+              <p className="mt-flow text-accent">
+                <Cue label={openSource.featured.label} />
+              </p>
             </div>
           </a>
 
@@ -448,6 +510,7 @@ export default function Home() {
                   "px-6 py-8 md:px-10",
                   i === 0 && "border-border border-b md:border-r md:border-b-0",
                 )}
+                data-reveal
                 key={repo.name}
               >
                 <div className="max-w-measure">
@@ -468,10 +531,14 @@ export default function Home() {
                       promises, and the page is the thing a link to GitHub
                       cannot signal — that there is an argument behind the
                       name. */}
-                  {"page" in repo && (
+                  {/* Both halves, not just the path: the cue line needs its
+                      label to name what is behind the click, and a link with
+                      an href and nothing to say is not the thing #52 asked
+                      for. `"page" in repo` only ever proved the first half. */}
+                  {repo.page && repo.pageLabel && (
                     <p className="mt-tight">
                       <a className="text-accent text-sm" href={repo.page}>
-                        {repo.pageLabel}
+                        <Cue label={repo.pageLabel} />
                       </a>
                     </p>
                   )}
@@ -495,6 +562,7 @@ export default function Home() {
         <section
           aria-labelledby="about"
           className="grid gap-8 px-6 py-14 md:grid-cols-[9rem_1fr] md:px-10"
+          data-reveal
         >
           <Portrait />
           <div className="max-w-measure space-y-flow text-foreground-muted">
@@ -511,7 +579,7 @@ export default function Home() {
             <p className="border-border border-t pt-flow">{stack.line}</p>
             <p>
               <a className="text-accent text-sm" href={stack.href}>
-                {stack.label}
+                <Cue label={stack.label} />
               </a>
             </p>
           </div>

@@ -50,8 +50,28 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
  * arrives. That is what a budget is for. The 100 KB figure is recorded on #34
  * rather than quietly dropped, because the interesting part is that it was
  * agreed without anybody building the site.
+ *
+ * **RAISED FROM 145 TO 192 KB when the motion moved to GSAP.** That is 43 KB
+ * of gsap core and ScrollTrigger, on every route, and it is the largest single
+ * thing this site has ever chosen to ship. It is written down here rather than
+ * absorbed quietly, because a budget that moves whenever it is inconvenient is
+ * not a gate:
+ *
+ * - It buys scrubbed reveals in EVERY browser. The CSS it replaces used
+ *   `animation-timeline: view()`, which Safari and Firefox do not have, so
+ *   most readers were getting the `@supports` fallback of no motion at all.
+ *   The 43 KB is what makes the site's motion true for most of its readers
+ *   rather than for a minority on Chrome.
+ * - It is NOT deferred, and that is deliberate. Loading it on an idle callback
+ *   would keep this number at 145 and move the cost somewhere the budget
+ *   cannot see, which is worse than paying it. It would also land after the
+ *   fold had been painted, so the first thing a reader saw would be the hero
+ *   snapping back to hidden and starting again.
+ *
+ * The room is 6 KB again, the same as before, so the next arrival still has to
+ * argue for itself.
  */
-export const LIMIT_BYTES = 145 * 1024;
+export const LIMIT_BYTES = 192 * 1024;
 
 /**
  * Every `<script src="/_next/static/...">` a browser will fetch, in order and

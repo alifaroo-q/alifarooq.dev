@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@/components/analytics";
+import { MotionRuntime } from "@/components/motion-runtime";
 import { rootMetadata } from "@/lib/metadata";
 import "./globals.css";
 
@@ -59,6 +60,11 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        {/* The site's only client boundary, and it renders nothing. It reads
+            the motion hooks already on the markup above it, so a page stays
+            server-rendered and the animation stays out of the page's own
+            source. See `motion-runtime.tsx`. */}
+        <MotionRuntime />
         <Analytics />
       </body>
     </html>

@@ -88,6 +88,27 @@
 
   /* The sticky header's height, so anchored content can clear it. */
   --spacing-header: 3.5rem;
+
+  /* MOTION. One curve and three speeds, named by role, for the same reason
+     the spacing scale is named by role: a duration picked at the call site is
+     a duration the next call site guesses at. The motion block at the foot of
+     this file reads them, and `motion-runtime.tsx` mirrors the curve and the
+     enter speed — GSAP cannot read a CSS variable, so those two are written
+     once in each place and have to be edited together.
+
+     One curve, and it decelerates. Everything that moves on this site is
+     arriving — a row into view, a page over the last one — and a thing that
+     arrives should slow as it lands. Nothing here bounces or overshoots.
+
+     Three speeds, because there are three jobs. `hover` is the ground flip and
+     the arrow nudge: the reader did it, so the answer has to feel instant.
+     `enter` is a block arriving on its own, which is the only motion long
+     enough to be watched. `page` sits between them and is short on purpose —
+     a cross-fade the reader waits for is a slow site. */
+  --ease-arrive: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-hover: 140ms;
+  --duration-page: 220ms;
+  --duration-enter: 520ms;
 }
 
 /* ==========================================================================
@@ -353,10 +374,17 @@
    left grey text stranded on a light ground at 3.36:1 — a fail — and any
    later "just set the colour here" edit brings it back.
    ========================================================================== */
-.flip-ground {
+/* The descendants are in the selector, and that is not tidying. `color` is
+   inherited, but a transition is not: the row faded its ground over 140ms
+   while every word on it changed in one frame, so the text arrived on the new
+   ground before the ground did. Each element that reads a colour needs its own
+   transition to move with the row, and inside a row that is all of them. */
+.flip-ground,
+.flip-ground * {
   transition:
-    background-color 140ms linear,
-    border-color 140ms linear;
+    background-color var(--duration-hover) linear,
+    border-color var(--duration-hover) linear,
+    color var(--duration-hover) linear;
 }
 
 .flip-ground:hover,
@@ -480,7 +508,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .flip-ground {
+  .flip-ground,
+  .flip-ground * {
     transition: none;
   }
 
@@ -488,5 +517,224 @@
      fade between the two states, which is the movement. */
   [data-part] {
     transition: none;
+  }
+}
+
+/* ==========================================================================
+   MOTION.
+
+   Everything below is decoration, and that word is the whole design of this
+   block. The page has to be complete and readable with none of it — the
+   argument is the prose, the ground flip and the dimmed diagram, and all three
+   are settled above this line.
+
+   The reveals moved to `src/components/motion-runtime.tsx` and the rest is
+   still here — the page transition, the header's hairline, the cue arrows and
+   the status dot, all of which the browser can do on its own. Three rules
+   govern both halves, and each one is a correctness rule:
+
+   - NOTHING STARTS HIDDEN UNLESS IT CAN BE SHOWN AGAIN. Nothing in this file
+     hides anything, and every hidden state in the runtime is set FROM
+     JavaScript, so a browser that runs none of it gets the finished page.
+   - ONLY `opacity`, `translate` AND `scale`. All three compose, so a reveal
+     costs no layout and no paint. Anything that moves an edge — a height, a
+     margin, a width — would relayout the column on every frame of a scroll.
+   - MOTION SETS NO COLOUR. Same rule the rest of the file keeps, for the same
+     reason: a colour written here would beat the variables a row flip
+     redefines. The one value below that names a colour names `transparent`,
+     which is the absence of one.
+
+   And all of it is off under `prefers-reduced-motion: reduce`. That is stated
+   as `no-preference` on each block rather than as a `reduce` block that undoes
+   them, so a reveal added later is off by default instead of being remembered.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Page to page.
+
+   Every internal link on this site is a plain `<a href>` — there is no client
+   router and no `next/link` anywhere in `src/` — so each navigation is a real
+   document load. That is what makes this two lines instead of a library: a
+   cross-document view transition is the browser's own, it needs no JavaScript,
+   and where it is unsupported the navigation is the hard cut it always was.
+
+   The default is a straight cross-fade of the whole page. What replaces it is
+   the same fade with 6px of rise on the arriving page, at 220ms — the reader
+   should register that the page changed and never wait for it.
+
+   `navigation: none` under reduce, because a cross-fade is still movement and
+   the spec leaves honouring the preference to the browser.
+   -------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: page-leave var(--duration-page) linear both;
+  }
+
+  ::view-transition-new(root) {
+    animation: page-arrive var(--duration-page) var(--ease-arrive) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+@keyframes page-leave {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-arrive {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Arriving on load and on scroll — NOT HERE ANY MORE.
+
+   `data-enter`, `data-reveal`, `.section-rule` and `data-headline` are driven
+   by `src/components/motion-runtime.tsx`, on GSAP with ScrollTrigger. The
+   hooks are unchanged and a call site still names no duration and no curve;
+   what changed is what reads them.
+
+   The reason is coverage. Those two blocks were scrubbed against
+   `animation-timeline: view()`, which is right — a block follows the reader's
+   thumb and runs backwards on the way up — and which Safari and Firefox do not
+   have, so most readers got the `@supports` fallback of no motion at all. The
+   guard was hiding that rather than fixing it. ScrollTrigger scrubs the same
+   way everywhere, and it can hold a timeline, which is what the headline needs
+   and what a list of CSS delays could only approximate.
+
+   Every rule the block kept is kept there: the hidden state is set FROM
+   JavaScript so a browser that never runs it gets the finished page, only
+   `opacity`, `y` and `scale` move, no colour is set, and the whole of it is
+   inside a `no-preference` query.
+
+   Neither reveal was ever on the contact footer. That block is the end of the
+   page in both fills, it is often taller than the viewport, and a form is not
+   a thing to fade in underneath somebody. It carries no hook, so it still is
+   not.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   The fold's way out.
+
+   The fold holds the whole screen, so the work rows start below the bottom
+   edge and a reader who does not scroll has read a claim and no evidence. The
+   line at the foot of the fold is what says there is more, and the arrow is
+   the part of it that pictures the direction — so the arrow is the part that
+   moves.
+
+   It is the cue arrow's rule turned through ninety degrees, and it is a
+   separate selector for that reason: `.cue-arrow` nudges right, this one
+   nudges down, and one class doing both would be two directions in one
+   gesture. A quarter-em, like the other, so the line's height does not
+   visibly change.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .fold-cue {
+    transition:
+      translate var(--duration-hover) var(--ease-arrive),
+      color var(--duration-hover) linear;
+  }
+
+  :where(a:hover, a:focus-visible) .fold-cue {
+    translate: 0 0.25em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The header's hairline, which is not there at the top of the page.
+
+   At rest the header sits on the same ground as the fold under it, so the
+   border is a line drawn between two things that are not yet separate. It
+   earns itself once the page moves and content starts passing behind it, and
+   `scroll()` is what ties it to that rather than to a scroll listener setting
+   a class.
+
+   `transparent` is the only colour word in this block. It is the absence of a
+   colour, not a second one, so the border keeps reading `--border` and follows
+   the ground like everything else.
+   -------------------------------------------------------------------------- */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-site-header] {
+      animation: header-settle linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 4rem;
+    }
+  }
+}
+
+@keyframes header-settle {
+  from {
+    border-bottom-color: transparent;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The arrow on a cue line.
+
+   Every "See the state diagram →" on this site ends in that arrow, and the
+   arrow is the only part of the line that is a picture of what the click does.
+   So it is the part that moves. A quarter-em is enough to read as a nudge and
+   small enough that the line's right edge does not visibly change length.
+
+   `inline-block`, because a transform does nothing to an inline box. The hover
+   is written on the ANCHOR, not on the arrow, so the whole row triggers it —
+   which is what the work rows need, where the cue is one line inside a link
+   the size of the row.
+   -------------------------------------------------------------------------- */
+.cue-arrow {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* `color` is repeated here, and it has to be. Three of these arrows sit
+     inside a `.flip-ground` row, and `.flip-ground *` is the same specificity
+     as this selector — so whichever comes last in the file wins the WHOLE
+     `transition` property, not the halves each one asked for. This one comes
+     last, so it carries both jobs or the arrow snaps to the new ground while
+     every word around it fades. */
+  .cue-arrow {
+    transition:
+      translate var(--duration-hover) var(--ease-arrive),
+      color var(--duration-hover) linear;
+  }
+
+  :where(a:hover, a:focus-visible) .cue-arrow {
+    translate: 0.25em 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The status dot.
+
+   The fold states availability in words and the dot is what makes the line
+   read as current rather than as boilerplate. A slow breathe is the whole of
+   that job: 2.6s is far below the flash threshold SC 2.3.1 sets, and it never
+   drops far enough to be mistaken for switching off.
+
+   It is the one thing on the site that moves without being asked to, which is
+   why it is 6px across and why nothing else may join it.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  [data-live] {
+    animation: live-breathe 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes live-breathe {
+  50% {
+    opacity: 0.4;
   }
 }

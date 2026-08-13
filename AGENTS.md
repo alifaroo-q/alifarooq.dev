@@ -61,3 +61,58 @@ picked at the call site is the thing this section exists to stop.
   thought, `figure` around a code block or a table, `group` before a
   sub-heading, `section` between sections. A sixth step has to justify a sixth
   kind of relationship.
+
+## The motion
+
+Two files, and it is all decoration — the page has to be complete and readable
+with none of it. `src/components/motion-runtime.tsx` drives everything that
+arrives (GSAP with ScrollTrigger); the foot of `src/app/globals.css` keeps what
+the browser can do alone — the page transition, the header hairline, the cue
+arrows, the status dot. A call site gets a HOOK (`data-enter`, `data-reveal`,
+`data-headline`, `data-live`, `data-site-header`, `.cue-arrow`,
+`.section-rule`, `.fold-cue`) and never a duration, a curve or a keyframe. One
+curve and three speeds, named by role, the same way the spacing steps are.
+
+- **The runtime is the site's only client boundary**, mounted once in
+  `layout.tsx`, and it renders nothing. It reads hooks off server-rendered
+  markup, which is what keeps every page a server component. Do not add a
+  motion component per block.
+- **GSAP is 43 KB on every route and the budget was raised for it.** See the
+  note on `LIMIT_BYTES` in `scripts/js-budget.mjs`. It buys scrubbed reveals in
+  Safari and Firefox, which `animation-timeline: view()` never gave them. Do
+  not defer the load to get the number back down — the cost would just move
+  somewhere the budget cannot see, and the fold would paint before it ran.
+- **Nothing starts hidden unless it can be shown again.** Every hidden state is
+  set FROM JavaScript, by `gsap.from`, so a browser that runs none of it gets
+  the finished page. Never write the hidden half in CSS.
+- **A reveal ends while the block is still arriving** — `top 55%`, not the
+  bottom of the viewport. A range a short page cannot finish strands the last
+  block half-faded with nothing left to scroll.
+- **Only `opacity`, `y` and `scale`.** All three compose, so a reveal costs no
+  layout and no paint. Anything that moves an edge relayouts the column on
+  every frame of a scroll.
+- **Motion sets no colour**, for the reason the theme section gives. The one
+  value that names one names `transparent`, which is the absence of a colour.
+- **`no-preference` on each block, never a `reduce` block that undoes them.**
+  In the runtime that is `gsap.matchMedia("(prefers-reduced-motion:
+  no-preference)")`, which also reverts every tween if the reader turns the
+  preference on mid-visit. Stated that way round, motion added later is off by
+  default rather than off if somebody remembered.
+- **Page to page is the browser's own.** Every internal link is a plain
+  `<a href>` — no `next/link` anywhere in `src/` — so `@view-transition` costs
+  no JavaScript. Adding a client router would take this over and the
+  cross-fade would have to be re-earned.
+
+## The fold holds the screen
+
+The home page's fold is `min-h-[calc(100svh-var(--spacing-header))]`, so the
+first screen is the whole claim and none of the evidence. That is what makes
+the work rows arrive on the scroll instead of already being there.
+
+- `svh`, never `vh` — on a phone `vh` is the tallest the viewport ever gets, so
+  the first row would sit under the browser chrome rather than under the fold.
+- `min-h`, never `h` — a short landscape window makes the fold taller than the
+  screen instead of clipping the sentence.
+- A fold that hides what is under it has to say there IS something under it.
+  That is the one line at its foot, and it names the section rather than saying
+  "scroll".

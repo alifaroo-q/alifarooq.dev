@@ -21,7 +21,13 @@ export function SiteHeader({
   resumeHref: string;
 }) {
   return (
-    <header className="sticky top-0 z-10 flex h-header items-center justify-between border-border border-b bg-background px-6 text-sm md:px-10">
+    // `data-site-header` is the hook the hairline's scroll animation reads.
+    // The border is declared here and stays declared: what the animation does
+    // is hold it back until the page has moved. See `globals.css`.
+    <header
+      className="sticky top-0 z-10 flex h-header items-center justify-between border-border border-b bg-background px-6 text-sm md:px-10"
+      data-site-header
+    >
       <span className="font-medium">{name}</span>
       <nav aria-label="Primary" className="flex gap-6 text-foreground-muted">
         <a className="hover:text-accent" href={resumeHref}>
