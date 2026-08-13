@@ -565,9 +565,18 @@ export default function Home() {
               scrolled to rather than landed on. `data-reveal` scrubs each one
               against its own progress up the screen — it runs on the scroll,
               not alongside it, so it also runs backwards. */}
-          {work.map((caseStudy) => (
+          {work.map((caseStudy, i) => (
             <a
-              className="flip-ground group grid grid-cols-[2.5rem_1fr] gap-x-4 border-border border-b bg-background px-6 py-8 text-foreground md:grid-cols-[4rem_1fr] md:px-10 md:py-10"
+              className={cn(
+                "flip-ground group grid grid-cols-[2.5rem_1fr] gap-x-4 bg-background px-6 py-8 text-foreground md:grid-cols-[4rem_1fr] md:px-10 md:py-10",
+                // The rule between two rows, and only between two rows. The
+                // last row used to draw one as well, which sat directly on the
+                // next section head's own top rule — a 2px line made of two
+                // 1px ones. Now that the head takes `mt-section` the two would
+                // be a hairline, 56px of nothing, and a second hairline. The
+                // head's rule closes the stack; this one only divides it.
+                i < work.length - 1 && "border-border border-b",
+              )}
               data-reveal
               href={`/work/${caseStudy.slug}`}
               key={caseStudy.slug}
@@ -621,8 +630,15 @@ export default function Home() {
             weighting are in `openSource` above. */}
         <SectionHead id="open-source" label="Open source" />
         <section aria-labelledby="open-source">
-          {/* The conviction, and the one clause the retrofit gets up here. */}
-          <div className="px-6 pt-14 pb-12 md:px-10">
+          {/* The conviction, and the one clause the retrofit gets up here.
+
+              `pt-group` and not the 56px it opened with. The section head now
+              carries 56px above it, and a section that then puts another 56px
+              between its label and its first line leaves the label floating
+              between the two — as near to the section it ended as to the one
+              it opens. `group` is the scale's step for "a new thought under a
+              sub-heading", which is what this is. */}
+          <div className="px-6 pt-group pb-12 md:px-10">
             <div className="max-w-measure">
               <p className="text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
                 {openSource.conviction}

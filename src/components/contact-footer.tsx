@@ -26,10 +26,15 @@ export function ContactFooter({ compact = false }: { compact?: boolean }) {
     <footer>
       <SectionHead id="contact" label="Contact" />
 
+      {/* `pt-group` on both variants, and the bottom keeps its own step. The
+          head above now carries 56px of its own, so opening with another 56
+          would leave the label as far from the section it introduces as from
+          the one it ended. The foot is the page's last edge and wants the
+          room, so only the top comes down. */}
       <div
         className={cn(
-          "px-6 md:px-10",
-          compact ? "py-10 md:py-12" : "py-14 md:py-16",
+          "px-6 pt-group md:px-10",
+          compact ? "pb-10 md:pb-12" : "pb-14 md:pb-16",
         )}
       >
         {/* One container, one width, for everything in the footer — the lead,
