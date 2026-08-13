@@ -17,9 +17,26 @@ export const CONTACT_EMAIL = "hello@alifarooq.dev";
  * copied twice is two things that used to match. It carries no layout — the
  * call site adds that — and it sets nothing that is not a token, so it follows
  * the ground like everything else.
+ *
+ * THE LINE-HEIGHT IS STATED, and the reason is not how it looked. `body` sets
+ * `text-body`, 15px at 1.7, and a control inherited it like anything else — a
+ * 25.5px line box in 20px of padding, so the button was 47.5px tall. Half the
+ * leading goes above and half below, so the label was centred; it was a taller
+ * box, not a floating word, and stating the leading only takes about 3px off.
+ *
+ * What it buys is that the height stops being a function of a PROSE token. 1.7
+ * is tuned for a column where the eye has to find the next line, and it is the
+ * number most likely to be retuned for reading; every button on the site would
+ * have resized with it. `leading-tight` with `py-3` fixes the box at about
+ * 44px, which is the target size WCAG 2.5.5 asks for, and it now moves only
+ * when somebody means to move it.
+ *
+ * `inline-flex` and the two centring rules stop padding alone deciding where
+ * the label sits, so the two states of the contact form's submit — "Send
+ * message" and "Sending…" — cannot shift it.
  */
 export const ACTION_CLASS =
-  "border border-accent px-5 py-2.5 text-accent transition-colors hover:bg-accent hover:text-accent-foreground";
+  "inline-flex items-center justify-center border border-accent px-5 py-3 text-accent leading-tight transition-colors hover:bg-accent hover:text-accent-foreground";
 
 /**
  * The origin, written once (#16).
