@@ -166,6 +166,8 @@ const openSource = {
 };
 
 /**
+ * ABOUT — the bio, and under it the resume as two dated rows.
+ *
  * #8 names the employer exactly once, on this page, and never inside a case
  * study. That single mention is what stops the anonymised work reading as
  * evasion: the clients are nameless BECAUSE the employer is stated.
@@ -174,15 +176,66 @@ const openSource = {
  * years" and does the arithmetic in the reader's head rather than handing
  * over a small credential to be discounted before the evidence is read.
  *
- * The second line is one clause. It used to carry three examples, and #14 cut
- * them: they were the positioning sentence's three clauses restated, same
- * structure and same rhythm, so the page read as saying it twice.
+ * The bio's second line is one clause. It used to carry three examples, and
+ * #14 cut them: they were the positioning sentence's three clauses restated,
+ * same structure and same rhythm, so the page read as saying it twice.
+ *
+ * THE ROWS ARE NEW, and they are the work rows' grid rather than a shape of
+ * their own — a date in the marker column, then the thing and what it was.
+ * Reverse-chronological is the one layout a reader does not have to be taught,
+ * which is the whole argument for spending a second row-stack on the page.
+ *
+ * The bio's third line is GONE. It said "I'm in Karachi, and open to backend
+ * roles", and both halves are in the fold's micro-line four sections up.
+ *
+ * THE FIGURES BELONG TO THE ROW, not to the section. Loose under the bio they
+ * were a stat row about a person; under a dated employer they are the size of
+ * that job. Two of the four candidates are cut for the reason #14 cut the
+ * About line — `22 modules` is the drizzle-tx case study's own heading and the
+ * npm count is the line the open-source section closes on, so both would print
+ * twice in one scroll. What is left is the two the rest of the page never
+ * says.
+ *
+ * Only the employer row carries them. A lone `1` under the degree would be a
+ * number invented to fill a slot, and the uneven weight is the open-source
+ * block's device: the row with more to say gets more.
+ *
+ * NEITHER ROW NAMES A CITY, and it is the same rule as the fold's cut `role`
+ * row. Both rows carried "Karachi" for one draft, which put the city on this
+ * page three times — the fold's `based` row, and once each here. A row that
+ * repeats the line above it teaches a reader that the rows are decoration. The
+ * fold has the city, and the degree row already names the university.
  */
-const about = [
-  "I have been a software engineer at Zenkoders since 2024, on the backend of client products. That is why the work above never names a client.",
-  "The problems I get handed are the ones where being wrong is expensive.",
-  "I'm in Karachi, and open to backend roles.",
-];
+const about = {
+  bio: [
+    "I have been a software engineer at Zenkoders since 2024, on the backend of client products. That is why the work above never names a client.",
+    "The problems I get handed are the ones where being wrong is expensive.",
+  ],
+
+  rows: [
+    {
+      span: "2024 — now",
+      title: "Software engineer, Zenkoders",
+      line: "Backend of client products in healthcare, fintech and SaaS. AI voice booking on BullMQ queues, Gmail automation, document extraction out of PDFs nobody controls.",
+      figures: [
+        { n: "7,000", of: "inbound leads a month, booked against a calendar" },
+        { n: "100", of: "consultants drafting email through it" },
+      ],
+    },
+    {
+      span: "2020 — 2024",
+      title: "BS Computer Software Engineering",
+      line: "DHA Suffa University. Gold medal, top of the batch.",
+      figures: [],
+    },
+  ],
+
+  // Names what is behind the click, the habit every other cue here keeps. The
+  // href is `person.resumeHref` at the call site — the header, the fold and
+  // this line are one file, and three literals of a path is a dead link that
+  // only one of them shows.
+  resumeLabel: "The whole thing, dated and on one page →",
+};
 
 /**
  * The stack, and the only route to `/stack`.
@@ -731,23 +784,95 @@ export default function Home() {
         {/* ABOUT — after the work, not before it. Nobody scrolled for
             biography. */}
         <SectionHead id="about" label="About" />
-        <section
-          aria-labelledby="about"
-          className="grid gap-8 px-6 py-14 md:grid-cols-[9rem_1fr] md:px-10"
-          data-reveal
-        >
-          <Portrait />
-          <div className="max-w-measure space-y-flow text-foreground-muted">
-            {/* The stack line that used to close this block is gone, and it
-                is in the fold now. See the note on `stack` above: About is
-                three lines of biography again, which is what it was before the
-                list needed somewhere to live. */}
-            {about.map((line, i) => (
-              <p className={i === 0 ? "text-foreground" : undefined} key={line}>
-                {line}
-              </p>
-            ))}
+        <section aria-labelledby="about">
+          {/* The bio, and the face beside it. The stack line that used to
+              close this block is gone and it is in the fold now — see the note
+              on `stack` above. What took its place is the rows underneath,
+              which is a different kind of thing: biography reads first, the
+              record reads second. */}
+          <div
+            className="grid gap-8 px-6 pt-group pb-section md:grid-cols-[9rem_1fr] md:px-10"
+            data-reveal
+          >
+            <Portrait />
+            <div className="max-w-measure space-y-flow text-foreground-muted">
+              {about.bio.map((line, i) => (
+                <p
+                  className={i === 0 ? "text-foreground" : undefined}
+                  key={line}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
           </div>
+
+          {/* THE ROWS. The work rows' grid, at the quieter weight: no ground
+              flip and no cue, because neither row is a click. That inversion
+              is the site's signal for "a piece of work you can read", and a
+              job is not one.
+
+              `data-reveal` per row, the way the work rows take it, so each
+              scrubs against its own progress up the screen rather than the
+              pair arriving as one block. */}
+          {about.rows.map((row) => (
+            <div
+              className="grid grid-cols-[5rem_1fr] gap-x-4 border-border border-t px-6 py-8 md:grid-cols-[9rem_1fr] md:gap-x-8 md:px-10"
+              data-reveal
+              key={row.span}
+            >
+              {/* A `p`, not a `dt`. The span is a label above nothing — the
+                  row's heading is the `h3` beside it, and a definition list
+                  would claim the date defines the job. */}
+              <p className="pt-1.5 text-foreground-label text-label uppercase">
+                {row.span}
+              </p>
+              <div className="max-w-measure">
+                {/* `h3`, the same level the work rows and the repos take.
+                    About's `h2` is the section head, so these sit under it. */}
+                <h3 className="font-medium text-lg leading-tight">
+                  {row.title}
+                </h3>
+                <p className="mt-flow text-foreground-muted text-sm">
+                  {row.line}
+                </p>
+
+                {/* The figures. A `dl` because a number and what it counts is
+                    a term and its value, and a screen reader gets the pair
+                    rather than two loose strings.
+
+                    `figure` above them — the step for a block that is not
+                    prose sitting inside a run of it. The number is `text-xl`,
+                    one step over the row's heading and two under the work
+                    rows' decision headings: the thing the eye lands on inside
+                    the row, and still smaller than the row it belongs to. */}
+                {row.figures.length > 0 && (
+                  <dl className="mt-figure flex flex-wrap gap-x-section gap-y-figure">
+                    {row.figures.map((figure) => (
+                      <div className="max-w-[16rem]" key={figure.n}>
+                        <dt className="font-medium text-xl leading-none">
+                          {figure.n}
+                        </dt>
+                        <dd className="mt-tight text-foreground-label text-sm">
+                          {figure.of}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* The resume, at the foot of the record rather than only in the
+              header and the fold. This is the one place on the page where a
+              reader has just been shown a partial one, so it is the one place
+              the full file is the obvious next thing. */}
+          <p className="border-border border-t px-6 py-6 text-sm md:px-10">
+            <a className="text-accent" href={person.resumeHref}>
+              <Cue label={about.resumeLabel} />
+            </a>
+          </p>
         </section>
       </main>
 
