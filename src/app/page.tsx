@@ -5,6 +5,7 @@ import { Headline } from "@/components/headline";
 import { Portrait } from "@/components/portrait";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
+import { StackStrip } from "@/components/stack-strip";
 import {
   ACTION_CLASS,
   CONTACT_EMAIL,
@@ -15,6 +16,7 @@ import {
   PROFILE_URLS,
   SITE_URL,
 } from "@/lib/site";
+import { STACK_CUE } from "@/lib/stack";
 import { cn } from "@/lib/utils";
 
 /**
@@ -52,19 +54,28 @@ const person = {
    * client sector. That is what lets every concrete detail arrive after the
    * abstraction instead of competing with it.
    */
+  // A colon, not the em dash it used to end on. What follows is a list, and a
+  // colon is what introduces one; the dash was reading as prose.md's pivot,
+  // which short copy has no room to earn.
   positioningLead:
-    "I'm a backend engineer who designs for the failure case first —",
+    "I'm a backend engineer who designs for the failure case first:",
   positioningClauses: [
     "the integration that degrades silently,",
     "the payment that must never be captured twice,",
     "the transaction that outgrows the service it started in.",
   ],
 
-  // The micro-line. Role, location, availability, and nothing that could be
-  // read as proof: #8 kept every badge, stat and repo link out of the fold,
-  // on the grounds that a fold which produces evidence for its own claim is
-  // a fold that does not trust it. The page below is the proof.
-  role: PERSON_ROLE,
+  // The micro-line. Location, availability, and nothing that could be read as
+  // proof: #8 kept every badge, stat and repo link out of the fold, on the
+  // grounds that a fold which produces evidence for its own claim is a fold
+  // that does not trust it. The page below is the proof.
+  //
+  // The `role` row is GONE, and that is the point. It printed "Backend
+  // engineer" two inches under a sentence whose first six words are "I'm a
+  // backend engineer" — the largest prose on the page. A spec row that repeats
+  // the claim above it teaches a reader that the rows are decoration. The two
+  // left both say something the sentence does not. `PERSON_ROLE` still reaches
+  // the `<head>` and the `Person` block, which is where a machine needs it.
   location: "Karachi, Pakistan",
   availability: "Open to backend roles",
 
@@ -174,30 +185,42 @@ const about = [
 ];
 
 /**
- * The stack line, and the only route to `/stack`.
+ * The stack, and the only route to `/stack`.
  *
  * Three case studies argue in depth about a narrow slice — Postgres, Drizzle,
  * one payment integration — and a reader finishing them cannot tell whether
  * anything else has been shipped. Nothing on this site says AWS, Redis, a
  * queue, Docker, or any of the LLM work. That is the gap this closes.
  *
- * It is a SENTENCE naming six, not a list naming twelve. Six is what a reader
- * needs to place me; twelve nouns in one line stops being a sentence and
- * becomes the list, which is the thing the separate page is for. The names are
- * on this page rather than only behind the click for the plain reason that a
- * reader who never clicks is most readers.
+ * IT MOVED OUT OF ABOUT AND INTO THE FOLD, and the note that used to sit here
+ * argued against exactly that: "putting a line of nouns above the work would
+ * let it outrank three arguments", on the grounds that a reader who got as far
+ * as About had already decided to care. That is overruled, not answered. The
+ * fold holds the whole screen and there was about 600px of nothing between the
+ * actions and the way-out line on a 1080p display, and a held screen has to
+ * earn what it holds.
  *
- * It sits inside About, and it is a plain inline link rather than a row that
- * flips the ground. That inversion is this site's signal for "a piece of work
- * you can read"; spent here it would rank a reference list with the case
- * studies. The block is the smallest thing on the page on purpose.
+ * The old objection is kept honest by WEIGHT rather than by position, which is
+ * the open-source block's device. The strip is the quietest thing in the fold,
+ * it is below the actions rather than above them, and it does not flip the
+ * ground — that inversion is the site's signal for "a piece of work you can
+ * read", and a reference list is not one.
+ *
+ * It became a LIST of six marks where it was a sentence naming six. What that
+ * costs is the sentence's nuance — "Next.js when the frontend is mine",
+ * "Postgres underneath and AWS around it" — which said how the six relate and
+ * a row of chips cannot. Six is still the count: twelve nouns is the list, and
+ * the list is what the separate page is for.
+ *
+ * The label is NOT written here. It spells a count, so it lives beside the
+ * array it counts and `stack.test.ts` holds the two together — a number in a
+ * file that cannot see the list is a number that goes wrong quietly.
  */
 const stack = {
-  line: "Most of it is TypeScript on Node, with Postgres underneath and AWS around it. Next.js when the frontend is mine. Lately, a lot of LLM and agent work.",
   href: "/stack",
   // Names what is behind the click, the habit the work rows and the featured
   // repo both keep, at the quietest weight on the page.
-  label: "The whole list, and what each one cost →",
+  label: STACK_CUE,
 };
 
 /**
@@ -314,13 +337,40 @@ export default function Home() {
             than the screen rather than clipping the sentence, which is the
             failure that matters.
 
-            Four slots inside — name, sentence, micro-line, action pair — and
-            `data-enter` staggers them in that order, which is the reading
-            order made briefly visible. The hook is on the CONTAINER because
-            the children take their delay from their position in it; a delay
-            written on a block is a delay the next block forgets. */}
-        <section className="flex min-h-[calc(100svh-var(--spacing-header))] flex-col px-6 py-14 md:px-10">
-          <div className="my-auto" data-enter>
+            THE CONTENT SITS AT THE TOP, and it used to be centred. `my-auto`
+            on the block split the fold's slack above AND below it, which cost
+            twice. It pushed the claim into the middle of the viewport —
+            NN/g's scroll study puts 57% of viewing time above the fold and 65%
+            of THAT in the top half, so centring spends the name and the
+            sentence on the weaker half. And it left the way-out line stranded
+            around three quarters down with dead space under it, where a line
+            that means "the page continues past this edge" has to BE at the
+            edge. The claim is anchored to the top now and the slack is taken
+            lower down — by the actions, which is the block that wants to be at
+            the foot. Both halves fixed at once.
+
+            FOUR SLOTS — the name, the claim row (the sentence with the
+            micro-line beside it), the stack strip, and the actions. The
+            micro-line is IN the claim row rather than a slot of its own, and
+            that pairing is the one real decision in here: it went the other
+            way first, sitting with the actions, which ranked a control level
+            with metadata. It belongs with the sentence, which it annotates.
+            Pairing it there also takes about 7rem off the stack, so the fold
+            fits a laptop viewport without the sentence and the button fighting
+            for the same screen.
+
+            `data-enter` staggers all four in reading order, and it is on a
+            `contents` box so it can. The runtime staggers a container's
+            CHILDREN, and the actions need `mt-auto` — which only works on a
+            flex child of the section itself. `display: contents` generates no
+            box, so the four are laid out by the section while still being one
+            container's children. Without it the hook and the auto margin want
+            two different parents and one of them has to lose. The hook is on
+            the CONTAINER because the children take their delay from their
+            position in it; a delay written on a block is a delay the next
+            block forgets. */}
+        <section className="flex min-h-[calc(100svh-var(--spacing-header))] flex-col px-6 pt-section pb-figure md:px-10">
+          <div className="contents" data-enter>
             {/* The name is non-negotiable up here. A reader arriving from a
                 LinkedIn link needs to confirm within a second that they are in
                 the right place, which is why #10 did not adopt the runner-up
@@ -329,44 +379,140 @@ export default function Home() {
               {person.name}
             </Headline>
 
-            <p className="mt-group max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
-              {person.positioningLead}{" "}
-              {person.positioningClauses.map((clause, i) => (
-                <span key={clause}>
-                  {clause}
-                  {/* Set at the label size rather than below it. That size is
-                      a floor on this site, and a marker is not the thing to
-                      make an exception for. */}
-                  <sup
-                    aria-hidden="true"
-                    className="ml-0.5 text-accent text-label"
-                  >
-                    {marker(i + 1)}
-                  </sup>
-                  {i < person.positioningClauses.length - 1 ? " " : ""}
-                </span>
-              ))}
-            </p>
+            {/* THE CLAIM ROW — the sentence, and the micro-line annotating it.
 
-            <dl className="mt-group max-w-md space-y-1.5">
-              <Fact detail={person.role} term="role" />
-              <Fact detail={person.location} term="based" />
-              <Fact detail={person.availability} live term="status" />
-            </dl>
+                `flow` above it, and it is the gap that does the most work on
+                this screen. The scale's own answer: `flow` is block to block
+                inside ONE thought, and the name and the sentence that finishes
+                it are one thought. At `group` the sentence read as a separate
+                item in a list. Bound tight to the name it reads as the rest of
+                the line.
 
-            {/* The action pair. No inventory line above it — the sentence is
-                already the table of contents, and a second line under it would
-                summarise a page the reader can see. A fold with two claims has
-                none. */}
-            <div className="mt-group flex flex-wrap gap-3">
+                The facts sit BESIDE the sentence rather than under it, and
+                that is what buys the actions their own rank below. Everything
+                on this page is capped at the measure and left-anchored, so
+                past about 1100px the right of the fold was empty while the
+                stack ran on down past the bottom edge. The micro-line is the
+                one block here small enough and quiet enough to go in that
+                space: it is an annotation on the claim, not a step after it,
+                and beside the first line is where an annotation belongs.
+
+                `lg`, and NOT `sm`. At 640px the measure alone is 544px of the
+                560px of content width, so a second column has nothing to sit
+                in and both would be squeezed under their own minimums. The two
+                clear each other comfortably at 1024px and stack below it.
+
+                The right track is a WIDTH, not a measure and not a gap, so it
+                is written here rather than tokenised. It needs a floor because
+                the dotted leader inside `Fact` fills whatever it is given, so
+                a `max-content` column collapses the leader to nothing; 18rem
+                is roughly what the longest row ("Open to backend roles") needs
+                before the leader stops being visible. It grows to 24rem where
+                there is room, which is the leader getting longer rather than
+                the column drifting away from the sentence.
+
+                `items-baseline`, not `items-start`. The sentence is set at up
+                to 22px on 1.6 and the micro-line at 14px, so their first lines
+                start at different depths inside boxes that begin at the same
+                y. Aligned by BOX the metadata floats about 10px high; aligned
+                by BASELINE it sits on the sentence's first line, which is the
+                thing it annotates. */}
+            <div className="mt-flow grid gap-x-section gap-y-group lg:grid-cols-[minmax(0,var(--container-measure))_minmax(18rem,24rem)] lg:items-baseline lg:justify-start">
+              <p className="max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
+                {person.positioningLead}{" "}
+                {person.positioningClauses.map((clause, i) => (
+                  <span key={clause}>
+                    {clause}
+                    {/* Set at the label size rather than below it. That size
+                        is a floor on this site, and a marker is not the thing
+                        to make an exception for. */}
+                    <sup
+                      aria-hidden="true"
+                      className="ml-0.5 text-accent text-label"
+                    >
+                      {marker(i + 1)}
+                    </sup>
+                    {i < person.positioningClauses.length - 1 ? " " : ""}
+                  </span>
+                ))}
+              </p>
+
+              {/* `max-w-sm` is 24rem, the same number the grid track tops out
+                  at. Below `lg` there is no track to cap it, and a two-row
+                  list running the full width of a tablet is 700px of dotted
+                  leader between a word and a place name. */}
+              <dl className="max-w-sm space-y-1.5">
+                <Fact detail={person.location} term="based" />
+                <Fact detail={person.availability} live term="status" />
+              </dl>
+            </div>
+
+            {/* THE STACK STRIP, tucked straight under the claim.
+
+                `group`, which is the scale's answer for "a new thought, and it
+                has a sub-heading" — the strip carries its own label, and the
+                micro-line beside the sentence has already put the reader in
+                the register of quiet facts about the person. The strip
+                continues that register rather than starting a rank.
+
+                It is above the actions and it used to be below them. What that
+                buys is the fold's one gap landing BETWEEN the facts and the
+                thing to do about them, which is the only break on the screen
+                worth a gap that size. */}
+            <StackStrip
+              className="mt-group"
+              href={stack.href}
+              label={stack.label}
+            />
+
+            {/* THE ACTIONS, at the foot of the fold.
+
+                `mt-auto` moved here, and this block is now what spends the
+                held screen. The claim and the strip sit at the top as one
+                block of facts; the actions drop to the bottom edge and the way
+                out sits under them. Everything above is what he is, and the
+                last thing before the fold ends is what to do about it.
+
+                `pt-section` is the floor for the case with no slack to take: a
+                short window makes the fold taller than the screen, `mt-auto`
+                resolves to zero, and the actions still need a gap above them.
+
+                ONE BOX, and the second action is a cue line.
+
+                It was two boxes, and they were the only two on the site.
+                Three things were wrong with the pair and the third is the one
+                that settles it:
+
+                The second style was written HERE, inline, next to the constant
+                that exists so an affordance is not a copied class list.
+                `ACTION_CLASS` is imported at the top of this file.
+
+                It was drawn in `--border-strong`, which `globals.css` measures
+                at 1.76:1 on the dark ground and 1.73:1 on the light one. SC
+                1.4.11 asks 3:1 of a control's boundary, so the box was a fail
+                — and the same file already holds `--error-line` to that rule
+                by name.
+
+                And the site does not do this anywhere else. The header gives
+                Resume and Contact as plain links; every work row, every repo
+                and the stack line end in a cue with an arrow. Two competing
+                outlines in the fold was the register of a landing page, not of
+                this one.
+
+                So the resume keeps the box, because a download is the one
+                thing here that is not navigation. Contact becomes what every
+                other invitation on the site is. The address is still in the
+                fold, which is the half of the pair worth keeping.
+
+                `items-center` and not the row's default stretch: a one-line
+                text link stretched to a 44px box would sit at its top edge,
+                which is the misalignment it is here to avoid. */}
+            <div className="mt-auto flex flex-wrap items-center gap-x-figure gap-y-tight pt-section">
               <a className={ACTION_CLASS} href={person.resumeHref}>
                 Download resume
               </a>
-              <a
-                className="border border-border-strong px-5 py-2.5 transition-colors hover:bg-foreground hover:text-background"
-                href={`mailto:${person.email}`}
-              >
-                Get in touch
+              <a className="text-accent" href={`mailto:${person.email}`}>
+                <Cue label="Get in touch →" />
               </a>
             </div>
           </div>
@@ -379,8 +525,18 @@ export default function Home() {
               section rather than saying "scroll", because the arrow already
               says which way and the label is the only part carrying a fact.
 
-              Outside `data-enter` on purpose: the stagger is four slots and
-              this is not a fifth claim, it is the way out of the four.
+              `mt-group`, because the actions above it now take the slack. The
+              cue held `mt-auto` itself while it was the last thing in the
+              fold; two auto margins in one column split the free space between
+              them and would push the actions back up into the middle of the
+              screen. One block takes the slack and the cue follows it at a
+              fixed step.
+
+              `group` and not `flow`: the actions are a different thought from
+              the way out of the page, and this is the gap that says so.
+
+              Outside `data-enter` on purpose: the stagger is the fold's four
+              slots and this is not a fifth, it is the way out of them.
 
               It writes its own arrow rather than going through `Cue`. Every
               cue on the site ends in `→` and nudges right on hover; this one
@@ -566,22 +722,15 @@ export default function Home() {
         >
           <Portrait />
           <div className="max-w-measure space-y-flow text-foreground-muted">
+            {/* The stack line that used to close this block is gone, and it
+                is in the fold now. See the note on `stack` above: About is
+                three lines of biography again, which is what it was before the
+                list needed somewhere to live. */}
             {about.map((line, i) => (
               <p className={i === 0 ? "text-foreground" : undefined} key={line}>
                 {line}
               </p>
             ))}
-
-            {/* The stack, after the biography and before the footer. A reader
-                who has got this far has already decided to care; putting a
-                line of nouns above the work would let it outrank three
-                arguments. */}
-            <p className="border-border border-t pt-flow">{stack.line}</p>
-            <p>
-              <a className="text-accent text-sm" href={stack.href}>
-                <Cue label={stack.label} />
-              </a>
-            </p>
           </div>
         </section>
       </main>

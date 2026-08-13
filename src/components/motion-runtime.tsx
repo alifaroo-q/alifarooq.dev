@@ -71,7 +71,8 @@ const MOTION = {
   rise: "power4.out",
   enter: 0.52,
   headline: 0.9,
-  /** Four slots at 70ms, which is what the CSS staggered. */
+  /** 70ms a slot, which is what the CSS staggered. The container decides how
+      many slots there are; the fold has three. */
   step: 0.07,
   scrubStart: "top 92%",
   scrubEnd: "top 55%",
