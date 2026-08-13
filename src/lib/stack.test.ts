@@ -1,6 +1,6 @@
 import { allCaseStudies, allOpenSources } from "content-collections";
 import { describe, expect, it } from "vitest";
-import { STACK } from "./stack";
+import { STACK, STACK_CUE, STACK_HEADING } from "./stack";
 
 /**
  * The proof links are the reason this page exists rather than being a list of
@@ -33,6 +33,31 @@ describe("stack", () => {
     // mode every surveyed site fell into. Raising it is a decision, and a
     // decision should have to edit a test.
     expect(STACK).toHaveLength(12);
+  });
+
+  it("spells the true count in every string that states one", () => {
+    // Two strings say the number in words — the page's `h1` and the fold's
+    // route into it — and neither can see the array. The cap test above pins
+    // the length; this pins the WORDS to it, so raising the cap cannot ship a
+    // fold promising twelve and a page holding thirteen.
+    //
+    // A short map on purpose. A length outside it reads `undefined` and fails
+    // the assertion, which is the direction an unmapped count should fail in.
+    const words: Record<number, string> = {
+      10: "ten",
+      11: "eleven",
+      12: "twelve",
+      13: "thirteen",
+      14: "fourteen",
+      15: "fifteen",
+    };
+    const word = words[STACK.length];
+
+    for (const line of [STACK_HEADING, STACK_CUE]) {
+      expect(line.toLowerCase(), `"${line}" disagrees with the list`).toContain(
+        word,
+      );
+    }
   });
 
   it("gives every item a slug of its own", () => {

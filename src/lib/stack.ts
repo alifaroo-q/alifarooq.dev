@@ -174,6 +174,22 @@ export const STACK_STANDFIRST =
 export const STACK_EYEBROW = "Stack";
 
 /**
+ * The home page's route to this one, and the only one on the site.
+ *
+ * It lives here, next to the array it counts, for the reason the heading does:
+ * it SPELLS THE LENGTH, and a number written in a file that cannot see the list
+ * is a number that goes wrong quietly. `stack.test.ts` checks both against
+ * `STACK.length`, so raising the cap breaks the build rather than shipping a
+ * fold that promises twelve and a page that holds thirteen.
+ *
+ * A number rather than an adjective, which is prose rule 4. It was "The whole
+ * list, and what each one cost" while it sat in About; "the whole list" is a
+ * promise the reader has to take on trust, and twelve is the same claim with
+ * the trust taken out of it.
+ */
+export const STACK_CUE = "All twelve, and what each one cost →";
+
+/**
  * The completeness hedge, taken without the date that usually comes with it.
  *
  * The surveyed pages that handle this well carry both a hedge and an "updated
