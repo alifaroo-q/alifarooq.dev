@@ -3,9 +3,6 @@
     Slot 3's checkable artifact: one transaction opened at the request, and the
     handle drawn travelling into each owner it reaches.
 
-    The rules this file is authored under are in the README beside it. What is
-    written here is only what is true of THIS drawing.
-
     SECTION MAPPING. `data-sections` holds heading slugs, so the tracking can
     derive the key from the h2 itself and needs no lookup table:
 

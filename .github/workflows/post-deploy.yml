@@ -2,8 +2,8 @@ name: Budget and accessibility
 
 # The second job (#18, #34). It runs AFTER Vercel has deployed, against the
 # preview it just built, because two of the three checks need a running site.
-# The lint-and-typecheck job in `ci.yml` is untouched and still does not
-# build — that decision is in docs/deploy.md and this job does not disturb it.
+# The lint-and-typecheck job in `ci.yml` is untouched and still does not build,
+# and this job does not disturb that.
 #
 # `deployment_status` is the only event that carries the preview URL. Vercel
 # sends one for every deployment; this job wakes for a successful Preview and

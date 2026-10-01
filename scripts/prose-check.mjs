@@ -1,5 +1,5 @@
 /**
- * The measurements behind `docs/agents/prose.md`.
+ * Prose measurements for the site copy.
  *
  * **This reports; it does not gate, with one exception.** Every rule in the
  * prose doc except one is a judgement call — whether an em dash is an aside or
@@ -298,7 +298,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   });
   console.log(
     "\nem dashes and reversals are counts to read, not failures.",
-    "\nSee docs/agents/prose.md — rule 9 for the aside, rule 2 for the pivot.",
   );
 
   if (total.banned.length) {

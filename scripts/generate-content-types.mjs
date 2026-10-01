@@ -8,7 +8,7 @@ import { createBuilder } from "@content-collections/core";
  * has never built has no types for it, and `tsc --noEmit` fails on the import
  * in `src/app/work/[slug]/page.tsx`. That is exactly what CI is: a fresh
  * checkout that lints and typechecks and deliberately does not build, for the
- * reason in `docs/deploy.md`.
+ * reason that CI does not build.
  *
  * `@content-collections/core` is already a direct dependency and exports the
  * builder, so this needs no new package. `@content-collections/cli` would do

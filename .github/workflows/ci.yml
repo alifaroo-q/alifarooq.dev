@@ -5,8 +5,7 @@ on:
     branches: [main]
   pull_request:
 
-# Lint, typecheck and the one test suite. Why this job does not build, and what
-# would change that, is in docs/deploy.md.
+# Lint, typecheck and the one test suite. This job deliberately does not build.
 jobs:
   check:
     name: Lint, typecheck and test

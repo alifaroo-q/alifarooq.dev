@@ -2,9 +2,6 @@
   <!--
     Slot 1's checkable artifact: the Gmail connection state machine (#6, #17).
 
-    The rules this file is authored under are in the README beside it. What is
-    written here is only what is true of THIS drawing.
-
     SECTION MAPPING. `data-sections` holds heading slugs, so #26 can derive the
     key from the h2 itself and needs no lookup table:
 

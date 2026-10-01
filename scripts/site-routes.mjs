@@ -14,8 +14,7 @@
  * can put every preview behind its own login, and a login page is what both
  * checks would then measure. The bypass goes on the URL rather than in a
  * header because axe drives a browser and cannot send one. If previews are
- * open, leave the variable unset and nothing is appended. docs/deploy.md has
- * the dashboard step for both choices.
+ * open, leave the variable unset and nothing is appended.
  */
 
 /**
@@ -68,7 +67,7 @@ export async function fetchRoutes(baseUrl) {
       `${baseUrl} sits behind Vercel's deployment protection: the sitemap redirects to a login.`,
     );
     console.error(
-      "Either open previews, or set VERCEL_AUTOMATION_BYPASS_SECRET. See docs/deploy.md.",
+      "Either open previews, or set VERCEL_AUTOMATION_BYPASS_SECRET.",
     );
     process.exit(1);
   }

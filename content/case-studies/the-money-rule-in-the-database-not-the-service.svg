@@ -1,8 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="28 14 686 198" fill="none" stroke="currentColor" aria-hidden="true">
   <!--
     Slot 2's checkable artifact: one capture, drawn as the two assets it is
-    written in. The rules this file is authored under are in the README beside
-    it. What is written here is only what is true of THIS drawing.
+    written in.
 
     WHY THIS DRAWING AND NOT A STATE MACHINE. The essay's turn is that an
     account holds a currency AND a scale, and that the sum-to-zero rule
