@@ -296,9 +296,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     shortMidLong: `${total.short}/${total.mid}/${total.long}`,
     uniformity: total.uniformity,
   });
-  console.log(
-    "\nem dashes and reversals are counts to read, not failures.",
-  );
+  console.log("\nem dashes and reversals are counts to read, not failures.");
 
   if (total.banned.length) {
     console.error(`\nBanned words in copy: ${total.banned.join(", ")}`);
