@@ -1,0 +1,240 @@
+---
+name: alifarooq.dev
+description: One day on the Karachi coast, dawn to night, as a scroll-journey portfolio of cut-paper cards with hard ink shadows.
+colors:
+  ink: "#10333d"
+  paper: "#fffaf0"
+  cream: "#fbefd8"
+  coral: "#c24e2c"
+  saffron: "#f2b93b"
+  sea: "#0b6673"
+  foreground-muted: "#34545d"
+  foreground-label: "#3f5f68"
+  border-sand: "#c9bfa8"
+  error: "#a82a1c"
+  sky-dawn-a: "#f6c9a6"
+  sky-dawn-b: "#fbe6c8"
+  sky-noon-a: "#cde9e6"
+  sky-noon-b: "#e9f5ec"
+  sky-golden-a: "#f4d98f"
+  sky-golden-b: "#f3c783"
+  sky-dusk-a: "#eeb89f"
+  sky-dusk-b: "#d89aa3"
+  sky-night-a: "#12304a"
+  sky-night-b: "#0a1a2b"
+  dusk-accent: "#6b1f42"
+typography:
+  display:
+    fontFamily: "Bricolage Grotesque, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 6.2vw, 4.75rem)"
+    fontWeight: 800
+    lineHeight: 1.02
+    letterSpacing: "-0.035em"
+  headline:
+    fontFamily: "Bricolage Grotesque, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.125rem, 5vw, 3.75rem)"
+    fontWeight: 700
+    lineHeight: 1.04
+    letterSpacing: "-0.03em"
+  title:
+    fontFamily: "Bricolage Grotesque, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(1.375rem, 2.2vw, 1.75rem)"
+    fontWeight: 700
+    lineHeight: 1.15
+    letterSpacing: "-0.025em"
+  accent:
+    fontFamily: "Spectral, Georgia, serif"
+    fontWeight: 400
+    letterSpacing: "0"
+  body:
+    fontFamily: "Hanken Grotesk, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 400
+    lineHeight: 1.65
+  label:
+    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontSize: "0.75rem"
+    fontWeight: 400
+    lineHeight: 1.4
+rounded:
+  paper: "4px"
+  arch: "999px"
+  pill: "999px"
+spacing:
+  tight: "0.75rem"
+  flow: "1.25rem"
+  figure: "1.75rem"
+  group: "3rem"
+  section: "5rem"
+  header: "5.25rem"
+  measure: "36rem"
+  wrap: "76rem"
+components:
+  paper-card:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.paper}"
+    padding: "24px"
+  key-button:
+    backgroundColor: "{colors.saffron}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.paper}"
+    padding: "12px 20px"
+    height: "44px"
+  key-button-night:
+    backgroundColor: "{colors.saffron}"
+    textColor: "{colors.ink}"
+  portrait-arch:
+    backgroundColor: "{colors.paper}"
+    rounded: "{rounded.arch}"
+  chip-tag:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pill}"
+    padding: "6px 14px"
+  hour-cue:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pill}"
+    padding: "8px 16px"
+  site-header:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.paper}"
+    height: "56px"
+---
+
+# Design System: alifarooq.dev
+
+## Overview
+
+**Creative North Star: "One Day on the Karachi Coast"**
+
+The page is a clock. Scrolling carries the reader from dawn through noon, golden hour and dusk to night, and each section is a different hour with its own sky gradient and a band of hand-built SVG scenery in that hour's light: shoreline and dhow, port cranes and skyline, dunes and palms, a dusk beach, a night harbour with a lighthouse and stars. There is no light/dark switch; the dark half of the day is the Contact section and is met by scrolling.
+
+Everything that carries content is cut paper: a sand card, a 2px ink border, a hard offset ink shadow with no blur, and corners of 4px. Cards sit on the sky and stay legible on every hour because a card re-declares its own ink and paper tokens. Headings are bold grotesque with a single italic serif word in coral. A pixel camel walks the beach and lies down to sleep at night. The voice is warm and plain, and the page is illustrated, not decorated: scenery is behind the content and never read.
+
+**Key Characteristics:**
+- Hour-of-the-day grounds: five sky gradients, one per section, night flips the ink.
+- Hard-shadow paper cards, no blur anywhere, press-down hover.
+- One saffron primary action per view.
+- One italic serif accent word per heading.
+- Original SVG scenery, drifting on scroll by depth; a pixel camel mascot.
+- Colour only through tokens in `globals.css`; components name roles, ancestors supply values.
+
+## Colors
+
+A coastal day: sun-warmed grounds, deep sea-ink for everything that must be read, saffron and coral as the two warm voices, sea teal for links.
+
+### Primary
+- **Saffron Key** (#f2b93b): the one primary button (`.key`), selection highlight, the "Has a write-up" chip, and the night-time accent. Always carries ink text.
+
+### Secondary
+- **Coral Accent** (#c24e2c): the italic accent word, focus rings, caret, the dot after the wordmark, nav underline, active field label. Large text and non-text marks only.
+- **Sea Teal** (#0b6673): links, card cue lines, the live availability dot. This is `--accent` by day; at night `--accent` becomes saffron.
+
+### Neutral
+- **Deep Sea Ink** (#10333d): all text on day grounds, every border, every card shadow, and the page background behind the night.
+- **Sand Paper** (#fffaf0): card surface and the lightest tone.
+- **Cream** (#fbefd8): default body background and the night's text colour.
+- **Muted Ink** (#34545d) and **Label Ink** (#3f5f68): secondary text and small labels, tinted from the ink and never grey; both clear 4.5:1 on the day skies. Dusk steps both darker (#1f3d47, #234049).
+- **Sand Border** (#c9bfa8): hairlines inside cards.
+- **Error Brick** (#a82a1c): form errors only.
+
+### Skies
+Dawn peach (#f6c9a6 to #fbe6c8), noon pale aqua (#cde9e6 to #e9f5ec), golden amber (#f4d98f to #f3c783), dusk rose-plum (#eeb89f to #d89aa3), night navy (#12304a to #0a1a2b). The accent word on dusk is plum (#6b1f42); at night it is saffron.
+
+### Named Rules
+**The Token Rule.** Nothing outside `globals.css` sets a colour in a component. Components say `text-foreground` or `bg-background`; the value comes from whichever ancestor last redefined the token (an `.hour-*` section, or a `.paper` card).
+**The Hour Owns The Ink Rule.** Only the night flips text to cream. A paper card flips it back to day ink, so a card reads the same on peach and on navy.
+**The Two Warm Voices Rule.** Saffron means act; coral means the one word to look at. Neither is used as a fill for large areas.
+
+## Typography
+
+**Display Font:** Bricolage Grotesque (600/700/800, with system sans fallback)
+**Body Font:** Hanken Grotesk (400/500/600)
+**Accent Font:** Spectral italic (400/500), headings' accent word only
+**Label/Mono Font:** JetBrains Mono (400/500), times printed on the scenery, coordinates, code
+
+**Character:** A friendly, slightly quirky grotesque for the claim, a quiet humanist body for the reading, and one serif italic to change voice on the word the heading turns on.
+
+### Hierarchy
+- **Display** (800, clamp(2.5rem, 6.2vw, 4.75rem), 1.02, -0.035em): the home h1 only, max 16ch.
+- **Headline** (700, clamp(2.125rem, 5vw, 3.75rem), 1.04, -0.03em): section h2, max 18-20ch. Detail-page h1 is 800 at clamp(2rem, 5.2vw, 3.75rem).
+- **Title** (700, clamp(1.375rem, 2.2vw, 1.75rem), 1.15, tight): card h3; the featured card steps up to clamp(1.75rem, 3vw, 2.5rem).
+- **Body** (400, 17px / 1.0625rem, 1.65): reading text, capped by the 36rem measure (about 62 characters). Lead paragraphs under headings run clamp(1.0625rem, 1.6vw, 1.1875rem) in Muted Ink.
+- **Label** (mono 400, 12px / 0.75rem, 1.4): hour times (06:10, 12:00), coordinates, card sub-lines. Sentence-case digits and words as shipped, not tracked uppercase.
+
+### Named Rules
+**The One Italic Rule.** Each heading has at most one accent word, a real `em.accent` in Spectral italic coral. A second italic word in the same heading is wrong.
+**The Measure On The Container Rule.** Width is set as `max-w-measure` on the column, so every block shares one right edge.
+
+## Layout
+
+One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically; each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px, text first on mobile. Work is a three-up card grid from 1024px; Open source is one large card over a two-up pair; About is two-up. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
+
+## Elevation & Depth
+
+Depth is hard, never soft. Surfaces lift by a flat offset shadow in ink with zero blur; the skies and scenery supply atmosphere by colour and parallax, not by shadow.
+
+### Shadow Vocabulary
+- **Card** (`box-shadow: 6px 6px 0 0 var(--shadow-ink)`): every `.paper`.
+- **Card hover** (`9px 9px 0 0`, translate -2px -2px): linked cards lift toward the viewer.
+- **Card pressed** (`2px 2px 0 0`, translate 4px 4px).
+- **Key** (`4px 4px 0 0 ink`; hover `6px 6px`; pressed `1px 1px`).
+- **Small chip** (`3px 3px 0 0` on the hour cue, `2px 2px 0 0` on detail chips).
+- **Night** (`--shadow-ink: #04101c`, key border cream): shadows deepen to near-black on navy.
+
+### Named Rules
+**The Hard Shadow Rule.** Shadows are offset, solid and blurless, and they move on press. A blurred or glowing shadow does not belong to this world.
+
+## Shapes
+
+Cut paper: 4px corners on cards, buttons, inputs and the header. Two deliberate silhouettes break it: the portrait's doorway arch (999px top corners, 4px bottom) and full-round chips, dots and hour cues. Borders are 2px ink on every raised object. Scenery is flat-filled SVG shapes with no outlines beyond occasional ink strokes.
+
+## Components
+
+### Buttons
+- **Shape:** 4px radius, 2px ink border, min-height 44px.
+- **Primary (`.key`):** saffron with ink text, padding 12px 20px, weight 600, hard 4px shadow. Hover lifts (-2px, 6px shadow); active presses in. Disabled drops to a sand fill with no shadow.
+- **Text link (`.ink-link`):** 2px underline at 35% of current colour, full on hover; the secondary action beside the key ("Say hello").
+- **Focus:** 3px coral outline, 3px offset, on every interactive element.
+
+### Cards / Containers
+- **`.paper`:** Sand Paper fill, ink text, 2px ink border, 4px radius, 6px hard shadow. Padding 24px, 28-32px from 768px. Redefines the tokens so contents read as day ink on any hour. Linked cards use hover/press motion.
+
+### Chips
+- **Tag:** full-round, 2px ink border, ink text, 12-14px, tinted fills (#f6c8b6, #f9dc8d, #bfe0e0) paired with a coral, saffron or sea dot. The same three tints identify the three case studies from the fold to the cards.
+
+### Inputs / Fields
+- Shadcn input and textarea restyled to the tokens: ink border, 4px radius, coral label on focus-within, error brick for failure. They sit inside a `.paper` card at night.
+
+### Navigation
+- **Header:** a fixed `.paper` bar, 56px high: lower-case wordmark with a coral dot ("af." on mobile), Work, Open source, About, and a resume link with a drawn arrow. The link for the hour in view gets a 3px coral underline (`html[data-hour]` written by the hour watcher); hover does the same.
+
+### Hour Cue
+- A full-round paper pill riding the foot of each scenery band: a mono time, then a semibold label naming the next hour with a drawn arrow. It is the section-to-section link.
+
+### Scenery And Mascot
+- **Scenery:** one SVG band per hour, in layers carrying `data-layer` and a `--depth`; layers drift against scroll by depth times 26px using CSS scroll-driven animation (no script). Clouds, twinkling stars, swaying palms, bobbing dhow and a pulsing lighthouse beam are slow and decorative, hidden from assistive tech.
+- **Camel:** a pixel sprite built from rects (ink, tan, shadow-tan, coral), two-step walk by day, lying with floating z's at night. Motion honours `prefers-reduced-motion`; all of it is off in that mode.
+
+## Do's and Don'ts
+
+### Do:
+- **Do** colour only through tokens; let `.hour-*` and `.paper` supply the values.
+- **Do** give every raised object a 2px ink border and a hard blurless offset shadow.
+- **Do** put one saffron `.key` per view, and one coral italic word per heading.
+- **Do** end each hour with a scenery band and an hour cue that names the next hour.
+- **Do** keep text on a sky at 4.5:1 or better; use the dusk step-down tones on dusk.
+- **Do** turn off every animation and view transition under `prefers-reduced-motion: reduce`.
+
+### Don't:
+- **Don't** blur shadows, add glows, or use radii above 4px on cards (the arch and chips are the only exceptions).
+- **Don't** add a light/dark switch; night is a section.
+- **Don't** use the italic serif for anything except a heading's one accent word and short captions.
+- **Don't** put scenery in front of content, or let content sit on the water.
+
+## Known drift (not canonized)
+
+- Components carry some raw hex values (tag tints, the portrait's sun disc, scenery fills, the camel palette) against the Token Rule. Scenery and sprite fills are art and are tolerable; the tag tints and sun disc are one-offs and should become tokens if reused.
+- The direction contract named slightly different hexes (paper #fbf5e6, saffron #f0b53c, coral #e0664a) and "tiny uppercase chapter labels"; the build uses the values above and mono labels are sentence-case times.

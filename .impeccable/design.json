@@ -1,0 +1,357 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-01T21:40:54.891Z",
+  "title": "Design System: alifarooq.dev",
+  "extensions": {
+    "colorMeta": {
+      "saffron": {
+        "role": "primary",
+        "displayName": "Saffron Key",
+        "canonical": "#f2b93b",
+        "tonalRamp": [
+          "#493812",
+          "#795d1e",
+          "#a98229",
+          "#d5a334",
+          "#f4c458",
+          "#f7d280",
+          "#fae3b1",
+          "#fcf1d8"
+        ]
+      },
+      "coral": {
+        "role": "secondary",
+        "displayName": "Coral Accent",
+        "canonical": "#c24e2c",
+        "tonalRamp": [
+          "#3a170d",
+          "#612716",
+          "#88371f",
+          "#ab4527",
+          "#cb694c",
+          "#d78c76",
+          "#e7b8ab",
+          "#f3dcd5"
+        ]
+      },
+      "sea": {
+        "role": "secondary",
+        "displayName": "Sea Teal",
+        "canonical": "#0b6673",
+        "tonalRamp": [
+          "#031f23",
+          "#06333a",
+          "#084751",
+          "#0a5a65",
+          "#307d88",
+          "#609ca4",
+          "#9dc2c7",
+          "#cee0e3"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Sea Ink",
+        "canonical": "#10333d",
+        "tonalRamp": [
+          "#050f12",
+          "#081a1f",
+          "#0b242b",
+          "#0e2d36",
+          "#34525a",
+          "#647a81",
+          "#9fadb1",
+          "#cfd6d8"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Sand Paper",
+        "canonical": "#fffaf0",
+        "tonalRamp": [
+          "#4d4b48",
+          "#807d78",
+          "#b3afa8",
+          "#e0dcd3",
+          "#fffbf2",
+          "#fffcf5",
+          "#fffdf9",
+          "#fffefc"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#fbefd8",
+        "tonalRamp": [
+          "#4b4841",
+          "#7e786c",
+          "#b0a797",
+          "#ddd2be",
+          "#fcf1de",
+          "#fcf5e6",
+          "#fdf9ef",
+          "#fefcf7"
+        ]
+      },
+      "foreground-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#34545d",
+        "tonalRamp": [
+          "#10191c",
+          "#1a2a2f",
+          "#243b41",
+          "#2e4a52",
+          "#526e75",
+          "#7b9096",
+          "#aebbbe",
+          "#d6dddf"
+        ]
+      },
+      "foreground-label": {
+        "role": "neutral",
+        "displayName": "Label Ink",
+        "canonical": "#3f5f68",
+        "tonalRamp": [
+          "#131d1f",
+          "#203034",
+          "#2c4349",
+          "#37545c",
+          "#5c777f",
+          "#82979d",
+          "#b2bfc3",
+          "#d9dfe1"
+        ]
+      },
+      "border-sand": {
+        "role": "neutral",
+        "displayName": "Sand Border",
+        "canonical": "#c9bfa8",
+        "tonalRamp": [
+          "#3c3932",
+          "#656054",
+          "#8d8676",
+          "#b1a894",
+          "#d1c9b5",
+          "#dcd5c6",
+          "#e9e5dc",
+          "#f4f2ee"
+        ]
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "Error Brick",
+        "canonical": "#a82a1c",
+        "tonalRamp": [
+          "#320d08",
+          "#54150e",
+          "#761d14",
+          "#942519",
+          "#b54a3e",
+          "#c6756b",
+          "#dcaaa4",
+          "#eed4d2"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home h1 only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section h2 with one italic accent word."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card h3."
+      },
+      "accent": {
+        "displayName": "Accent",
+        "purpose": "Spectral italic, a heading’s one word."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text at a 36rem measure."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Mono times, coordinates, code."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "6px 6px 0 0 var(--shadow-ink)",
+        "purpose": "Every paper card."
+      },
+      {
+        "name": "card-hover",
+        "value": "9px 9px 0 0 var(--shadow-ink)",
+        "purpose": "Linked card hover, with translate -2px -2px."
+      },
+      {
+        "name": "card-pressed",
+        "value": "2px 2px 0 0 var(--shadow-ink)",
+        "purpose": "Active, with translate 4px 4px."
+      },
+      {
+        "name": "key",
+        "value": "4px 4px 0 0 #10333d",
+        "purpose": "Primary button; hover 6px, pressed 1px."
+      },
+      {
+        "name": "night",
+        "value": "#04101c",
+        "purpose": "Shadow ink on the night hour."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-arrive",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Hover, press and page arrival."
+      },
+      {
+        "name": "duration-hover",
+        "value": "140ms",
+        "purpose": "Press and lift."
+      },
+      {
+        "name": "duration-page",
+        "value": "220ms",
+        "purpose": "View transition between pages."
+      },
+      {
+        "name": "duration-enter",
+        "value": "520ms",
+        "purpose": "Entrance reveals."
+      },
+      {
+        "name": "scenery-drift",
+        "value": "depth * 26px, scroll-driven view() timeline",
+        "purpose": "Layers move against scroll; still where unsupported or reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Key Button",
+      "kind": "custom",
+      "refersTo": "key-button",
+      "description": "The one saffron action, pressed like a key.",
+      "html": "<button class=\"ds-key\">Explore my work</button>",
+      "css": ".ds-key{display:inline-flex;align-items:center;min-height:44px;padding:12px 20px;font-weight:600;background:#f2b93b;color:#10333d;border:2px solid #10333d;border-radius:4px;box-shadow:4px 4px 0 0 #10333d;transition:translate 140ms cubic-bezier(.22,1,.36,1),box-shadow 140ms cubic-bezier(.22,1,.36,1)}.ds-key:hover{translate:-2px -2px;box-shadow:6px 6px 0 0 #10333d}.ds-key:active{translate:3px 3px;box-shadow:1px 1px 0 0 #10333d}.ds-key:focus-visible{outline:3px solid #c24e2c;outline-offset:3px}"
+    },
+    {
+      "name": "Paper Card",
+      "kind": "card",
+      "refersTo": "paper-card",
+      "description": "Cut paper with a hard ink shadow; the container for all content.",
+      "html": "<a class=\"ds-paper\" href=\"#\"><span class=\"ds-tag\">Fintech</span><h3 style=\"font-family:Bricolage Grotesque,sans-serif;font-weight:700;margin:20px 0 8px\">A decision and its cost</h3><p style=\"color:#34545d;margin:0\">The constraint it was made under.</p></a><style>.ds-tag{display:inline-block;border:2px solid #10333d;border-radius:999px;background:#f9dc8d;padding:4px 12px;font-size:12px;font-weight:500}</style>",
+      "css": ".ds-paper{background:#fffaf0;color:#10333d;border:2px solid #10333d;border-radius:4px;box-shadow:6px 6px 0 0 #10333d;padding:24px;font-family:Hanken Grotesk,sans-serif;transition:translate 140ms cubic-bezier(.22,1,.36,1),box-shadow 140ms cubic-bezier(.22,1,.36,1)}.ds-paper:hover{translate:-2px -2px;box-shadow:9px 9px 0 0 #10333d}.ds-paper:active{translate:4px 4px;box-shadow:2px 2px 0 0 #10333d}.ds-paper{display:block;text-decoration:none;max-width:320px}.ds-paper:focus-visible{outline:3px solid #c24e2c;outline-offset:3px}"
+    },
+    {
+      "name": "Site Header",
+      "kind": "nav",
+      "refersTo": "site-header",
+      "description": "Floating paper bar with wordmark, hour-aware nav and resume link.",
+      "html": "<header class=\"ds-header\"><a class=\"ds-mark\" href=\"#\">alifarooq<span>.</span></a><nav><a href=\"#\">Work</a><a href=\"#\">Open source</a><a href=\"#\">About</a></nav><a class=\"ds-res\" href=\"#\">Resume</a></header>",
+      "css": ".ds-header{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px;padding:0 20px;background:#fffaf0;color:#10333d;border:2px solid #10333d;border-radius:4px;box-shadow:6px 6px 0 0 #10333d;font-family:Hanken Grotesk,sans-serif;font-size:14px}.ds-header a{color:inherit;text-decoration:none}.ds-mark{font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:20px}.ds-mark span{color:#c24e2c}.ds-header nav{display:flex;gap:24px;font-weight:500}.ds-header nav a{background:linear-gradient(#c24e2c,#c24e2c) 0 100%/0 3px no-repeat;transition:background-size 140ms cubic-bezier(.22,1,.36,1)}.ds-header nav a:hover{background-size:100% 3px}.ds-res{font-weight:600;text-decoration:underline!important;text-decoration-thickness:2px}.ds-header a:focus-visible{outline:3px solid #c24e2c;outline-offset:3px}"
+    },
+    {
+      "name": "Section Heading",
+      "kind": "custom",
+      "refersTo": "headline",
+      "description": "Bold grotesque with one Spectral italic coral word.",
+      "html": "<h2 class=\"ds-h\">Three decisions and <em>what they cost</em></h2>",
+      "css": ".ds-h{font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:44px;line-height:1.04;letter-spacing:-.03em;color:#10333d;max-width:20ch;margin:0}.ds-h em{font-family:Spectral,Georgia,serif;font-style:italic;font-weight:400;letter-spacing:0;color:#c24e2c}"
+    },
+    {
+      "name": "Tag Chip",
+      "kind": "chip",
+      "refersTo": "chip-tag",
+      "description": "Full-round tinted chip with a colour dot; ties a failure in the fold to its case study.",
+      "html": "<a class=\"ds-chip\" href=\"#\"><i></i>The integration that goes quiet</a>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:8px;border:2px solid #10333d;border-radius:999px;background:#f6c8b6;color:#10333d;padding:6px 14px;font:500 14px Hanken Grotesk,sans-serif;text-decoration:none}.ds-chip i{width:8px;height:8px;border-radius:50%;background:#c24e2c}.ds-chip:focus-visible{outline:3px solid #c24e2c;outline-offset:3px}"
+    },
+    {
+      "name": "Hour Cue",
+      "kind": "custom",
+      "refersTo": "hour-cue",
+      "description": "Paper pill on the scenery naming the next hour.",
+      "html": "<a class=\"ds-cue\" href=\"#\"><span>12:00</span><b>Noon at the port</b></a>",
+      "css": ".ds-cue{display:inline-flex;align-items:center;gap:12px;border:2px solid #10333d;border-radius:999px;background:#fffaf0;color:#10333d;padding:8px 16px;font-size:14px;box-shadow:3px 3px 0 0 #10333d;text-decoration:none;font-family:Hanken Grotesk,sans-serif}.ds-cue span{font:12px JetBrains Mono,monospace;color:#3f5f68}.ds-cue b{font-weight:600}.ds-cue:focus-visible{outline:3px solid #c24e2c;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "One Day on the Karachi Coast",
+    "overview": "The page is a clock. Scrolling carries the reader from dawn through noon, golden hour and dusk to night, and each section is a different hour with its own sky gradient and a band of hand-built SVG scenery in that hour’s light. There is no light/dark switch; the dark half of the day is the Contact section.\n\nEverything that carries content is cut paper: a sand card, a 2px ink border, a hard offset ink shadow with no blur, and corners of 4px. Headings are bold grotesque with a single italic serif word in coral. A pixel camel walks the beach and lies down to sleep at night.",
+    "keyCharacteristics": [
+      "Hour-of-the-day grounds: five sky gradients, one per section, night flips the ink.",
+      "Hard-shadow paper cards, no blur anywhere, press-down hover.",
+      "One saffron primary action per view.",
+      "One italic serif accent word per heading.",
+      "Original SVG scenery, drifting on scroll by depth; a pixel camel mascot.",
+      "Colour only through tokens in globals.css; components name roles, ancestors supply values."
+    ],
+    "rules": [
+      {
+        "name": "The Token Rule",
+        "body": "Nothing outside globals.css sets a colour in a component. Components say text-foreground or bg-background; the value comes from whichever ancestor last redefined the token (an .hour-* section, or a .paper card).",
+        "section": "colors"
+      },
+      {
+        "name": "The Hour Owns The Ink Rule",
+        "body": "Only the night flips text to cream. A paper card flips it back to day ink, so a card reads the same on peach and on navy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Warm Voices Rule",
+        "body": "Saffron means act; coral means the one word to look at. Neither is used as a fill for large areas.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Italic Rule",
+        "body": "Each heading has at most one accent word, a real em.accent in Spectral italic coral.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measure On The Container Rule",
+        "body": "Width is set as max-w-measure on the column, so every block shares one right edge.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hard Shadow Rule",
+        "body": "Shadows are offset, solid and blurless, and they move on press. A blurred or glowing shadow does not belong to this world.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do colour only through tokens; let .hour-* and .paper supply the values.",
+      "Do give every raised object a 2px ink border and a hard blurless offset shadow.",
+      "Do put one saffron .key per view, and one coral italic word per heading.",
+      "Do end each hour with a scenery band and an hour cue that names the next hour.",
+      "Do keep text on a sky at 4.5:1 or better; use the dusk step-down tones on dusk.",
+      "Do turn off every animation and view transition under prefers-reduced-motion: reduce."
+    ],
+    "donts": [
+      "Don’t blur shadows, add glows, or use radii above 4px on cards (the arch and chips are the only exceptions).",
+      "Don’t add a light/dark switch; night is a section.",
+      "Don’t use the italic serif for anything except a heading’s one accent word and short captions.",
+      "Don’t put scenery in front of content, or let content sit on the water."
+    ]
+  }
+}
