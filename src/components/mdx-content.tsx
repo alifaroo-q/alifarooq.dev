@@ -50,10 +50,13 @@ const components = {
   // No margin: the pipeline makes every h2 the first child of its own
   // section, and the section above owns the space between them.
   h2: (props: React.ComponentProps<"h2">) => (
-    <h2 className="text-label text-accent uppercase" {...props} />
+    <h2
+      className="font-bold text-[clamp(1.5rem,2.6vw,2rem)] leading-[1.1] tracking-tight"
+      {...props}
+    />
   ),
   h3: (props: React.ComponentProps<"h3">) => (
-    <h3 className="mt-group font-medium text-foreground" {...props} />
+    <h3 className="mt-group font-bold text-foreground text-lg" {...props} />
   ),
   p: (props: React.ComponentProps<"p">) => (
     <p className="mt-flow text-foreground-muted" {...props} />
@@ -71,28 +74,28 @@ const components = {
     />
   ),
   a: (props: React.ComponentProps<"a">) => (
-    <a
-      className="text-foreground underline underline-offset-[0.2em] hover:text-accent"
-      {...props}
-    />
+    <a className="ink-link font-medium text-foreground" {...props} />
   ),
   strong: (props: React.ComponentProps<"strong">) => (
-    <strong className="font-medium text-foreground" {...props} />
+    <strong className="font-semibold text-foreground" {...props} />
   ),
   blockquote: (props: React.ComponentProps<"blockquote">) => (
     <blockquote
-      className="mt-flow border-border-strong border-l pl-5 text-foreground-muted"
+      className="mt-flow rounded-[var(--radius)] bg-paper/70 px-5 py-4 font-serif text-[1.125rem] text-foreground italic"
       {...props}
     />
   ),
   pre: (props: React.ComponentProps<"pre">) => (
     <pre
-      className="mt-figure overflow-x-auto border border-border bg-background-raised p-4 text-[0.8125rem] leading-[1.7]"
+      className="paper mt-figure overflow-x-auto p-4 font-mono text-[0.8125rem] leading-[1.7]"
       {...props}
     />
   ),
   code: (props: React.ComponentProps<"code">) => (
-    <code className="text-[0.9em]" {...props} />
+    <code
+      className="rounded-[3px] bg-paper/80 px-1.5 py-0.5 font-mono text-[0.88em] [pre_&]:bg-transparent [pre_&]:p-0"
+      {...props}
+    />
   ),
   table: (props: React.ComponentProps<"table">) => (
     <div className="mt-figure overflow-x-auto">
@@ -101,7 +104,7 @@ const components = {
   ),
   th: (props: React.ComponentProps<"th">) => (
     <th
-      className="border-border border-b px-3 py-2 text-label text-foreground-label uppercase"
+      className="border-border-strong border-b-2 px-3 py-2 font-semibold text-foreground text-sm"
       {...props}
     />
   ),
@@ -112,7 +115,7 @@ const components = {
     />
   ),
   hr: (props: React.ComponentProps<"hr">) => (
-    <hr className="mt-section border-border" {...props} />
+    <hr className="mt-section border-border-strong" {...props} />
   ),
 };
 

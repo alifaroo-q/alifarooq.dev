@@ -36,7 +36,7 @@ export function ArtifactFigure({
   const captionId = `${id}-caption`;
 
   return (
-    <figure className="border-border border-b px-6 py-10 md:px-10 lg:border-b-0">
+    <figure className="paper p-5 md:p-7">
       {/* A floor and a ceiling on the drawing's width. The floor keeps it
           legible in a narrow column and hands the overflow to the figure
           rather than to the page; the ceiling stops a wide column blowing a
@@ -44,7 +44,7 @@ export function ArtifactFigure({
       <div className="overflow-x-auto">
         <div
           aria-labelledby={captionId}
-          className="min-w-[26rem] max-w-[40rem] text-foreground [&_svg]:h-auto [&_svg]:w-full"
+          className="min-w-[26rem] max-w-[40rem] font-mono text-foreground [&_svg]:h-auto [&_svg]:w-full"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: the SVG is a committed file in this repo, read at build time. Inlining is the point — an <img> could not inherit currentColor.
           dangerouslySetInnerHTML={{ __html: svg }}
           role="img"

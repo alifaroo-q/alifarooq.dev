@@ -1,46 +1,40 @@
 import { ImageResponse } from "next/og";
-import { ACCENT, GROUND, ogFonts } from "@/lib/og-card";
+import { CORAL, GROUND, ogFonts } from "@/lib/og-card";
 import { PERSON_NAME } from "@/lib/site";
 
 /**
- * The app icon: one lowercase `a`, amber, on the dark ground.
+ * The app icon: the header's own wordmark, "af" and a coral full stop, on a
+ * cream paper card with a hard ink shadow, set on the dawn sky.
  *
- * **Why a letter and not the site's mark.** The site has one piece of
- * ornament, the full-bleed accent hairline, and it is the wrong thing to
- * shrink: at the 16px a tab strip actually renders, a 1px rule is a smudge and
- * a 48px rule is a dash that identifies nothing. A letterform is the only mark
- * on the site that stays a mark at that size.
+ * It is the same mark the floating bar wears on a phone, so the tab, the
+ * home-screen tile and the page agree. At 16px the card edge and the shadow
+ * blur into a frame, and what is left is two bold letters and a dot, which is
+ * all the mark ever was.
  *
- * **One letter, not two.** `af` fits the 48px tile and turns to mush at 16,
- * which is the size that decides whether a reader finds the tab again.
+ * It is fixed in colour, like the share card, and for the same reason: an icon
+ * is composited onto browser chrome and home screens the site cannot read, and
+ * Satori has no cascade or variables. The values are copied from `globals.css`.
  *
- * **It is fixed dark, like the share card and for the same reason.** An icon
- * is composited onto browser chrome, a bookmark bar or a home screen — none of
- * which is this site's ground, and none of which it can read. A `prefers-
- * color-scheme` SVG favicon could flip, but it would then be a second design
- * to keep matching the card, and Safari and every home screen would still get
- * the PNG. The `globals.css` rule against inline colour does not reach here:
- * see the header of `og-card.tsx`, this is the same renderer, with no cascade,
- * no variables and nothing that ever flips.
- *
- * **48, not 32.** Search results and the tab strip both take the largest
- * square offered and scale down; the smaller tile only removes the choice.
- *
- * `padding` is the one thing the two callers disagree on. iOS masks the corners
- * off an `apple-icon`, so its glyph has to sit inside that mask; a browser tab
- * crops nothing and every pixel spent on margin is one taken off the letter.
+ * `inset` is the margin between the tile and the card, and it also has to hold
+ * the shadow. iOS masks the corners off an `apple-icon`, so that caller leaves
+ * more room; a browser tab crops nothing and wants the card as large as it can
+ * be.
  */
 export function appIcon({
   size,
   glyphRatio,
+  inset,
 }: {
   size: number;
-  /** Font size as a share of the tile. Above 1 is normal and not a mistake:
-      `a` has no ascender and no descender, so the ink is roughly half the em
-      and a font sized to the tile draws a letter half its height. */
+  /** Font size as a share of the tile. */
   glyphRatio: number;
+  /** Margin around the card as a share of the tile. */
+  inset: number;
 }) {
   const fontSize = Math.round(size * glyphRatio);
+  const margin = Math.round(size * inset);
+  const border = Math.max(2, Math.round(size * 0.05));
+  const shadow = Math.max(2, Math.round(size * 0.07));
 
   return new ImageResponse(
     <div
@@ -48,25 +42,33 @@ export function appIcon({
         width: "100%",
         height: "100%",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: GROUND,
-        color: ACCENT,
-        fontFamily: "JetBrains Mono",
-        fontWeight: 500,
-        fontSize,
-        // Centring the LINE box does not centre the ink. Everything under the
-        // baseline is reserved and this letter uses none of it, so a centred
-        // line sits low by about a sixth of the em. `lineHeight: 1` makes the
-        // box the em, and the padding lifts the ink by half of what it adds.
-        //
-        // Both are measured off the built PNGs, not guessed: the 48 tile ends
-        // up with 9 clear above the `a` and 10 below, the 180 with 43 and 44.
-        lineHeight: 1,
-        paddingBottom: Math.round(fontSize * 0.175),
+        background: "#f6c9a6",
+        padding: margin,
+        paddingRight: margin + shadow,
+        paddingBottom: margin + shadow,
       }}
     >
-      a
+      <div
+        style={{
+          flexGrow: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#fffaf0",
+          color: GROUND,
+          border: `${border}px solid ${GROUND}`,
+          borderRadius: Math.round(size * 0.06),
+          boxShadow: `${shadow}px ${shadow}px 0 ${GROUND}`,
+          fontFamily: "Bricolage Grotesque",
+          fontWeight: 700,
+          fontSize,
+          lineHeight: 1,
+          letterSpacing: "-0.04em",
+          paddingBottom: Math.round(fontSize * 0.06),
+        }}
+      >
+        af<span style={{ color: CORAL }}>.</span>
+      </div>
     </div>,
     { width: size, height: size, fonts: [...ogFonts] },
   );

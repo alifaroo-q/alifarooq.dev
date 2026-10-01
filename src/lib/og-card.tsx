@@ -4,40 +4,35 @@ import { join } from "node:path";
 /**
  * The share card: one template, three fills (#16).
  *
- * **The card is fixed dark, and that is a decision rather than an oversight.**
- * Following the reader is not available to it: there is no
- * `prefers-color-scheme` at build time, and the card is composited onto
- * someone else's surface anyway. It is a picture, not a UI, and it does not
- * owe the reader their theme.
+ * The card is the dawn sky from the top of the home page: peach to cream, deep
+ * sea ink for type, a coral eyebrow. It is a picture composited onto someone
+ * else's surface, so it does not follow the reader's theme and does not need
+ * to.
  *
- * **Colours are inline here, and only here.** `globals.css` forbids an inline
- * colour because an inline value beats the variables a row flip redefines and
- * strands part of the subtree on the wrong ground. Neither half of that rule
- * applies: Satori supports no cascade, no variables and no media queries, so
- * there is nothing an inline value could beat, and nothing here ever flips.
- * The values below are #10's dark set, copied deliberately and not aliased —
- * a CSS variable cannot be read from a PNG renderer.
+ * Colours are inline here, and only here. Satori supports no cascade, no
+ * variables and no media queries, so a token cannot reach it and nothing here
+ * ever flips. The values are copied from `globals.css`, not aliased.
  *
- * **The artifact SVG is not the card, and that is the important rejection.**
- * It is the only real illustration the site owns and it already exists per
- * document, but #8 withholds the diagram behind "See the state diagram →",
- * and the withholding is what makes the click worth making. Putting it on the
- * card spends the payoff before anyone arrives, on the audience least likely
- * to click.
+ * The artifact SVG is not the card. It already exists per document, but the
+ * home page withholds the diagram behind "See the state diagram", and the
+ * withholding is what makes the click worth making. Putting it on the card
+ * spends the payoff before anyone arrives.
  */
 
 /**
- * #10's dark ground, and the four values that sit on it.
+ * The ink and the saffron the app icon spends: a saffron letter on deep sea.
  *
- * `GROUND` and `ACCENT` are exported because the app icon spends the same two
- * and is rendered by the same PNG renderer, which cannot read a CSS variable
- * either. Two literals of the accent is a tab that stops matching the card.
+ * `GROUND` and `ACCENT` are exported because the icon is rendered by the same
+ * PNG renderer, which cannot read a CSS variable either. Two literals of the
+ * accent is a tab that stops matching the card.
  */
-export const GROUND = "#0a0a0b";
-const FOREGROUND = "#edece9";
-const MUTED = "#a3a19c";
-const LABEL = "#807d77";
-export const ACCENT = "#f2b544";
+export const GROUND = "#10333d";
+const FOREGROUND = "#10333d";
+const MUTED = "#34545d";
+const LABEL = "#3f5f68";
+export const ACCENT = "#f2b93b";
+export const CORAL = "#c24e2c";
+const SKY = "linear-gradient(180deg, #f6c9a6 0%, #fbe6c8 100%)";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
@@ -53,14 +48,21 @@ export const ogContentType = "image/png";
  */
 const fontDir = join(process.cwd(), "assets/fonts");
 
-const [regular, medium] = await Promise.all([
+const [regular, medium, bricolage] = await Promise.all([
   readFile(join(fontDir, "JetBrainsMono-Regular.ttf")),
   readFile(join(fontDir, "JetBrainsMono-Medium.ttf")),
+  readFile(join(fontDir, "BricolageGrotesque-Bold.woff")),
 ]);
 
 export const ogFonts = [
   { name: "JetBrains Mono", data: regular, style: "normal", weight: 400 },
   { name: "JetBrains Mono", data: medium, style: "normal", weight: 500 },
+  {
+    name: "Bricolage Grotesque",
+    data: bricolage,
+    style: "normal",
+    weight: 700,
+  },
 ] as const;
 
 /**
@@ -71,11 +73,11 @@ export const ogFonts = [
  * sits below it. The fills differ only in what they put in the slots and how
  * large the headline is set.
  *
- * - **Home** — the name, then `Backend engineer` under the rule.
- * - **Case study** — the anonymised `sector` eyebrow, the `decision`, then the
- *   name small in the corner. The eyebrow is the anonymised one, so #6's
- *   checklist passes by construction: there is no path by which a client name
- *   reaches a card.
+ * - **Home** — the name, then the umbrella role under the rule.
+ * - **Case study** — the `sector` eyebrow (client and what it is), the `decision`, then the
+ *   name small in the corner. Clients are named where the work
+ *   may be shown, and the one that stays anonymous is anonymous in the field
+ *   itself, so the card cannot name one that the page does not.
  * - **Open source** — the repo name, then the conviction line under the rule.
  */
 export function OgCard({
@@ -104,7 +106,7 @@ export function OgCard({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: GROUND,
+        background: SKY,
         color: FOREGROUND,
         fontFamily: "JetBrains Mono",
       }}
@@ -125,7 +127,7 @@ export function OgCard({
           <div
             style={{
               display: "flex",
-              color: ACCENT,
+              color: CORAL,
               fontSize: 24,
               letterSpacing: "0.14em",
               textTransform: "uppercase",
@@ -150,7 +152,7 @@ export function OgCard({
 
       {/* The one hairline, running edge to edge rather than boxing anything —
           the same rule the site draws, in the one colour the card spends. */}
-      <div style={{ display: "flex", height: 1, background: ACCENT }} />
+      <div style={{ display: "flex", height: 4, background: FOREGROUND }} />
 
       <div
         style={{

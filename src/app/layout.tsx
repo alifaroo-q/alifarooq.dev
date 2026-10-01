@@ -1,18 +1,44 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Hanken_Grotesk,
+  JetBrains_Mono,
+  Spectral,
+} from "next/font/google";
 import { Analytics } from "@/components/analytics";
+import { Camel } from "@/components/camel";
+import { HourWatcher } from "@/components/hour-watcher";
 import { MotionRuntime } from "@/components/motion-runtime";
 import { rootMetadata } from "@/lib/metadata";
 import "./globals.css";
 
-// 400 and 500 only. The 700 was dropped: nothing on the site used a bold
-// utility, so it was a font file shipped on every page load for nothing.
-// Adding a weight back is a one-line change and should argue for itself.
-//
-// Naming the weights also pins them. JetBrains Mono is a variable font, so
-// omitting `weight` would ship one file instead of two — but that file
-// carries 100 to 800, which quietly makes every dropped weight work again.
-// Two static cuts is the cost of the rule above having teeth.
+// One face per job. Bricolage Grotesque is the voice of headings, Hanken
+// Grotesk is body, Spectral italic is the single accented word in a heading,
+// and JetBrains Mono is kept for code and the times printed on the scenery,
+// which are data. Each weight listed is one that something on the site uses.
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-hanken",
+  display: "swap",
+});
+
+const spectral = Spectral({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: "italic",
+  variable: "--font-spectral",
+  display: "swap",
+});
+
 const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
   subsets: ["latin"],
@@ -20,17 +46,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-/**
- * The home description, verbatim from #16 (152 characters).
- *
- * It **deliberately gives up the positioning sentence**, which #8 called the
- * obvious site-level description. At 195 characters that sentence gets cut
- * after its first clause, throwing away two of the three — and since the
- * sentence IS the page's table of contents, a card showing one third of it is
- * worse than a card that does not attempt it.
- */
+/** The home description. It is not the headline: the headline says the claim, this says what is behind it. */
 const description =
-  "I'm a backend engineer who designs for the failure case first. Three case studies on where that mattered, and the open-source work that came out of it.";
+  "Software engineer in Karachi, working remotely across backend, full-stack and AI product work. Case studies on what held up when things broke.";
 
 /**
  * `metadataBase`, the title template, and the home page's own `<head>` (#16).
@@ -42,19 +60,20 @@ const description =
  */
 export const metadata: Metadata = rootMetadata(description);
 
-// Both grounds, so the browser chrome matches the page the reader gets.
+// The page opens at dawn, so the browser chrome matches the first thing the
+// reader sees. There is no dark scheme: the dark half of the day is a section.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#edece9" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0b" },
-  ],
+  themeColor: "#f7cfae",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={jetbrainsMono.variable}>
+    <html
+      lang="en"
+      className={`${bricolage.variable} ${hanken.variable} ${spectral.variable} ${jetbrainsMono.variable}`}
+    >
       <body className="min-h-dvh">
         <a className="skip-link" href="#main">
           Skip to content
@@ -65,6 +84,8 @@ export default function RootLayout({
             server-rendered and the animation stays out of the page's own
             source. See `motion-runtime.tsx`. */}
         <MotionRuntime />
+        <HourWatcher />
+        <Camel />
         <Analytics />
       </body>
     </html>

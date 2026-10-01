@@ -10,33 +10,11 @@
 export const CONTACT_EMAIL = "hello@alifarooq.dev";
 
 /**
- * The site's one action style: an accent outline that fills on hover.
- *
- * It is here rather than copied because the fold's resume link and the contact
- * form's submit button are the same affordance in two places, and a class list
- * copied twice is two things that used to match. It carries no layout — the
- * call site adds that — and it sets nothing that is not a token, so it follows
- * the ground like everything else.
- *
- * THE LINE-HEIGHT IS STATED, and the reason is not how it looked. `body` sets
- * `text-body`, 15px at 1.7, and a control inherited it like anything else — a
- * 25.5px line box in 20px of padding, so the button was 47.5px tall. Half the
- * leading goes above and half below, so the label was centred; it was a taller
- * box, not a floating word, and stating the leading only takes about 3px off.
- *
- * What it buys is that the height stops being a function of a PROSE token. 1.7
- * is tuned for a column where the eye has to find the next line, and it is the
- * number most likely to be retuned for reading; every button on the site would
- * have resized with it. `leading-tight` with `py-3` fixes the box at about
- * 44px, which is the target size WCAG 2.5.5 asks for, and it now moves only
- * when somebody means to move it.
- *
- * `inline-flex` and the two centring rules stop padding alone deciding where
- * the label sits, so the two states of the contact form's submit — "Send
- * message" and "Sending…" — cannot shift it.
+ * The site's one action style: the saffron key, defined once in `globals.css`.
+ * The fold's call to action and the contact form's submit are the same
+ * affordance in two places, so they share the one class.
  */
-export const ACTION_CLASS =
-  "inline-flex items-center justify-center border border-accent px-5 py-3 text-accent leading-tight transition-colors hover:bg-accent hover:text-accent-foreground";
+export const ACTION_CLASS = "key";
 
 /**
  * The origin, written once (#16).
@@ -51,14 +29,38 @@ export const SITE_URL = "https://alifarooq.dev";
 export const SITE_NAME = "alifarooq.dev";
 
 /**
- * The name and the role, as the `<head>` and the share card print them.
+ * The name and the roles, as the `<head>` and the share card print them.
  *
- * `role` is the same string the fold's micro-line carries. It is also half of
- * the home title and the `Person` block's `jobTitle`, and three literals of a
- * job title is how a site ends up claiming two different jobs.
+ * Ali works across four kinds of engineering and the site says all four.
+ * `PERSON_ROLE` is the one umbrella title: it is half of the home title and
+ * the share card's footline, where a single phrase has to do the job.
+ * `PERSON_ROLES` is the full list, printed in the fold and handed to a machine
+ * as the `Person` block's `jobTitle`. Two literals of a job title is how a site
+ * ends up claiming two different jobs, so both live here.
  */
 export const PERSON_NAME = "Ali Farooq";
-export const PERSON_ROLE = "Backend engineer";
+export const PERSON_ROLE = "Software engineer";
+export const PERSON_ROLES = [
+  "Backend engineer",
+  "Software engineer",
+  "AI product engineer",
+  "Full-stack engineer",
+] as const;
+
+/**
+ * Where Ali works from and who he will work for, stated once.
+ *
+ * The fold prints the short form and the contact section the long one, and a
+ * time zone written in two places is a time zone that gets changed in one.
+ */
+export const BASE_LOCATION = "Karachi, Pakistan";
+export const BASE_UTC = "UTC+5";
+export const REMOTE_REGIONS = [
+  "United States",
+  "Australia",
+  "Middle East",
+  "Europe",
+] as const;
 
 /**
  * The photograph, written once because two things print it.
@@ -77,13 +79,13 @@ export const PORTRAIT_SRC = "/profile-image.jpg";
 /**
  * The two profiles, spelled out (#16).
  *
- * They do not match — `alifaroo-q` on GitHub, `itsalifarooq` on LinkedIn — so
+ * They do not match — `alifaroo-q` on GitHub, `alifarooqdev` on LinkedIn — so
  * neither can be derived from the other. Both are listed, and `sameAs` is the
  * one place a machine gets to tie the site to the name a recruiter types.
  */
 export const PROFILE_URLS = [
   "https://github.com/alifaroo-q",
-  "https://www.linkedin.com/in/itsalifarooq",
+  "https://www.linkedin.com/in/alifarooqdev",
 ];
 
 /**

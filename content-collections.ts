@@ -75,7 +75,7 @@ const caseStudies = defineCollection({
   directory: CASE_STUDY_DIR,
   include: "*.mdx",
   schema: z.object({
-    sector: z.string(), // "A healthcare services provider" — home eyebrow
+    sector: z.string(), // "Numlix, a virtual-phone-number & SMS platform" — the client, then what it is
     decision: z.string(), // heading, h1, <title>, and the slug's source
     constraint: z.string(), // ~2 lines; home page only
     artifactLabel: z.string(), // "See the state diagram →"

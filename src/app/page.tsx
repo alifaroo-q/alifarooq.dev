@@ -3,15 +3,19 @@ import { ContactFooter } from "@/components/contact-footer";
 import { Cue } from "@/components/cue";
 import { Headline } from "@/components/headline";
 import { Portrait } from "@/components/portrait";
+import { Clouds, Dunes, Dusk, Port, Shore } from "@/components/scenery";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
 import { StackStrip } from "@/components/stack-strip";
 import {
   ACTION_CLASS,
+  BASE_LOCATION,
+  BASE_UTC,
   CONTACT_EMAIL,
   OPEN_SOURCE_CONVICTION,
   PERSON_NAME,
   PERSON_ROLE,
+  PERSON_ROLES,
   PORTRAIT_SRC,
   PROFILE_URLS,
   SITE_URL,
@@ -22,348 +26,220 @@ import { cn } from "@/lib/utils";
 /**
  * The home page.
  *
- * The copy lives here in TSX rather than in a `home.mdx` singleton (#24). A
- * singleton makes the schema BE the layout: every slot on this page would
- * become a frontmatter field, and moving a slot would then be a content
- * migration. The case studies are the other way round — they are free-form
- * prose with a handful of fields, so they are a collection.
+ * The page is one day on the Karachi coast. The fold is dawn, Work is noon at
+ * the port, Open source is the golden hour, About is dusk, and Contact is the
+ * night. Each hour ends in a band of scenery and a cue that names the next
+ * one, stamped with its time, so the order of the sections is carried by the
+ * clock and not by numbers.
  *
- * Nothing here sets a colour. Every value arrives as a token through a class,
- * which is what lets a work row invert its whole subtree at once. See the
- * header of `globals.css`; it is a correctness rule, not a preference.
+ * The copy lives here in TSX and not in an MDX singleton: a singleton makes
+ * the schema the layout, and moving a slot would then be a content migration.
+ * The case studies are the other way round, free-form prose with a few fields,
+ * so they are a collection.
  *
- * Order is fixed by #8: fold → Work → Open source → About → Contact. Work
- * precedes open source because the reader arrives from a resume or a LinkedIn
- * profile asking what he built at work — and because the case studies cannot
- * link to code, so the repos carry the verifiability load and read better
- * AFTER the claims they back.
+ * Nothing here sets a colour. Every value arrives as a token through a class;
+ * see the header of `globals.css`.
+ *
+ * Order is fixed: fold, Work, Open source, About, Contact. Work comes first
+ * because the reader arrives from a resume asking what was built at work, and
+ * because the case studies cannot link to code, so the repos carry the
+ * verifiability and read better after the claims they back.
  */
 
 const person = {
   name: PERSON_NAME,
-
-  /**
-   * #8's positioning sentence, cut at its existing commas. Not a rewrite —
-   * the same string, split so each clause can be marked against the work row
-   * it promises. The sentence IS the page's table of contents: three clauses,
-   * three case studies, in the order the sections appear. Marking it is the
-   * one device on the page that no other terminal portfolio has (#10), and it
-   * is available only because #8 wrote the sentence that way.
-   *
-   * It deliberately spends no named fact — no module count, no metric, no
-   * client sector. That is what lets every concrete detail arrive after the
-   * abstraction instead of competing with it.
-   */
-  // A colon, not the em dash it used to end on. What follows is a list, and a
-  // colon is what introduces one; the dash was reading as prose.md's pivot,
-  // which short copy has no room to earn.
-  positioningLead:
-    "I'm a backend engineer who designs for the failure case first:",
-  positioningClauses: [
-    "the integration that degrades silently,",
-    "the payment that must never be captured twice,",
-    "the transaction that outgrows the service it started in.",
-  ],
-
-  // The micro-line. Location, availability, and nothing that could be read as
-  // proof: #8 kept every badge, stat and repo link out of the fold, on the
-  // grounds that a fold which produces evidence for its own claim is a fold
-  // that does not trust it. The page below is the proof.
-  //
-  // The `role` row is GONE, and that is the point. It printed "Backend
-  // engineer" two inches under a sentence whose first six words are "I'm a
-  // backend engineer" — the largest prose on the page. A spec row that repeats
-  // the claim above it teaches a reader that the rows are decoration. The two
-  // left both say something the sentence does not. `PERSON_ROLE` still reaches
-  // the `<head>` and the `Person` block, which is where a machine needs it.
-  location: "Karachi, Pakistan",
-  availability: "Open to backend roles",
-
-  // The same string the footer prints, read from one place — the fold and the
-  // contact section both carry the address, and two literals of it is one edit
-  // away from a page that disagrees with itself.
+  location: `${BASE_LOCATION.split(",")[0]} (${BASE_UTC})`,
+  availability: "Open to remote roles",
+  hours: "Flexible hours",
   email: CONTACT_EMAIL,
-  // Short and year-free, so a link pasted into an application does not go
-  // stale. The file itself is #32's.
   resumeHref: "/resume.pdf",
 };
 
 /**
- * The open-source block (#7, #29).
+ * The fold. The headline makes the claim, the sentence under it says what is
+ * behind the claim, and one line names the umbrella title and the range under
+ * it. Four titles side by side read as a keyword list, so the four live in
+ * About, each next to the work that backs it.
+ */
+const fold = {
+  headline: {
+    lead: "I build software that",
+    accent: "keeps working",
+    tail: "when things break.",
+  },
+  sentence:
+    "Two years of AI-automation systems, taken end to end: the database, the queues, the integrations and the dashboard on top.",
+  title: PERSON_ROLE,
+  range: "backend, full-stack and AI product",
+  caption: "Good morning from Karachi",
+  cue: { time: "12:00", label: "Noon at the port ↓" },
+};
+
+/**
+ * Tints for the three case studies, in `order`. The same three colours colour
+ * the tags in the fold, so a reader can follow a failure from the headline to
+ * the card that answers it.
+ */
+const TINTS = [
+  { tag: "bg-[#f6c8b6]", dot: "bg-coral" },
+  { tag: "bg-[#f9dc8d]", dot: "bg-saffron" },
+  { tag: "bg-[#bfe0e0]", dot: "bg-sea" },
+] as const;
+
+const work = {
+  lead: "Three decisions and",
+  accent: "what they cost",
+  intro:
+    "This is client work, and I name the client where I can. Each card is one decision I would defend, along with the bill that came with it.",
+  cue: { time: "16:30", label: "Golden hour: the code ↓" },
+};
+
+/**
+ * The open-source block. It carries no mechanism: the mechanism may only
+ * appear below a link, which is what makes the split with the case studies
+ * safe, since nothing here can leak upward into the page that shares its
+ * subject.
  *
- * Entirely non-technical, and it carries no mechanism — not because a hiring
- * manager could not follow one, but because the mechanism may only appear
- * below a link. That is what makes the case-study split mechanically safe:
- * if this block cannot explain how anything works, nothing can leak upward
- * into the case study that shares its subject.
+ * The weight is uneven on purpose. Three equal cards would claim a production
+ * line, and the claim is the opposite: a conviction held twice. So the
+ * conviction leads, `drizzle-tx` is the big card, and the two that started it
+ * sit beside it. Only `drizzle-tx` has a page to click into.
  *
- * The weight is uneven on purpose. Three equal cards re-assert the pipeline
- * story visually — a reader counts three boxes and infers a sequence before
- * reading a word — and the claim here is the opposite one: a conviction held
- * twice, not a production line. Equal weight would also promise three clicks
- * when only `drizzle-tx` has a page to click into.
- *
- * So: the conviction leads, `drizzle-tx` is a row, and the two that started it
- * sit beneath as a pair. The `retrofit` line is the whole of what the home
- * page says about the repeat. The argument for it — two implementations of the
- * same type resolving the same question in opposite directions, four months
- * apart — is a named section on the detail page, where a reader has agreed to
- * that level of detail.
- *
- * No npm scope appears here, and none may (#22). The packages are cited by
- * repo name and GitHub URL. A scope is how you GET the code; the URL is where
- * the argument for it lives. "Published on npm" as a bare fact is allowed, and
- * it is what carries `result-kit-lint`, whose entire pitch is that it is
- * tooling somebody can actually run.
+ * No npm scope appears here. A scope is how you GET the code; the URL is where
+ * the argument for it lives.
  */
 const openSource = {
-  // #14's pinned conviction specimen, stated once. `result-kit`'s pitch used
-  // to end by restating it almost word for word; that clause is cut here, on
-  // the precedent #14 set when it cut the About line for restating the
-  // positioning sentence. Saying it twice in one screen reads as padding.
+  lead: "Two libraries and",
+  accent: "one argument",
   conviction: OPEN_SOURCE_CONVICTION,
   retrofit:
     "Four months later I hit the same wall and answered it the other way.",
-
   featured: {
     name: "drizzle-tx",
-    // #7's pitch as #8 amended it. It lost "22-module" because that number is
-    // the case study's, and the case study's home-page heading is literally
-    // "22 modules, one transaction boundary" — the same fact twice in one
-    // scroll reads as padding rather than emphasis.
     pitch:
       "I let the handle travel with the request, so it stops showing up in signatures that never touch the database. Drizzle only undoes work when something throws. This library never throws.",
     href: "/open-source/drizzle-tx",
-    // Names what is behind the click, the way the work rows name their
-    // diagram, rather than asking for the click on trust.
     label: "Read how it holds →",
   },
-
   origin: [
     {
       name: "result-kit",
       pitch:
         "Where I started. I had built this by hand once already: thirty-nine static methods, and six of them were ever called from outside.",
       href: "https://github.com/alifaroo-q/result-kit",
-      // #52. The cell keeps its repo link and gains a second line, because
-      // the cells are deliberately not links and the visible text is the URL
-      // with the protocol cut — pointing `href` inward would print a path
-      // where a domain belongs. The label is the featured row's habit at the
-      // quieter weight: name what is behind the click.
       page: "/open-source/result-kit",
       pageLabel: "Why there are no classes in it →",
     },
     {
       name: "result-kit-lint",
-      // #14's rewrite, which split the sentence at its em-dash.
       pitch:
         "Lint rules that fail the build when a result goes unchecked. Without them, the convention holds for as long as I remember to keep it.",
       href: "https://github.com/alifaroo-q/result-kit-lint",
     },
   ],
-
   published: "Both are published on npm.",
+  cue: { time: "18:40", label: "Dusk, a little about me ↓" },
 };
 
-/**
- * ABOUT — the bio, and under it the resume as two dated rows.
- *
- * #8 names the employer exactly once, on this page, and never inside a case
- * study. That single mention is what stops the anonymised work reading as
- * evasion: the clients are nameless BECAUSE the employer is stated.
- *
- * Seniority is a date, not a duration. "Since 2024" is the same fact as "two
- * years" and does the arithmetic in the reader's head rather than handing
- * over a small credential to be discounted before the evidence is read.
- *
- * The bio's second line is one clause. It used to carry three examples, and
- * #14 cut them: they were the positioning sentence's three clauses restated,
- * same structure and same rhythm, so the page read as saying it twice.
- *
- * THE ROWS ARE NEW, and they are the work rows' grid rather than a shape of
- * their own — a date in the marker column, then the thing and what it was.
- * Reverse-chronological is the one layout a reader does not have to be taught,
- * which is the whole argument for spending a second row-stack on the page.
- *
- * The bio's third line is GONE. It said "I'm in Karachi, and open to backend
- * roles", and both halves are in the fold's micro-line four sections up.
- *
- * THE FIGURES BELONG TO THE ROW, not to the section. Loose under the bio they
- * were a stat row about a person; under a dated employer they are the size of
- * that job. Two of the four candidates are cut for the reason #14 cut the
- * About line — `22 modules` is the drizzle-tx case study's own heading and the
- * npm count is the line the open-source section closes on, so both would print
- * twice in one scroll. What is left is the two the rest of the page never
- * says.
- *
- * Only the employer row carries them. A lone `1` under the degree would be a
- * number invented to fill a slot, and the uneven weight is the open-source
- * block's device: the row with more to say gets more.
- *
- * NEITHER ROW NAMES A CITY, and it is the same rule as the fold's cut `role`
- * row. Both rows carried "Karachi" for one draft, which put the city on this
- * page three times — the fold's `based` row, and once each here. A row that
- * repeats the line above it teaches a reader that the rows are decoration. The
- * fold has the city, and the degree row already names the university.
- */
 const about = {
+  lead: "A bit about",
+  accent: "me",
   bio: [
-    "I have been a software engineer at Zenkoders since 2024, on the backend of client products. That is why the work above never names a client.",
+    "I have been a software engineer at Zenkoders since 2024, across the backend, the AI features and the dashboards of client products. Most of what you see here is client work, so it carries their names.",
     "The problems I get handed are the ones where being wrong is expensive.",
   ],
-
+  /**
+   * The four titles, each with the work that backs it. Every sentence restates
+   * something already on this site or the resume, and each link goes to the page
+   * that holds the evidence, so the range is something a reader can check.
+   */
+  rolesLabel: "Four ways I work",
+  roles: [
+    {
+      title: "Backend engineer",
+      line: "NestJS, PostgreSQL and BullMQ queues, with the rules that must hold kept in the database.",
+      href: "/work/the-money-rule-in-the-database-not-the-service",
+      label: "The money rule →",
+    },
+    {
+      title: "Software engineer",
+      line: "Features taken end to end, from the schema to the release, in client products across healthcare, fintech and SaaS.",
+      href: "#work",
+      label: "Three decisions →",
+    },
+    {
+      title: "AI product engineer",
+      line: "AI voice booking, Gmail automation and document extraction. I treat what a model returns like any other input from outside.",
+      href: "/work/treating-google-as-a-system-that-will-fail",
+      label: "The automation case →",
+    },
+    {
+      title: "Full-stack engineer",
+      line: "The Next.js dashboard on top of the queues and the database, and this site.",
+      href: "/stack",
+      label: "The stack →",
+    },
+  ],
   rows: [
     {
-      span: "2024 — now",
+      span: "2024 to now",
       title: "Software engineer, Zenkoders",
-      line: "Backend of client products in healthcare, fintech and SaaS. AI voice booking on BullMQ queues, Gmail automation, document extraction out of PDFs nobody controls.",
+      line: "Backend of client products in healthcare, fintech and SaaS, including Numlix, Mach 1 and Voxena. AI voice booking on BullMQ queues, Gmail automation, document extraction out of PDFs nobody controls.",
       figures: [
         { n: "7,000", of: "inbound leads a month, booked against a calendar" },
         { n: "100", of: "consultants drafting email through it" },
       ],
     },
     {
-      span: "2020 — 2024",
+      span: "2020 to 2024",
       title: "BS Computer Software Engineering",
       line: "DHA Suffa University. Gold medal, top of the batch.",
       figures: [],
     },
   ],
-
-  // Names what is behind the click, the habit every other cue here keeps. The
-  // href is `person.resumeHref` at the call site — the header, the fold and
-  // this line are one file, and three literals of a path is a dead link that
-  // only one of them shows.
   resumeLabel: "The whole thing, dated and on one page →",
+  cue: { time: "21:30", label: "Night, say hello ↓" },
 };
 
-/**
- * The stack, and the only route to `/stack`.
- *
- * Three case studies argue in depth about a narrow slice — Postgres, Drizzle,
- * one payment integration — and a reader finishing them cannot tell whether
- * anything else has been shipped. Nothing on this site says AWS, Redis, a
- * queue, Docker, or any of the LLM work. That is the gap this closes.
- *
- * IT MOVED OUT OF ABOUT AND INTO THE FOLD, and the note that used to sit here
- * argued against exactly that: "putting a line of nouns above the work would
- * let it outrank three arguments", on the grounds that a reader who got as far
- * as About had already decided to care. That is overruled, not answered. The
- * fold holds the whole screen and there was about 600px of nothing between the
- * actions and the way-out line on a 1080p display, and a held screen has to
- * earn what it holds.
- *
- * The old objection is kept honest by WEIGHT rather than by position, which is
- * the open-source block's device. The strip is the quietest thing in the fold,
- * it is below the actions rather than above them, and it does not flip the
- * ground — that inversion is the site's signal for "a piece of work you can
- * read", and a reference list is not one.
- *
- * It became a LIST of six marks where it was a sentence naming six. What that
- * costs is the sentence's nuance — "Next.js when the frontend is mine",
- * "Postgres underneath and AWS around it" — which said how the six relate and
- * a row of chips cannot. Six is still the count: twelve nouns is the list, and
- * the list is what the separate page is for.
- *
- * The label is NOT written here. It spells a count, so it lives beside the
- * array it counts and `stack.test.ts` holds the two together — a number in a
- * file that cannot see the list is a number that goes wrong quietly.
- */
-const stack = {
-  href: "/stack",
-  // Names what is behind the click, the habit the work rows and the featured
-  // repo both keep, at the quietest weight on the page.
-  label: STACK_CUE,
-};
+const stack = { href: "/stack", label: STACK_CUE };
 
-/**
- * Ties a clause of the positioning sentence to the work row that answers it.
- *
- * The sentence and the row print the SAME string from here, because the whole
- * device is that they match — two call sites formatting a number the same way
- * by coincidence is one edit away from not matching. What differs is only how
- * each carries it: a superscript inside prose, a column entry beside a row.
- *
- * Decorative, and hidden from assistive technology at both call sites: a
- * screen reader gets the sentence unbroken and then gets the rows in the same
- * order, which is the argument without the visual crutch.
- */
-function marker(n: number) {
-  return String(n).padStart(2, "0");
-}
-
-/** One row of the fold's micro-line, with a dotted leader out to its value. */
-function Fact({
-  term,
-  detail,
-  live = false,
-}: {
-  term: string;
-  detail: string;
-  live?: boolean;
-}) {
-  return (
-    <div className="flex items-baseline gap-3">
-      <dt className="flex flex-1 items-baseline gap-3 text-foreground-label text-sm after:block after:h-0 after:flex-1 after:border-border-strong after:border-b after:border-dotted after:content-['']">
-        {term}
-      </dt>
-      <dd className="flex items-baseline gap-2 text-sm">
-        {/* A dot, not a word. #8 wants availability stated outright and #10
-            kept this one UI convention from the register it otherwise
-            stripped: it is the cheapest way to make the line read as current
-            rather than as boilerplate. */}
-        {live ? (
-          <span
-            aria-hidden="true"
-            className="inline-block size-1.5 self-center rounded-full bg-accent"
-            // The one thing on the site that moves without being asked to, and
-            // the reason it may is the same reason the dot exists: the line
-            // has to read as current. A slow breathe, settled in `globals.css`.
-            data-live
-          />
-        ) : null}
-        {detail}
-      </dd>
-    </div>
-  );
-}
-
-/**
- * The site's only structured data — `Person`, on this page and no other (#16).
- *
- * It is the one piece that ties the site to the name a recruiter types, and
- * the reason it is here rather than in the root layout is that "on the home
- * page" is the whole of the decision: a `Person` block repeated on five pages
- * claims five people.
- *
- * `sameAs` carries both handles spelled out, because they do not match —
- * `alifaroo-q` on GitHub, `itsalifarooq` on LinkedIn — so anyone deriving one
- * from the other gets it wrong.
- *
- * `image` is the same file About renders, absolute because a relative path in
- * structured data resolves against nothing a consumer can rely on. It is the
- * one field that lets a result carry a face rather than a favicon.
- *
- * No `email` and no `address`. Both are already visible to a human on this
- * page, nothing renders the machine-readable copy, and the email version is a
- * gift to scrapers. `BreadcrumbList` is not here either: it exists to render a
- * trail Google will not show for a two-level, five-page site.
- */
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: PERSON_NAME,
-  jobTitle: PERSON_ROLE,
+  jobTitle: [...PERSON_ROLES],
   url: SITE_URL,
   image: `${SITE_URL}${PORTRAIT_SRC}`,
   sameAs: PROFILE_URLS,
 };
 
+/** The line on the scenery that names the next hour and links to it. */
+function HourCue({
+  href,
+  time,
+  label,
+}: {
+  href: string;
+  time: string;
+  label: string;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-[calc(var(--scene-h)+0.25rem)] z-10 flex justify-center md:bottom-6">
+      <a
+        className="pill pointer-events-auto gap-3 whitespace-nowrap px-4 py-2 text-sm"
+        href={href}
+      >
+        <span className="font-mono text-foreground-label text-xs">{time}</span>
+        <span className="font-semibold">
+          <Cue label={label} />
+        </span>
+      </a>
+    </div>
+  );
+}
+
 export default function Home() {
-  // Ordered by the collection's own field, not by filename or read order —
-  // the row order is the order the positioning sentence promised, so it
-  // cannot be left to whatever the filesystem hands back.
-  const work = allCaseStudies.toSorted((a, b) => a.order - b.order);
+  const caseStudies = allCaseStudies.toSorted((a, b) => a.order - b.order);
 
   return (
     <>
@@ -372,513 +248,278 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         type="application/ld+json"
       />
-
       <SiteHeader name={person.name} resumeHref={person.resumeHref} />
-
       <main id="main">
-        {/* THE FOLD, AND IT HOLDS THE SCREEN.
-
-            One viewport tall, less the header it sits under, so the first
-            thing a reader sees is the whole claim and NOTHING of the evidence.
-            The work rows start below the bottom edge — that is what makes them
-            arrive on the scroll rather than already be there, and it is why
-            this section owns a height at all. `svh` rather than `vh`: on a
-            phone `vh` is the tallest the viewport ever gets, so the first row
-            would be tucked under the browser chrome instead of under the fold.
-
-            `min-h`, never `h`. A short landscape window makes the fold taller
-            than the screen rather than clipping the sentence, which is the
-            failure that matters.
-
-            THE CONTENT SITS AT THE TOP, and it used to be centred. `my-auto`
-            on the block split the fold's slack above AND below it, which cost
-            twice. It pushed the claim into the middle of the viewport —
-            NN/g's scroll study puts 57% of viewing time above the fold and 65%
-            of THAT in the top half, so centring spends the name and the
-            sentence on the weaker half. And it left the way-out line stranded
-            around three quarters down with dead space under it, where a line
-            that means "the page continues past this edge" has to BE at the
-            edge. The claim is anchored to the top now and the slack is taken
-            lower down — by the actions, which is the block that wants to be at
-            the foot. Both halves fixed at once.
-
-            FOUR SLOTS — the name, the claim row (the sentence with the
-            micro-line beside it), the stack strip, and the actions. The
-            micro-line is IN the claim row rather than a slot of its own, and
-            that pairing is the one real decision in here: it went the other
-            way first, sitting with the actions, which ranked a control level
-            with metadata. It belongs with the sentence, which it annotates.
-            Pairing it there also takes about 7rem off the stack, so the fold
-            fits a laptop viewport without the sentence and the button fighting
-            for the same screen.
-
-            `data-enter` staggers all four in reading order, and it is on a
-            `contents` box so it can. The runtime staggers a container's
-            CHILDREN, and the actions need `mt-auto` — which only works on a
-            flex child of the section itself. `display: contents` generates no
-            box, so the four are laid out by the section while still being one
-            container's children. Without it the hook and the auto margin want
-            two different parents and one of them has to lose. The hook is on
-            the CONTAINER because the children take their delay from their
-            position in it; a delay written on a block is a delay the next
-            block forgets. */}
-        <section className="flex min-h-[calc(100svh-var(--spacing-header))] flex-col px-6 pt-section pb-figure md:px-10">
-          <div className="contents" data-enter>
-            {/* The name is non-negotiable up here. A reader arriving from a
-                LinkedIn link needs to confirm within a second that they are in
-                the right place, which is why #10 did not adopt the runner-up
-                take's inverted fold. */}
-            <Headline className="font-medium text-[clamp(2.5rem,8vw,5rem)] leading-[0.95] tracking-tight">
-              {person.name}
-            </Headline>
-
-            {/* THE CLAIM ROW — the sentence, and the micro-line annotating it.
-
-                `flow` above it, and it is the gap that does the most work on
-                this screen. The scale's own answer: `flow` is block to block
-                inside ONE thought, and the name and the sentence that finishes
-                it are one thought. At `group` the sentence read as a separate
-                item in a list. Bound tight to the name it reads as the rest of
-                the line.
-
-                The facts sit BESIDE the sentence rather than under it, and
-                that is what buys the actions their own rank below. Everything
-                on this page is capped at the measure and left-anchored, so
-                past about 1100px the right of the fold was empty while the
-                stack ran on down past the bottom edge. The micro-line is the
-                one block here small enough and quiet enough to go in that
-                space: it is an annotation on the claim, not a step after it,
-                and beside the first line is where an annotation belongs.
-
-                `lg`, and NOT `sm`. At 640px the measure alone is 544px of the
-                560px of content width, so a second column has nothing to sit
-                in and both would be squeezed under their own minimums. The two
-                clear each other comfortably at 1024px and stack below it.
-
-                The right track is a WIDTH, not a measure and not a gap, so it
-                is written here rather than tokenised. It needs a floor because
-                the dotted leader inside `Fact` fills whatever it is given, so
-                a `max-content` column collapses the leader to nothing; 18rem
-                is roughly what the longest row ("Open to backend roles") needs
-                before the leader stops being visible. It grows to 24rem where
-                there is room, which is the leader getting longer rather than
-                the column drifting away from the sentence.
-
-                `items-baseline`, not `items-start`. The sentence is set at up
-                to 22px on 1.6 and the micro-line at 14px, so their first lines
-                start at different depths inside boxes that begin at the same
-                y. Aligned by BOX the metadata floats about 10px high; aligned
-                by BASELINE it sits on the sentence's first line, which is the
-                thing it annotates. */}
-            <div className="mt-flow grid gap-x-section gap-y-group lg:grid-cols-[minmax(0,var(--container-measure))_minmax(18rem,24rem)] lg:items-baseline lg:justify-start">
-              <p className="max-w-measure text-[clamp(1.0625rem,2.1vw,1.375rem)] leading-[1.6]">
-                {person.positioningLead}{" "}
-                {person.positioningClauses.map((clause, i) => (
-                  <span key={clause}>
-                    {clause}
-                    {/* Set at the label size rather than below it. That size
-                        is a floor on this site, and a marker is not the thing
-                        to make an exception for. */}
-                    <sup
-                      aria-hidden="true"
-                      className="ml-0.5 text-accent text-label"
-                    >
-                      {marker(i + 1)}
-                    </sup>
-                    {i < person.positioningClauses.length - 1 ? " " : ""}
-                  </span>
-                ))}
+        {/* Dawn. */}
+        <section
+          aria-label="Introduction"
+          className="hour hour-dawn"
+          data-hour="dawn"
+        >
+          <Clouds />
+          <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+3.5rem)] md:pb-[calc(var(--scene-h)*0.5+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
+            <div className="order-2 lg:order-1" data-reveal>
+              <Portrait />
+              <p className="mt-figure text-center text-foreground-muted">
+                <span className="font-mono text-foreground-label text-xs">
+                  06:10
+                </span>{" "}
+                <em className="font-serif">{fold.caption}</em>
               </p>
-
-              {/* `max-w-sm` is 24rem, the same number the grid track tops out
-                  at. Below `lg` there is no track to cap it, and a two-row
-                  list running the full width of a tablet is 700px of dotted
-                  leader between a word and a place name. */}
-              <dl className="max-w-sm space-y-1.5">
-                <Fact detail={person.location} term="based" />
-                <Fact detail={person.availability} live term="status" />
-              </dl>
             </div>
-
-            {/* THE STACK STRIP, tucked straight under the claim.
-
-                `group`, which is the scale's answer for "a new thought, and it
-                has a sub-heading" — the strip carries its own label, and the
-                micro-line beside the sentence has already put the reader in
-                the register of quiet facts about the person. The strip
-                continues that register rather than starting a rank.
-
-                It is above the actions and it used to be below them. What that
-                buys is the fold's one gap landing BETWEEN the facts and the
-                thing to do about them, which is the only break on the screen
-                worth a gap that size. */}
-            <StackStrip
-              className="mt-group"
-              href={stack.href}
-              label={stack.label}
-            />
-
-            {/* THE ACTIONS, at the foot of the fold.
-
-                `mt-auto` moved here, and this block is now what spends the
-                held screen. The claim and the strip sit at the top as one
-                block of facts; the actions drop to the bottom edge and the way
-                out sits under them. Everything above is what he is, and the
-                last thing before the fold ends is what to do about it.
-
-                `pt-section` is the floor for the case with no slack to take: a
-                short window makes the fold taller than the screen, `mt-auto`
-                resolves to zero, and the actions still need a gap above them.
-
-                ONE BOX, and the second action is a cue line.
-
-                It was two boxes, and they were the only two on the site.
-                Three things were wrong with the pair and the third is the one
-                that settles it:
-
-                The second style was written HERE, inline, next to the constant
-                that exists so an affordance is not a copied class list.
-                `ACTION_CLASS` is imported at the top of this file.
-
-                It was drawn in `--border-strong`, which `globals.css` measures
-                at 1.76:1 on the dark ground and 1.73:1 on the light one. SC
-                1.4.11 asks 3:1 of a control's boundary, so the box was a fail
-                — and the same file already holds `--error-line` to that rule
-                by name.
-
-                And the site does not do this anywhere else. The header gives
-                Resume and Contact as plain links; every work row, every repo
-                and the stack line end in a cue with an arrow. Two competing
-                outlines in the fold was the register of a landing page, not of
-                this one.
-
-                So the resume keeps the box, because a download is the one
-                thing here that is not navigation. Contact becomes what every
-                other invitation on the site is. The address is still in the
-                fold, which is the half of the pair worth keeping.
-
-                `items-center` and not the row's default stretch: a one-line
-                text link stretched to a 44px box would sit at its top edge,
-                which is the misalignment it is here to avoid. */}
-            <div className="mt-auto flex flex-wrap items-center gap-x-figure gap-y-tight pt-section">
-              <a className={ACTION_CLASS} href={person.resumeHref}>
-                Download resume
-              </a>
-              <a className="text-accent" href={`mailto:${person.email}`}>
-                <Cue label="Get in touch →" />
-              </a>
+            <div className="order-1 lg:order-2" data-enter>
+              <Headline
+                accent={fold.headline.accent}
+                className="max-w-[16ch] font-extrabold text-[clamp(2.5rem,6.2vw,4.75rem)] leading-[1.02] tracking-[-0.035em]"
+                lead={fold.headline.lead}
+                tail={fold.headline.tail}
+              />
+              <p className="mt-figure max-w-measure text-[clamp(1.0625rem,1.7vw,1.25rem)] text-foreground-muted leading-[1.6]">
+                {fold.sentence}
+              </p>
+              <p className="mt-figure font-bold font-display text-[clamp(1.0625rem,1.8vw,1.3125rem)] tracking-tight">
+                {fold.title}
+                <span aria-hidden="true" className="px-3 text-coral">
+                  /
+                </span>
+                <span className="font-semibold text-foreground-muted">
+                  {fold.range}
+                </span>
+              </p>
+              <p className="mt-figure flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground-muted text-sm">
+                <span
+                  aria-hidden="true"
+                  className="inline-block size-2 rounded-full bg-sea"
+                  data-live
+                />
+                {person.availability}
+                <span aria-hidden="true">·</span>
+                {person.location}
+                <span aria-hidden="true">·</span>
+                {person.hours}
+              </p>
+              <div className="mt-figure flex flex-wrap items-center gap-x-8 gap-y-4">
+                <a className={ACTION_CLASS} href="#work">
+                  <Cue label="Explore my work ↘" />
+                </a>
+                <a
+                  className="font-semibold ink-link"
+                  href={`mailto:${person.email}`}
+                >
+                  <Cue label="Say hello ↗" />
+                </a>
+              </div>
             </div>
           </div>
-
-          {/* The one line the held screen costs, and the reason it is cheap.
-
-              A fold that fills the viewport hides the evidence under it, so it
-              has to say that there IS evidence under it — otherwise a reader
-              who does not scroll has read a claim and left. It names the
-              section rather than saying "scroll", because the arrow already
-              says which way and the label is the only part carrying a fact.
-
-              `mt-group`, because the actions above it now take the slack. The
-              cue held `mt-auto` itself while it was the last thing in the
-              fold; two auto margins in one column split the free space between
-              them and would push the actions back up into the middle of the
-              screen. One block takes the slack and the cue follows it at a
-              fixed step.
-
-              `group` and not `flow`: the actions are a different thought from
-              the way out of the page, and this is the gap that says so.
-
-              Outside `data-enter` on purpose: the stagger is the fold's four
-              slots and this is not a fifth, it is the way out of them.
-
-              It writes its own arrow rather than going through `Cue`. Every
-              cue on the site ends in `→` and nudges right on hover; this one
-              points DOWN, and a right-moving down arrow is two directions in
-              one gesture. The arrow is `aria-hidden` for the reason `Cue`
-              hides its own: the link already says where it goes. */}
-          <a
-            className="mt-group self-start text-foreground-label text-label uppercase hover:text-accent"
-            href="#work"
-          >
-            Work{" "}
-            <span aria-hidden="true" className="fold-cue inline-block">
-              ↓
-            </span>
-          </a>
+          <Shore />
+          <HourCue href="#work" label={fold.cue.label} time={fold.cue.time} />
         </section>
 
-        {/* WORK — rows, never cards. A reader counts boxes and infers a
-            sequence before reading a word, which is the reading #7 rejected
-            for the open-source block and the one #6's decision-led headings
-            cannot afford either. The label is "Work": "Case studies"
-            announces a genre and primes the reader for marketing copy. */}
-        <SectionHead id="work" label="Work" />
-        <section aria-labelledby="work">
-          {/* Every row starts below the fold's bottom edge, so every row is
-              scrolled to rather than landed on. `data-reveal` scrubs each one
-              against its own progress up the screen — it runs on the scroll,
-              not alongside it, so it also runs backwards. */}
-          {work.map((caseStudy, i) => (
-            <a
-              className={cn(
-                "flip-ground group grid grid-cols-[2.5rem_1fr] gap-x-4 bg-background px-6 py-8 text-foreground md:grid-cols-[4rem_1fr] md:px-10 md:py-10",
-                // The rule between two rows, and only between two rows. The
-                // last row used to draw one as well, which sat directly on the
-                // next section head's own top rule — a 2px line made of two
-                // 1px ones. Now that the head takes `mt-section` the two would
-                // be a hairline, 56px of nothing, and a second hairline. The
-                // head's rule closes the stack; this one only divides it.
-                i < work.length - 1 && "border-border border-b",
-              )}
-              data-reveal
-              href={`/work/${caseStudy.slug}`}
-              key={caseStudy.slug}
-            >
-              {/* The same marker the sentence carried, pointing back — and
-                  read off the case study's own `order`, not off where it
-                  landed in the array. The row that answers clause two is the
-                  one the collection ordered second; a render index only
-                  agrees with that by accident, and stops agreeing the moment
-                  a study is added, dropped or reordered. */}
-              <span
-                aria-hidden="true"
-                className="pt-1.5 text-accent text-label"
+        {/* Noon. */}
+        <section
+          aria-labelledby="work"
+          className="hour hour-noon pt-section pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="noon"
+        >
+          <SectionHead accent={work.accent} id="work" lead={work.lead}>
+            {work.intro}
+          </SectionHead>
+          <div className="wrap mt-group grid gap-8 lg:grid-cols-3 lg:gap-10">
+            {caseStudies.map((caseStudy, i) => (
+              <a
+                className="paper group flex flex-col p-6 md:p-7"
+                data-reveal
+                href={`/work/${caseStudy.slug}`}
+                id={`work-${caseStudy.order}`}
+                key={caseStudy.slug}
               >
-                {marker(caseStudy.order)}
-              </span>
-              <div className="max-w-measure">
-                {/* The sector, one level up and never the scheme or the niche
-                    (#6). It carries the context a hiring manager scans for —
-                    did he work in a domain like mine — at almost no visual
-                    cost, while the heading keeps the weight on judgment. */}
-                <p className="text-foreground-label text-label uppercase">
-                  {caseStudy.sector}
-                </p>
-                {/* The decision IS the heading. A slot that surveys a project
-                    reads as documentation; one that names a decision reads as
-                    judgment, which is what is being assessed. */}
-                <h3 className="mt-tight font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
+                <div className="lg:min-h-[3.1rem]">
+                  <span
+                    className={cn(
+                      "inline-block rounded-[1.1rem] border-2 border-ink px-3 py-1 font-medium text-ink text-xs leading-snug",
+                      TINTS[i]?.tag,
+                    )}
+                  >
+                    {caseStudy.sector}
+                  </span>
+                </div>
+                <h3 className="mt-flow font-bold text-[clamp(1.375rem,2.2vw,1.75rem)] leading-[1.15] tracking-tight lg:min-h-[3.45em]">
                   {caseStudy.decision}
                 </h3>
                 <p className="mt-flow text-foreground-muted">
                   {caseStudy.constraint}
                 </p>
-                {/* The diagram stays off this page. It is the strongest asset
-                    each slot has and the one thing that cannot be skimmed —
-                    inline, it is spent on people who will not look, and it
-                    removes the only real reason to click. Naming it turns
-                    that withholding into a promise, where "Read the case
-                    study" asks for the click on trust alone. */}
-                <p className="mt-flow text-accent">
+                <p className="mt-auto pt-figure font-semibold text-accent">
                   <Cue label={caseStudy.artifactLabel} />
                 </p>
-              </div>
-            </a>
-          ))}
+              </a>
+            ))}
+          </div>
+          <Port />
+          <HourCue
+            href="#open-source"
+            label={work.cue.label}
+            time={work.cue.time}
+          />
         </section>
 
-        {/* OPEN SOURCE — in its settled position. The label is fixed here
-            because the order is: evidence reads better after the claims it
-            backs, and this is where those claims end. The copy and the
-            weighting are in `openSource` above. */}
-        <SectionHead id="open-source" label="Open source" />
-        <section aria-labelledby="open-source">
-          {/* The conviction, and the one clause the retrofit gets up here.
-
-              `pt-group` and not the 56px it opened with. The section head now
-              carries 56px above it, and a section that then puts another 56px
-              between its label and its first line leaves the label floating
-              between the two — as near to the section it ended as to the one
-              it opens. `group` is the scale's step for "a new thought under a
-              sub-heading", which is what this is. */}
-          <div className="px-6 pt-group pb-12 md:px-10">
-            <div className="max-w-measure">
-              <p className="text-[clamp(1.1875rem,2.6vw,1.625rem)] leading-[1.4]">
-                {openSource.conviction}
-              </p>
-              <p className="mt-flow text-foreground-muted">
-                {openSource.retrofit}
-              </p>
-            </div>
-          </div>
-
-          {/* The feature. A row, like the work rows, because it is the same
-              kind of promise: one click, one page. It is the only thing in
-              this section that flips the ground, which is the section's
-              weighting done structurally rather than stated. */}
-          <a
-            className="flip-ground block border-border border-y bg-background px-6 py-8 text-foreground md:px-10 md:py-10"
-            data-reveal
-            href={openSource.featured.href}
+        {/* Golden hour. */}
+        <section
+          aria-labelledby="open-source"
+          className="hour hour-golden pt-section pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="golden"
+        >
+          <SectionHead
+            accent={openSource.accent}
+            id="open-source"
+            lead={openSource.lead}
           >
-            <div className="max-w-measure">
-              <h3 className="font-medium text-[clamp(1.3125rem,3vw,1.875rem)] leading-tight">
-                {openSource.featured.name}
-              </h3>
-              <p className="mt-flow text-foreground-muted">
-                {openSource.featured.pitch}
-              </p>
-              <p className="mt-flow text-accent">
+            {openSource.conviction}
+          </SectionHead>
+          <div className="wrap mt-group grid gap-8 lg:gap-10">
+            <a
+              className="paper grid gap-x-10 gap-y-figure p-6 md:grid-cols-[1fr_auto] md:items-end md:p-8"
+              data-reveal
+              href={openSource.featured.href}
+            >
+              <div>
+                <span className="inline-block rounded-full border-2 border-ink bg-saffron px-3 py-1 font-medium text-ink text-xs">
+                  Has a write-up
+                </span>
+                <h3 className="mt-flow font-bold text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.05] tracking-tight">
+                  {openSource.featured.name}
+                </h3>
+                <p className="mt-flow max-w-measure text-foreground-muted">
+                  {openSource.featured.pitch}
+                </p>
+              </div>
+              <p className="font-semibold text-accent">
                 <Cue label={openSource.featured.label} />
               </p>
-            </div>
-          </a>
-
-          {/* The paired origin, beneath and quieter. The cells are not links:
-              three clickable boxes would be the three equal cards this block
-              exists to avoid, so the repo URL inside each one carries the
-              click and the pair keeps its weight. */}
-          <div className="grid md:grid-cols-2">
-            {openSource.origin.map((repo, i) => (
-              <div
-                className={cn(
-                  "px-6 py-8 md:px-10",
-                  i === 0 && "border-border border-b md:border-r md:border-b-0",
-                )}
-                data-reveal
-                key={repo.name}
-              >
-                <div className="max-w-measure">
-                  <h3 className="font-medium text-lg">{repo.name}</h3>
-                  <p className="mt-tight text-foreground-muted text-sm">
-                    {repo.pitch}
-                  </p>
-                  <p className="mt-flow">
-                    <a
-                      className="text-sm underline underline-offset-[0.2em] hover:text-accent"
-                      href={repo.href}
-                    >
+            </a>
+            <div className="grid gap-8 md:grid-cols-2 lg:gap-10">
+              {openSource.origin.map((repo) => (
+                <div className="paper p-6" data-reveal key={repo.name}>
+                  <h3 className="font-bold text-xl tracking-tight">
+                    {repo.name}
+                  </h3>
+                  <p className="mt-tight text-foreground-muted">{repo.pitch}</p>
+                  <p className="mt-flow text-sm">
+                    <a className="ink-link" href={repo.href}>
                       {repo.href.replace("https://", "")}
                     </a>
                   </p>
-                  {/* The write-up, where one exists (#52). Below the repo
-                      link, not instead of it: the repo is what the cell
-                      promises, and the page is the thing a link to GitHub
-                      cannot signal — that there is an argument behind the
-                      name. */}
-                  {/* Both halves, not just the path: the cue line needs its
-                      label to name what is behind the click, and a link with
-                      an href and nothing to say is not the thing #52 asked
-                      for. `"page" in repo` only ever proved the first half. */}
-                  {repo.page && repo.pageLabel && (
-                    <p className="mt-tight">
-                      <a className="text-accent text-sm" href={repo.page}>
+                  {repo.page && repo.pageLabel ? (
+                    <p className="mt-tight font-semibold text-accent text-sm">
+                      <a href={repo.page}>
                         <Cue label={repo.pageLabel} />
                       </a>
                     </p>
-                  )}
+                  ) : null}
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* The registry as a bare fact, never a scope string (#22). It is
-              the one signal a repo link does not carry, and `result-kit-lint`
-              is the pitch that needs it: tooling nobody can install is a
-              convention with a README. */}
-          <p className="border-border border-t px-6 py-6 text-foreground-label text-sm md:px-10">
-            {openSource.published}
-          </p>
-        </section>
-
-        {/* ABOUT — after the work, not before it. Nobody scrolled for
-            biography. */}
-        <SectionHead id="about" label="About" />
-        <section aria-labelledby="about">
-          {/* The bio, and the face beside it. The stack line that used to
-              close this block is gone and it is in the fold now — see the note
-              on `stack` above. What took its place is the rows underneath,
-              which is a different kind of thing: biography reads first, the
-              record reads second. */}
-          <div
-            className="grid gap-8 px-6 pt-group pb-section md:grid-cols-[9rem_1fr] md:px-10"
-            data-reveal
-          >
-            <Portrait />
-            <div className="max-w-measure space-y-flow text-foreground-muted">
-              {about.bio.map((line, i) => (
-                <p
-                  className={i === 0 ? "text-foreground" : undefined}
-                  key={line}
-                >
-                  {line}
-                </p>
               ))}
             </div>
           </div>
+          <p className="wrap mt-group max-w-measure text-foreground-muted">
+            {openSource.retrofit} {openSource.published}
+          </p>
+          <Dunes />
+          <HourCue
+            href="#about"
+            label={openSource.cue.label}
+            time={openSource.cue.time}
+          />
+        </section>
 
-          {/* THE ROWS. The work rows' grid, at the quieter weight: no ground
-              flip and no cue, because neither row is a click. That inversion
-              is the site's signal for "a piece of work you can read", and a
-              job is not one.
-
-              `data-reveal` per row, the way the work rows take it, so each
-              scrubs against its own progress up the screen rather than the
-              pair arriving as one block. */}
-          {about.rows.map((row) => (
-            <div
-              className="grid grid-cols-[5rem_1fr] gap-x-4 border-border border-t px-6 py-8 md:grid-cols-[9rem_1fr] md:gap-x-8 md:px-10"
-              data-reveal
-              key={row.span}
-            >
-              {/* A `p`, not a `dt`. The span is a label above nothing — the
-                  row's heading is the `h3` beside it, and a definition list
-                  would claim the date defines the job. */}
-              <p className="pt-1.5 text-foreground-label text-label uppercase">
-                {row.span}
-              </p>
-              <div className="max-w-measure">
-                {/* `h3`, the same level the work rows and the repos take.
-                    About's `h2` is the section head, so these sit under it. */}
-                <h3 className="font-medium text-lg leading-tight">
+        {/* Dusk. */}
+        <section
+          aria-labelledby="about"
+          className="hour hour-dusk pt-section pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="dusk"
+        >
+          <SectionHead accent={about.accent} id="about" lead={about.lead}>
+            {about.bio[0]} {about.bio[1]}
+          </SectionHead>
+          <div className="wrap mt-group">
+            <div className="paper p-6 md:p-8" data-reveal>
+              <h3 className="font-bold text-xl tracking-tight">
+                {about.rolesLabel}
+              </h3>
+              <dl className="mt-figure grid gap-x-10 gap-y-figure md:grid-cols-2">
+                {about.roles.map((role) => (
+                  <div key={role.title}>
+                    <dt className="font-bold font-display text-lg tracking-tight">
+                      {role.title}
+                    </dt>
+                    <dd className="mt-1 text-foreground-muted">
+                      {role.line}
+                      <span className="mt-1 block font-semibold text-accent text-sm">
+                        <a href={role.href}>
+                          <Cue label={role.label} />
+                        </a>
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+          <div className="wrap mt-group grid items-start gap-8 lg:grid-cols-2 lg:gap-10">
+            {about.rows.slice(0, 1).map((row) => (
+              <div className="paper p-6 md:p-7" data-reveal key={row.span}>
+                <h3 className="mt-tight font-bold text-xl leading-tight tracking-tight">
                   {row.title}
                 </h3>
-                <p className="mt-flow text-foreground-muted text-sm">
-                  {row.line}
+                <p className="mt-1 font-mono text-foreground-label text-xs">
+                  {row.span}
                 </p>
-
-                {/* The figures. A `dl` because a number and what it counts is
-                    a term and its value, and a screen reader gets the pair
-                    rather than two loose strings.
-
-                    `figure` above them — the step for a block that is not
-                    prose sitting inside a run of it. The number is `text-xl`,
-                    one step over the row's heading and two under the work
-                    rows' decision headings: the thing the eye lands on inside
-                    the row, and still smaller than the row it belongs to. */}
-                {row.figures.length > 0 && (
-                  <dl className="mt-figure flex flex-wrap gap-x-section gap-y-figure">
-                    {row.figures.map((figure) => (
-                      <div className="max-w-[16rem]" key={figure.n}>
-                        <dt className="font-medium text-xl leading-none">
-                          {figure.n}
-                        </dt>
-                        <dd className="mt-tight text-foreground-label text-sm">
-                          {figure.of}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
+                <p className="mt-flow text-foreground-muted">{row.line}</p>
+                <dl className="mt-figure space-y-3">
+                  {row.figures.map((figure) => (
+                    <div className="flex items-baseline gap-3" key={figure.n}>
+                      <dt className="font-bold font-display text-2xl tabular-nums">
+                        {figure.n}
+                      </dt>
+                      <dd className="text-foreground-muted text-sm">
+                        {figure.of}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+            <div className="grid gap-8 lg:gap-10">
+              {about.rows.slice(1).map((row) => (
+                <div className="paper p-6 md:p-7" data-reveal key={row.span}>
+                  <h3 className="mt-tight font-bold text-xl leading-tight tracking-tight">
+                    {row.title}
+                  </h3>
+                  <p className="mt-1 font-mono text-foreground-label text-xs">
+                    {row.span}
+                  </p>
+                  <p className="mt-flow text-foreground-muted">{row.line}</p>
+                </div>
+              ))}
+              <div className="paper p-6 md:p-7" data-reveal>
+                <StackStrip href={stack.href} label={stack.label} />
               </div>
             </div>
-          ))}
-
-          {/* The resume, at the foot of the record rather than only in the
-              header and the fold. This is the one place on the page where a
-              reader has just been shown a partial one, so it is the one place
-              the full file is the obvious next thing. */}
-          <p className="border-border border-t px-6 py-6 text-sm md:px-10">
-            <a className="text-accent" href={person.resumeHref}>
+          </div>
+          <p className="wrap mt-figure font-semibold" data-reveal>
+            <a className="ink-link" href={person.resumeHref}>
               <Cue label={about.resumeLabel} />
             </a>
           </p>
+          <Dusk />
+          <HourCue
+            href="#contact"
+            label={about.cue.label}
+            time={about.cue.time}
+          />
         </section>
       </main>
 
-      {/* CONTACT — the shared footer, full rather than compact. This is the
-          one page a reader can arrive at without having read an argument to
-          its end, so it is the one that still has something to introduce. */}
+      {/* Night. */}
       <ContactFooter />
     </>
   );

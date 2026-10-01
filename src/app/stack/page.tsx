@@ -92,11 +92,16 @@ export default function StackPage() {
             {/* The name takes the h2 treatment the prose uses — accent, at the
                 label size. It is a heading in the document outline because it
                 is one: twelve named things, each with its own paragraph. */}
-            <h2 className="text-accent text-label uppercase">{item.name}</h2>
+            <h2 className="font-bold text-[clamp(1.5rem,2.6vw,2rem)] leading-[1.1] tracking-tight">
+              {item.name}
+            </h2>
             <p className="mt-flow text-foreground-muted">{item.note}</p>
             {item.proof ? (
               <p className="mt-flow">
-                <a className="text-accent text-sm" href={item.proof.href}>
+                <a
+                  className="font-semibold text-accent text-sm"
+                  href={item.proof.href}
+                >
                   <Cue label={item.proof.label} />
                 </a>
               </p>
@@ -107,7 +112,7 @@ export default function StackPage() {
         {/* The two bounding sentences, below the list and quieter than it.
             They are the whole of what stops this being an inventory: one says
             where the list ends, the other says what sits under the bar. */}
-        <div className="mt-section border-border border-t pt-figure text-foreground-label text-sm">
+        <div className="paper mt-section p-6 text-foreground-muted text-sm">
           <p>{BELOW_BAR}</p>
           <p className="mt-flow">{STACK_HEDGE}</p>
         </div>

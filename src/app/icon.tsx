@@ -13,5 +13,5 @@ export const size = { width: 48, height: 48 };
 export const contentType = appIconContentType;
 
 export default function Icon() {
-  return appIcon({ size: size.width, glyphRatio: 1.05 });
+  return appIcon({ size: size.width, glyphRatio: 0.52, inset: 0.04 });
 }

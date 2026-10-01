@@ -47,8 +47,8 @@ export function SectionIndex({
   const labelId = `${id}-label`;
 
   return (
-    <div className="border-border border-b px-6 py-10 md:px-10 lg:border-b-0">
-      <p className="text-foreground-label text-label uppercase" id={labelId}>
+    <div className="paper p-6 md:p-7">
+      <p className="font-bold font-display text-xl tracking-tight" id={labelId}>
         {label}
       </p>
 

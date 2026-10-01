@@ -2,241 +2,96 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* The theme is chosen by the reader's system, not by a toggle (#11, #8).
-   shadcn components are written against a `.dark` class, so this one line
-   points that class at the media query. Without it every `dark:` utility in
-   a component added later is dead code that looks alive. */
-@custom-variant dark (@media (prefers-color-scheme: dark));
-
 /* ==========================================================================
-   Fixed tokens — the same in both themes.
+   One day on the Karachi coast.
 
-   `static`, not bare `@theme`. Bare `@theme` drops any token that no
-   utility class references, and it cannot see a `var()` lookup inside
-   hand-written CSS. The row flip below is exactly that: raw CSS reading
-   six variables. `static` emits them all regardless.
+   The page is a clock. Each section is a different hour with its own sky, and
+   the scenery at the foot of a section is drawn in that hour's light. So there
+   is no light/dark switch: the dark half of the day is the Contact section,
+   and the reader meets it by scrolling, not by a system setting.
+
+   THE TOKEN RULE, kept from the previous system: nothing outside this file
+   sets a colour. Components say `text-foreground` or `bg-background`, and the
+   value arrives from whichever ancestor last redefined the token. Two things
+   redefine them: a section's hour (the night flips the whole subtree to light
+   ink) and a `.paper` card (which flips it back to day ink on cream, so a card
+   reads the same on a peach sky and on a navy one).
    ========================================================================== */
+
 @theme static {
-  /* One face, both roles. #10 chose JetBrains Mono for the tallest x-height
-     of the free monospaces, and set the whole site in it. */
-  --font-sans: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-spectral), Georgia, serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  /* Square corners are the direction, not a default (#10). */
-  --radius: 0;
+  /* Corners are barely rounded: the cards are cut paper, not pills. */
+  --radius: 4px;
 
-  /* Body is 15px at 1.7. The label size is a floor — nothing is set smaller. */
-  --text-body: 0.9375rem;
-  --text-body--line-height: 1.7;
-  --text-label: 0.6875rem;
-  --text-label--line-height: 1.45;
-  --text-label--letter-spacing: 0.14em;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.12em;
 
-  /* THE MEASURE, and it is a LENGTH, not a character count.
+  /* The measure, as a length and set on the container, never on the block, so
+     every block in a column shares one right edge. 36rem is 576px: about 62
+     characters of the 17px body. */
+  --container-measure: 36rem;
 
-     It was `54ch` first, and that is the bug this token exists to name.
-     `ch` resolves against the ELEMENT'S OWN font-size, so one token made
-     six different widths on one page: 842px under the 26px lead, 713 under
-     the 22px intro, 583 under the standfirst, 486 under body, 454 under the
-     small print — and nothing at all on an `h2` or a `pre`, which carried no
-     cap and ran the full column. Every block began on the same left edge and
-     stopped somewhere else. Measured on the money case study at 1440: the
-     paragraphs ended at 526 and the headings at 622, a 96px step the reader
-     sees as a broken right margin.
+  /* Spacing in names. More above a heading than below it, always. */
+  --spacing-tight: 0.75rem;
+  --spacing-flow: 1.25rem;
+  --spacing-figure: 1.75rem;
+  --spacing-group: 3rem;
+  --spacing-section: 5rem;
+  /* The floating header: its height plus the gap above it. Anchors and the
+     sticky detail column both clear it. */
+  --spacing-header: 5.25rem;
 
-     A length fixes both halves at once. Blocks share one right edge, and a
-     bigger size simply runs FEWER characters — which is what a lead wants
-     anyway. A 26px lead set to the same count as 15px body is a wall.
-
-     34rem is 544px. In this face that is 60 characters of the 15px body, 50
-     of the 18px standfirst, 41 of the 22px intro and 35 of the 26px lead —
-     every one inside the 45–75 band, and the display sizes short where they
-     should be short. It also closes the gap the old number left: the reading
-     column is 663px wide, so 486 stranded 137px between the text and the
-     column rule while the left gutter was only 40.
-
-     WHERE IT GOES, and this is the correctness half: on the CONTAINER, never
-     on the block. A cap written on a paragraph is a cap the next block can
-     forget, which is exactly how the `h2` and the `pre` came to run past the
-     prose beside them. The one allowance is a block that stands alone with no
-     prose siblings — it is its own container, and a wrapper around one
-     paragraph says nothing a reader can see.
-
-     THE ONE EXCEPTION: the page title. An `h1` at 52px inside 544px is ten
-     characters a line. A title is display, not prose, and its line count is a
-     property of its own size, so it keeps a cap in `ch`. Nothing else may. */
-  --container-measure: 34rem;
-
-  /* The spacing scale. Five steps, chosen by ROLE, and nothing outside it.
-
-     Before this the prose picked from mt-3, mt-4, mt-5, mt-6, mt-8, mt-10,
-     mt-12 and mt-14 with no rule saying which, so the same relationship —
-     paragraph to paragraph — got a different gap in the MDX than it got on
-     the home page. A number picked at the call site is a number the next
-     call site guesses at.
-
-     Named by what the gap MEANS, so there is one answer per relationship and
-     a sixth step has to justify a sixth kind of relationship. The label pair
-     is in here because it was the clearest case of the drift: the same
-     label-then-heading pair got `mt-2` on the home page and `mt-3` on the
-     detail pages. */
-  --spacing-tight: 0.75rem; /* a label and the thing it labels */
-  --spacing-flow: 1.25rem; /* block to block inside one thought */
-  --spacing-figure: 1.5rem; /* around a code block, a table, a figure */
-  --spacing-group: 2.5rem; /* before a sub-heading — a new thought */
-  --spacing-section: 3.5rem; /* between top-level sections */
-
-  /* The sticky header's height, so anchored content can clear it. */
-  --spacing-header: 3.5rem;
-
-  /* MOTION. One curve and three speeds, named by role, for the same reason
-     the spacing scale is named by role: a duration picked at the call site is
-     a duration the next call site guesses at. The motion block at the foot of
-     this file reads them, and `motion-runtime.tsx` mirrors the curve and the
-     enter speed — GSAP cannot read a CSS variable, so those two are written
-     once in each place and have to be edited together.
-
-     One curve, and it decelerates. Everything that moves on this site is
-     arriving — a row into view, a page over the last one — and a thing that
-     arrives should slow as it lands. Nothing here bounces or overshoots.
-
-     Three speeds, because there are three jobs. `hover` is the ground flip and
-     the arrow nudge: the reader did it, so the answer has to feel instant.
-     `enter` is a block arriving on its own, which is the only motion long
-     enough to be watched. `page` sits between them and is short on purpose —
-     a cross-fade the reader waits for is a slow site. */
   --ease-arrive: cubic-bezier(0.22, 1, 0.36, 1);
+  /* How tall a scenery band is. Fixed, so it costs no layout shift; a section
+     pads its foot by about half of it so content never sits on the water. */
+  --scene-h: clamp(14rem, 24vw, 22rem);
   --duration-hover: 140ms;
   --duration-page: 220ms;
   --duration-enter: 520ms;
 }
 
-/* ==========================================================================
-   The two grounds.
-
-   The site has exactly two: `#0a0a0b` and `#edece9`. Each is the other's
-   inversion in both directions, so the inverted set of one theme is the
-   page set of the other. That is why there are two grounds here and not
-   four (#21).
-
-   THE RULE, and it governs everything below:
-   the accent belongs to the ground, not to the theme. On a dark ground it
-   is amber; on a light ground it is ink. A flip swaps the ground, so it
-   swaps the accent. Amber on `#edece9` measures 1.55:1 — a fail — and this
-   is the rule that keeps it off light ground without a per-case exception.
-
-   Every ratio in the comments is computed, not eyeballed.
-
-   THE ONE SANCTIONED EXCEPTION: `src/lib/og-card.tsx` writes these values
-   inline. It renders a PNG through Satori, which has no cascade, no
-   variables and no media queries, so a token cannot reach it and there is
-   nothing an inline value could beat. The card is also fixed dark and never
-   flips, so the accent stays amber and the rule above is kept rather than
-   waived. Nothing else may copy a value out of this file (#16, #33).
-   ========================================================================== */
-
-/* Light is the default branch; dark is the override. */
 :root {
-  color-scheme: light dark;
+  --ink: #10333d;
+  --paper: #fffaf0;
+  --cream: #fbefd8;
+  --coral: #c24e2c;
+  --saffron: #f2b93b;
+  --sea: #0b6673;
 
-  --background: #edece9;
-  --background-raised: #e3e1dc; /* 1.11:1 — a second ground step, no shadow */
-
-  --foreground: #0a0a0b; /* 16.75:1 */
-  --foreground-muted: #46443f; /*  8.23:1 — body copy */
-  --foreground-label: #5c594f; /*  5.93:1 — labels only, never body */
-
-  --border: #c8c6c1; /* 1.44:1 */
-  --border-strong: #b8b5ae; /* 1.73:1 */
-
-  --accent: #0a0a0b; /* 16.75:1 — ink, because the ground is light */
-  --accent-foreground: #edece9;
-
-  /* Three roles, so a field can go wrong in border and message at once
-     without either being invented at the call site (#20). */
-  --error: #b3261e; /* 5.53:1 */
-  --error-line: #c04a3c; /* 4.15:1 — clears SC 1.4.11's 3:1 */
-  --error-bg: #f4dbd6; /* --error on it is 4.96:1 */
-
-  /* A token pair, not an opacity. 50% of a ramp this tight lands under any
-     usable floor and cannot be checked; a named colour can. Both clear 3:1
-     on the page ground and on the raised one. */
-  --foreground-disabled: #827f77; /* 3.39:1 page, 3.06:1 raised */
-  --action-disabled: #d4d1cb; /* 1.29:1 — recedes behind --border */
-
-  /* The opposite ground, reached by a flip. On light that is the dark set,
-     reused exactly — no softened dark, which would be a second signature. */
-  --inverted-background: #0a0a0b;
-  --inverted-background-raised: #111113;
-  --inverted-foreground: #edece9;
-  --inverted-foreground-muted: #a3a19c;
-  --inverted-foreground-label: #807d77;
-  --inverted-border: #26262b;
-  --inverted-border-strong: #3a3a42;
-  --inverted-accent: #f2b544; /* 10.81:1 — amber, because the ground is dark */
-  --inverted-accent-foreground: #0a0a0b;
+  --background: var(--cream);
+  --background-raised: var(--paper);
+  --foreground: var(--ink);
+  /* Both text tiers are tinted from the ink, never grey, and both clear 4.5:1
+     on every sky in the day. The label is the lighter of the two. */
+  --foreground-muted: #34545d;
+  --foreground-label: #3f5f68;
+  --border: #c9bfa8;
+  --border-strong: var(--ink);
+  --accent: var(--sea);
+  --accent-foreground: var(--paper);
+  --shadow-ink: var(--ink);
+  --error: #a82a1c;
+  --error-line: #b84a3a;
+  --error-bg: #fbe3dc;
+  --foreground-disabled: #6d7f84;
+  --action-disabled: #e4dbc7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0b;
-    --background-raised: #111113; /* 1.05:1 */
-
-    --foreground: #edece9; /* 16.75:1 */
-    --foreground-muted: #a3a19c; /*  7.67:1 — body copy */
-    --foreground-label: #807d77; /*  4.82:1 — labels only, never body */
-
-    --border: #26262b; /* 1.31:1 */
-    --border-strong: #3a3a42; /* 1.76:1 */
-
-    --accent: #f2b544; /* 10.81:1 */
-    --accent-foreground: #0a0a0b;
-
-    --error: #f2705c; /* 6.83:1 page, 6.51:1 raised */
-    --error-line: #a8483c; /* 3.45:1 page, 3.28:1 raised */
-    --error-bg: #2a120e; /* --error on it is 6.08:1 */
-
-    --foreground-disabled: #6b6862; /* 3.56:1 page, 3.40:1 raised */
-    --action-disabled: #332f2c; /* 1.49:1 — recedes behind --border-strong */
-
-    /* On dark the opposite ground is the light set. */
-    --inverted-background: #edece9;
-    --inverted-background-raised: #e3e1dc;
-    --inverted-foreground: #0a0a0b;
-    --inverted-foreground-muted: #46443f;
-    --inverted-foreground-label: #5c594f;
-    --inverted-border: #c8c6c1;
-    --inverted-border-strong: #b8b5ae;
-    --inverted-accent: #0a0a0b; /* ink, because the flipped ground is light */
-    --inverted-accent-foreground: #edece9;
-  }
-}
-
-/* ==========================================================================
-   Names, pointed at the grounds above. shadcn's names live here too.
-
-   THE RULE FOR THIS BLOCK, and it is a correctness rule:
-   an alias belongs here, NEVER in `:root`. A `var()` written in `:root` is
-   resolved against `:root` and the answer is then inherited as a plain
-   colour — writing `--ring: var(--accent)` up there would freeze the ring on
-   the page ground, and the row flip below could never move it. Aliased here
-   instead, the `var()` is substituted into the utility itself and resolves
-   on whatever element uses it, so it follows the flip. This bit the ring,
-   `--primary`, `--card`, `--muted-foreground`, `--input` and `--destructive`
-   at once, silently, and only inside a flipped row.
-
-   `inline` for the same reason: a utility compiles to `var(--foreground)`
-   rather than to a copied hex, so it follows the media query too.
-
-   No `static` here, and it is not an oversight. `static` exists to stop a
-   token being dropped when only hand-written CSS reads it — the hazard the
-   fixed block at the top of this file has, because the focus ring reads
-   `--radius` and the scroll offset reads `--spacing-header` and no utility
-   touches either. The colours are different: they are declared in the plain
-   `:root` rules above, which Tailwind never tree-shakes, so what follows
-   only generates utility names.
-   ========================================================================== */
 @theme inline {
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-cream: var(--cream);
+  --color-coral: var(--coral);
+  --color-saffron: var(--saffron);
+  --color-sea: var(--sea);
+
   --color-background: var(--background);
   --color-background-raised: var(--background-raised);
   --color-foreground: var(--foreground);
@@ -252,20 +107,7 @@
   --color-foreground-disabled: var(--foreground-disabled);
   --color-action-disabled: var(--action-disabled);
 
-  --color-inverted-background: var(--inverted-background);
-  --color-inverted-background-raised: var(--inverted-background-raised);
-  --color-inverted-foreground: var(--inverted-foreground);
-  --color-inverted-foreground-muted: var(--inverted-foreground-muted);
-  --color-inverted-foreground-label: var(--inverted-foreground-label);
-  --color-inverted-border: var(--inverted-border);
-  --color-inverted-border-strong: var(--inverted-border-strong);
-  --color-inverted-accent: var(--inverted-accent);
-  --color-inverted-accent-foreground: var(--inverted-accent-foreground);
-
-  /* shadcn's names. `--primary` is its FILL token, so amber fill with ink
-     text on it is fine — the 1.55:1 failure is amber as TEXT on the light
-     ground. Pointing it at the accent means the ground rule already answers
-     it: ink on light, amber on dark, and no separate warning to remember. */
+  /* shadcn's semantic names, pointed at the tokens above. */
   --color-card: var(--background-raised);
   --color-card-foreground: var(--foreground);
   --color-popover: var(--background-raised);
@@ -294,303 +136,350 @@
 
   html {
     @apply font-sans;
-    /* A face for reading, not a code editor: no ligatures, and a slashed
-       zero so a zero cannot be read as a letter O. */
-    font-variant-ligatures: none;
-    font-feature-settings: "zero" 1;
-  }
-
-  /* Thinned glyphs are right for light-on-dark and exactly wrong for
-     dark-on-light, so this is scoped rather than set on `html` outright.
-     It is also what pays for the light theme's optical weight without
-     loading a third font weight. */
-  @media (prefers-color-scheme: dark) {
-    html {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+    background-color: var(--ink);
+    scrollbar-color: var(--ink) var(--cream);
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground text-body;
+    caret-color: var(--coral);
   }
 
-  /* ======================================================================
-     HOW LINES BREAK.
+  /* The browser surfaces the page did not draw still carry the world. */
+  ::selection {
+    background: var(--saffron);
+    color: var(--ink);
+  }
 
-     Flush left, ragged right, everywhere on the site. Justified is not a
-     taste call here and it is worth writing down why: justification needs
-     hyphenation to close its gaps, this face is MONOSPACED so every gap it
-     opens is a whole character wide, and the browser has no hyphenation
-     dictionary worth falling back on. What you get is rivers running down a
-     60-character column. Nothing on this site is ever set justified.
-
-     So the rag is what is left to control, and it is two different jobs.
-
-     `balance` evens the line lengths of a SHORT block, so a heading does not
-     leave one word alone on its second line. The spec stops honouring it past
-     about six lines, which is why it is scoped to the things that are short by
-     definition rather than put on everything.
-
-     `pretty` is the body rule. It only reconsiders the last few lines and
-     pulls a word back to stop a paragraph ending on one. The money case
-     study's standfirst ended on `hand.` — five characters — before this.
-
-     Neither is load-bearing. Where they are unsupported the browser wraps
-     normally and the page is the page it was. `pretty` costs more to lay out
-     than plain wrapping, which is affordable on prerendered prose and would
-     not be on a list that re-renders. */
-  :where(h1, h2, h3, h4, figcaption, dt) {
+  :where(h1, h2, h3, h4) {
+    @apply font-display;
     text-wrap: balance;
   }
-
+  :where(figcaption, dt) {
+    text-wrap: balance;
+  }
   :where(p, li, blockquote, dd) {
     text-wrap: pretty;
   }
 
-  /* Anything anchored has to clear the sticky header. */
   :where([id]) {
-    scroll-margin-top: calc(var(--spacing-header) + 1.5rem);
+    scroll-margin-top: var(--spacing-header);
   }
 
-  /* The default ring is invisible on near-black, so it is stated. It reads
-     the accent, which belongs to the ground — so inside a flipped row it
-     becomes ink without a second rule. */
   :where(a, button, input, textarea, select, [tabindex]):focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 3px solid var(--coral);
     outline-offset: 3px;
     border-radius: var(--radius);
   }
 }
 
-/* ==========================================================================
-   The signature interaction.
-
-   A row flips to the OPPOSITE ground, whichever theme is active: dark theme,
-   the row goes light; light theme, the row goes dark.
-
-   It redefines the variables rather than setting colours on the row, so the
-   whole subtree flips together. Setting colour at the leaves instead is what
-   left grey text stranded on a light ground at 3.36:1 — a fail — and any
-   later "just set the colour here" edit brings it back.
-   ========================================================================== */
-/* The descendants are in the selector, and that is not tidying. `color` is
-   inherited, but a transition is not: the row faded its ground over 140ms
-   while every word on it changed in one frame, so the text arrived on the new
-   ground before the ground did. Each element that reads a colour needs its own
-   transition to move with the row, and inside a row that is all of them. */
-.flip-ground,
-.flip-ground * {
-  transition:
-    background-color var(--duration-hover) linear,
-    border-color var(--duration-hover) linear,
-    color var(--duration-hover) linear;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
-.flip-ground:hover,
-.flip-ground:focus-visible,
-.flip-ground:focus-within {
-  --background: var(--inverted-background);
-  --background-raised: var(--inverted-background-raised);
-  --foreground: var(--inverted-foreground);
-  --foreground-muted: var(--inverted-foreground-muted);
-  --foreground-label: var(--inverted-foreground-label);
-  --border: var(--inverted-border);
-  --border-strong: var(--inverted-border-strong);
-  --accent: var(--inverted-accent);
-  --accent-foreground: var(--inverted-accent-foreground);
+/* --------------------------------------------------------------------------
+   The hours. A section sets its sky and, at night, flips the ink.
+   -------------------------------------------------------------------------- */
 
-  background-color: var(--background);
+.hour {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
   color: var(--foreground);
+  background: linear-gradient(to bottom, var(--sky-a), var(--sky-b));
+}
+.hour-dawn {
+  --sky-a: #f6c9a6;
+  --sky-b: #fbe6c8;
+}
+.hour-noon {
+  --sky-a: #cde9e6;
+  --sky-b: #e9f5ec;
+}
+.hour-golden {
+  --sky-a: #f4d98f;
+  --sky-b: #f3c783;
+}
+.hour-dusk {
+  --sky-a: #eeb89f;
+  --sky-b: #d89aa3;
+  /* The sky is the darkest of the day's light grounds, so text on it steps down
+     a tone to keep 4.5:1 against the bottom of the gradient. */
+  --foreground-muted: #1f3d47;
+  --foreground-label: #234049;
+}
+.hour-night {
+  --sky-a: #12304a;
+  --sky-b: #0a1a2b;
+  --background: #0a1a2b;
+  --foreground: #fbefd8;
+  --foreground-muted: #c8d3d4;
+  --foreground-label: #a9bcc0;
+  --border: #35566a;
+  --border-strong: #fbefd8;
+  --accent: #f2b93b;
+  --accent-foreground: var(--ink);
+  --shadow-ink: #04101c;
 }
 
-/* Keyboard escape hatch past the header. Its fill is the accent and its text
-   is the accent's foreground, so it obeys the ground rule in both themes:
-   ink on amber at 10.81:1, paper on ink at 16.75:1. */
+/* The scenery sits behind the content and is never read. Each layer carries a
+   `data-layer` so the scroll-driven drift below can move them at their own
+   speeds. */
+.scene {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.scene svg {
+  display: block;
+  width: 100%;
+  height: var(--scene-h);
+}
+
+/* The page's one measure for width. */
+.wrap {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76rem;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .wrap {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The card: cut paper with a hard shadow.
+   -------------------------------------------------------------------------- */
+
+.paper {
+  --background: var(--paper);
+  --background-raised: #f6edd9;
+  --foreground: var(--ink);
+  --foreground-muted: #34545d;
+  --foreground-label: #3f5f68;
+  --border: #d6cbb2;
+  --border-strong: var(--ink);
+  --accent: var(--sea);
+  --accent-foreground: var(--paper);
+  background-color: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 0 var(--shadow-ink);
+}
+
+/* The portrait's window: a doorway arch. */
+.paper.arch {
+  border-radius: 999px 999px var(--radius) var(--radius);
+}
+
+a.paper {
+  transition:
+    translate var(--duration-hover) var(--ease-arrive),
+    box-shadow var(--duration-hover) var(--ease-arrive);
+}
+a.paper:hover,
+a.paper:focus-visible {
+  translate: -2px -2px;
+  box-shadow: 9px 9px 0 0 var(--shadow-ink);
+}
+a.paper:active {
+  translate: 4px 4px;
+  box-shadow: 2px 2px 0 0 var(--shadow-ink);
+}
+
+/* A small paper pill: the hour cues and the back link. It owns its own
+   shadow and its own press, and it is never positioned with a transform,
+   because a hover that rewrites `translate` on an element centred by
+   `translate` moves it out from under the pointer and the hover flickers. The
+   hour cues are centred by a flex wrapper instead. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition:
+    translate var(--duration-hover) var(--ease-arrive),
+    box-shadow var(--duration-hover) var(--ease-arrive);
+}
+.pill:hover,
+.pill:focus-visible {
+  translate: -1px -1px;
+  box-shadow: 5px 5px 0 0 var(--ink);
+}
+.pill:active {
+  translate: 2px 2px;
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+/* The one primary action: saffron, pressed like a key. */
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  line-height: 1.2;
+  background: var(--saffron);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 0 var(--ink);
+  transition:
+    translate var(--duration-hover) var(--ease-arrive),
+    box-shadow var(--duration-hover) var(--ease-arrive);
+}
+.key:hover {
+  translate: -2px -2px;
+  box-shadow: 6px 6px 0 0 var(--ink);
+}
+.key:active {
+  translate: 3px 3px;
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+.key:disabled {
+  background: var(--action-disabled);
+  color: var(--foreground-disabled);
+  box-shadow: none;
+  translate: none;
+}
+.hour-night .key {
+  border-color: var(--cream);
+  box-shadow: 4px 4px 0 0 #04101c;
+}
+
+/* The heading's one italic word. Large text only, so the coral may be lighter
+   than body contrast; at night it flips to saffron. */
+em.accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--coral);
+}
+.hour-night em.accent {
+  color: var(--saffron);
+}
+.hour-dusk em.accent {
+  color: #6b1f42;
+}
+
+/* An underlined link that reads as a link on any sky. */
+.ink-link {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--duration-hover) linear;
+}
+.ink-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   Page chrome
+   -------------------------------------------------------------------------- */
+
 .skip-link {
   position: absolute;
   left: -9999px;
   z-index: 60;
 }
-
 .skip-link:focus {
   left: 1rem;
   top: 1rem;
   padding: 0.625rem 1rem;
-  background-color: var(--accent);
-  color: var(--accent-foreground);
+  background-color: var(--saffron);
+  color: var(--ink);
+  border: 2px solid var(--ink);
 }
 
-/* ==========================================================================
-   The contact form's fields (#30).
+/* The nav lights the link of the hour the reader is in. `HourWatcher` writes
+   `data-hour` on <html>; nothing else needs to know. */
+[data-nav] {
+  background-image: linear-gradient(var(--coral), var(--coral));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 3px;
+  transition: background-size var(--duration-hover) var(--ease-arrive);
+}
+[data-nav]:hover,
+html[data-hour="noon"] [data-nav="work"],
+html[data-hour="golden"] [data-nav="open-source"],
+html[data-hour="dusk"] [data-nav="about"] {
+  background-size: 100% 3px;
+}
 
-   `focus-within` on the field WRAPPER, borrowed from the TanStack DS as an
-   idea and not as code (#20). The input already states its own focus ring in
-   the base layer above; what this adds is the label moving with it, so the
-   thing being edited is marked at the top of the field rather than only at
-   its outline.
-
-   It reads the accent, which belongs to the ground — so it is amber on dark
-   and ink on light with no second rule, and it survives a flipped row.
-
-   It lives here rather than on the component for the reason the whole file
-   exists: colour is not set at a call site. `field.tsx` owns the field's
-   layout; this owns what focused looks like.
-   ========================================================================== */
+/* Form fields are labelled by the hour they sit in; the field's label warms up
+   when its field has focus. */
 [data-slot="field"]:focus-within [data-slot="field-label"] {
-  color: var(--accent);
+  color: var(--coral);
 }
 
-/* ==========================================================================
-   Section tracking on the detail pages (#26).
-
-   The diagram is the page's second column of argument: as a section reaches
-   the reading band, the parts it names take the accent and the rest recede.
-   The observer in `section-tracking.tsx` only toggles `data-state`; what
-   focused and dimmed LOOK like is settled here, once.
-
-   Two of these are correctness rules, not preferences:
-
-   - The focused part is `color`, INHERITED. The asset is stroked and filled
-     with `currentColor` and carries no hex, so it never learns it is being
-     highlighted — and because the accent belongs to the ground, a focused
-     part is amber on dark and ink on light with no second rule.
-   - Dimming is OPACITY, never a second grey. A grey is a colour, and a
-     colour set on the part would beat the variables `.flip-ground`
-     redefines and strand the drawing on the wrong ground. Opacity is a
-     ratio, so it survives a whole-row inversion.
-
-   0.24 is the dimmed step. Measured against the focused part it separates
-   5.64:1 on the dark ground and 9.73:1 on the light one — #26 quotes 5.66
-   and 9.77 for the same pair, which is the same measurement rounded from a
-   different composite; these two are recomputed from the tokens above — both well clear of
-   3:1, so the two states are told apart by more than a hint, and the dimmed
-   part still reads at 1.92:1 and 1.72:1 against its ground rather than
-   vanishing.
-
-   Neither state applies until `data-tracking` is set, which the observer does
-   only once it is live and only on desktop. Untracked, the diagram is whole.
-   The transition is not gated, because there is nothing to fade until one of
-   the two states is set.
-   ========================================================================== */
+/* The detail pages' section tracking: the section in view is full ink and the
+   rest recede. */
 [data-part] {
   transition:
     opacity 180ms linear,
     color 180ms linear;
 }
-
 [data-tracking] [data-part][data-state="focus"] {
-  color: var(--accent);
+  color: var(--coral);
 }
-
 [data-tracking] [data-part][data-state="dim"] {
-  opacity: 0.24;
+  opacity: 0.32;
 }
-
-/* The template's other fill is TEXT, and text cannot take the drawing's ratio
-   (#29).
-
-   A shape at 0.24 is a shape you can still make out. An index entry at 0.24 is
-   1.92:1 on the dark ground and 1.72:1 on the light one, and SC 1.4.3 asks for
-   4.5:1 of anything a reader is meant to read. AA is a ship blocker, so the
-   index dims to 0.6 instead: 6.33:1 and 4.98:1, both clear. Recomputed from
-   the tokens above, like every other ratio in this file.
-
-   What that costs is the gap between the current entry and the rest, and the
-   two grounds pay it differently. On dark the gap is hue rather than
-   luminance: amber against near-white measures 1.71:1 and is still obvious.
-   On light the accent IS the foreground colour, so the only thing marking the
-   current entry is that the others receded — 3.37:1, and it is why the index
-   cannot simply decline to dim. Raising this number past 0.6 puts the light
-   ground below 3:1 and the tracking stops saying anything there. */
 [data-tracking] [data-section-index] [data-part][data-state="dim"] {
-  opacity: 0.6;
+  opacity: 0.65;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .flip-ground,
-  .flip-ground * {
-    transition: none;
-  }
-
-  /* The dimming stays — it is the argument, not decoration. What goes is the
-     fade between the two states, which is the movement. */
-  [data-part] {
-    transition: none;
-  }
-}
-
-/* ==========================================================================
-   MOTION.
-
-   Everything below is decoration, and that word is the whole design of this
-   block. The page has to be complete and readable with none of it — the
-   argument is the prose, the ground flip and the dimmed diagram, and all three
-   are settled above this line.
-
-   The reveals moved to `src/components/motion-runtime.tsx` and the rest is
-   still here — the page transition, the header's hairline, the cue arrows and
-   the status dot, all of which the browser can do on its own. Three rules
-   govern both halves, and each one is a correctness rule:
-
-   - NOTHING STARTS HIDDEN UNLESS IT CAN BE SHOWN AGAIN. Nothing in this file
-     hides anything, and every hidden state in the runtime is set FROM
-     JavaScript, so a browser that runs none of it gets the finished page.
-   - ONLY `opacity`, `translate` AND `scale`. All three compose, so a reveal
-     costs no layout and no paint. Anything that moves an edge — a height, a
-     margin, a width — would relayout the column on every frame of a scroll.
-   - MOTION SETS NO COLOUR. Same rule the rest of the file keeps, for the same
-     reason: a colour written here would beat the variables a row flip
-     redefines. The one value below that names a colour names `transparent`,
-     which is the absence of one.
-
-   And all of it is off under `prefers-reduced-motion: reduce`. That is stated
-   as `no-preference` on each block rather than as a `reduce` block that undoes
-   them, so a reveal added later is off by default instead of being remembered.
-   ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Page to page.
-
-   Every internal link on this site is a plain `<a href>` — there is no client
-   router and no `next/link` anywhere in `src/` — so each navigation is a real
-   document load. That is what makes this two lines instead of a library: a
-   cross-document view transition is the browser's own, it needs no JavaScript,
-   and where it is unsupported the navigation is the hard cut it always was.
-
-   The default is a straight cross-fade of the whole page. What replaces it is
-   the same fade with 6px of rise on the arriving page, at 220ms — the reader
-   should register that the page changed and never wait for it.
-
-   `navigation: none` under reduce, because a cross-fade is still movement and
-   the spec leaves honouring the preference to the browser.
+   Motion. One authored thing per place, all of it off for reduced motion.
    -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-part],
+  a.paper,
+  .pill,
+  .key,
+  [data-nav] {
+    transition: none;
+  }
+}
+
 @view-transition {
   navigation: auto;
 }
-
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root) {
     animation: page-leave var(--duration-page) linear both;
   }
-
   ::view-transition-new(root) {
     animation: page-arrive var(--duration-page) var(--ease-arrive) both;
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
   @view-transition {
     navigation: none;
   }
 }
-
 @keyframes page-leave {
   to {
     opacity: 0;
   }
 }
-
 @keyframes page-arrive {
   from {
     opacity: 0;
@@ -598,143 +487,165 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   Arriving on load and on scroll — NOT HERE ANY MORE.
-
-   `data-enter`, `data-reveal`, `.section-rule` and `data-headline` are driven
-   by `src/components/motion-runtime.tsx`, on GSAP with ScrollTrigger. The
-   hooks are unchanged and a call site still names no duration and no curve;
-   what changed is what reads them.
-
-   The reason is coverage. Those two blocks were scrubbed against
-   `animation-timeline: view()`, which is right — a block follows the reader's
-   thumb and runs backwards on the way up — and which Safari and Firefox do not
-   have, so most readers got the `@supports` fallback of no motion at all. The
-   guard was hiding that rather than fixing it. ScrollTrigger scrubs the same
-   way everywhere, and it can hold a timeline, which is what the headline needs
-   and what a list of CSS delays could only approximate.
-
-   Every rule the block kept is kept there: the hidden state is set FROM
-   JavaScript so a browser that never runs it gets the finished page, only
-   `opacity`, `y` and `scale` move, no colour is set, and the whole of it is
-   inside a `no-preference` query.
-
-   Neither reveal was ever on the contact footer. That block is the end of the
-   page in both fills, it is often taller than the viewport, and a form is not
-   a thing to fade in underneath somebody. It carries no hook, so it still is
-   not.
-   -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   The fold's way out.
-
-   The fold holds the whole screen, so the work rows start below the bottom
-   edge and a reader who does not scroll has read a claim and no evidence. The
-   line at the foot of the fold is what says there is more, and the arrow is
-   the part of it that pictures the direction — so the arrow is the part that
-   moves.
-
-   It is the cue arrow's rule turned through ninety degrees, and it is a
-   separate selector for that reason: `.cue-arrow` nudges right, this one
-   nudges down, and one class doing both would be two directions in one
-   gesture. A quarter-em, like the other, so the line's height does not
-   visibly change.
-   -------------------------------------------------------------------------- */
+/* The arrows lean toward where the link goes. */
+.cue-arrow {
+  display: inline-block;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .fold-cue {
-    transition:
-      translate var(--duration-hover) var(--ease-arrive),
-      color var(--duration-hover) linear;
+  .cue-arrow {
+    transition: translate var(--duration-hover) var(--ease-arrive);
   }
-
-  :where(a:hover, a:focus-visible) .fold-cue {
+  :where(a:hover, a:focus-visible) .cue-arrow {
+    translate: 0.25em 0;
+  }
+  :where(a:hover, a:focus-visible) .cue-arrow[data-dir="down"] {
     translate: 0 0.25em;
   }
 }
 
-/* --------------------------------------------------------------------------
-   The header's hairline, which is not there at the top of the page.
-
-   At rest the header sits on the same ground as the fold under it, so the
-   border is a line drawn between two things that are not yet separate. It
-   earns itself once the page moves and content starts passing behind it, and
-   `scroll()` is what ties it to that rather than to a scroll listener setting
-   a class.
-
-   `transparent` is the only colour word in this block. It is the absence of a
-   colour, not a second one, so the border keeps reading `--border` and follows
-   the ground like everything else.
-   -------------------------------------------------------------------------- */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    [data-site-header] {
-      animation: header-settle linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0 4rem;
-    }
-  }
-}
-
-@keyframes header-settle {
-  from {
-    border-bottom-color: transparent;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   The arrow on a cue line.
-
-   Every "See the state diagram →" on this site ends in that arrow, and the
-   arrow is the only part of the line that is a picture of what the click does.
-   So it is the part that moves. A quarter-em is enough to read as a nudge and
-   small enough that the line's right edge does not visibly change length.
-
-   `inline-block`, because a transform does nothing to an inline box. The hover
-   is written on the ANCHOR, not on the arrow, so the whole row triggers it —
-   which is what the work rows need, where the cue is one line inside a link
-   the size of the row.
-   -------------------------------------------------------------------------- */
-.cue-arrow {
-  display: inline-block;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* `color` is repeated here, and it has to be. Three of these arrows sit
-     inside a `.flip-ground` row, and `.flip-ground *` is the same specificity
-     as this selector — so whichever comes last in the file wins the WHOLE
-     `transition` property, not the halves each one asked for. This one comes
-     last, so it carries both jobs or the arrow snaps to the new ground while
-     every word around it fades. */
-  .cue-arrow {
-    transition:
-      translate var(--duration-hover) var(--ease-arrive),
-      color var(--duration-hover) linear;
-  }
-
-  :where(a:hover, a:focus-visible) .cue-arrow {
-    translate: 0.25em 0;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   The status dot.
-
-   The fold states availability in words and the dot is what makes the line
-   read as current rather than as boilerplate. A slow breathe is the whole of
-   that job: 2.6s is far below the flash threshold SC 2.3.1 sets, and it never
-   drops far enough to be mistaken for switching off.
-
-   It is the one thing on the site that moves without being asked to, which is
-   why it is 6px across and why nothing else may join it.
-   -------------------------------------------------------------------------- */
+/* "Open to new roles": the dot breathes. */
 @media (prefers-reduced-motion: no-preference) {
   [data-live] {
     animation: live-breathe 2.6s ease-in-out infinite;
   }
 }
-
 @keyframes live-breathe {
   50% {
     opacity: 0.4;
+  }
+}
+
+/* Scenery drift. Layers move against the scroll by an amount that grows with
+   their `--depth`, so the far hills barely shift and the near shore holds
+   still. Pure CSS scroll-driven animation: no script, no client bundle, and a
+   browser without it simply shows the scenery still. */
+@keyframes drift {
+  from {
+    translate: 0 calc(var(--depth, 1) * 26px);
+  }
+  to {
+    translate: 0 calc(var(--depth, 1) * -26px);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scene [data-layer] {
+      animation: drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+/* Slow things in the sky and on the water. */
+@keyframes cloud {
+  from {
+    translate: -12vw 0;
+  }
+  to {
+    translate: 112vw 0;
+  }
+}
+@keyframes twinkle {
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes sway {
+  50% {
+    rotate: 1.2deg;
+  }
+}
+@keyframes bob {
+  50% {
+    translate: 0 4px;
+  }
+}
+@keyframes beam {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-cloud] {
+    animation: cloud 140s linear infinite;
+  }
+  [data-twinkle] {
+    animation: twinkle 3.4s ease-in-out infinite;
+  }
+  [data-sway] {
+    animation: sway 5s ease-in-out infinite;
+    transform-origin: 50% 100%;
+    transform-box: fill-box;
+  }
+  [data-bob] {
+    animation: bob 4.5s ease-in-out infinite;
+  }
+  [data-beam] {
+    animation: beam 3s ease-in-out infinite;
+  }
+}
+
+/* The mascot: awake all day, asleep at night. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-camel] [data-pose="awake"] {
+    animation: camel-step 0.9s steps(2, jump-none) infinite;
+  }
+  [data-camel] [data-stride="a"] {
+    animation: stride-a 0.9s steps(1, end) infinite;
+  }
+  [data-camel] [data-stride="b"] {
+    animation: stride-b 0.9s steps(1, end) infinite;
+  }
+  [data-camel] [data-zzz] {
+    animation: zzz 3.2s ease-out infinite;
+  }
+}
+
+[data-camel] [data-pose="sleep"] {
+  display: none;
+}
+html[data-hour="night"] [data-camel] [data-pose="awake"] {
+  display: none;
+}
+html[data-hour="night"] [data-camel] [data-pose="sleep"] {
+  display: block;
+}
+@keyframes camel-step {
+  50% {
+    translate: 0 -3px;
+  }
+}
+@keyframes stride-a {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes stride-b {
+  0%,
+  49% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes zzz {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    translate: 6px -10px;
   }
 }

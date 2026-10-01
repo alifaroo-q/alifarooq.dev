@@ -13,5 +13,5 @@ export const size = { width: 180, height: 180 };
 export const contentType = appIconContentType;
 
 export default function AppleIcon() {
-  return appIcon({ size: size.width, glyphRatio: 0.9 });
+  return appIcon({ size: size.width, glyphRatio: 0.5, inset: 0.1 });
 }

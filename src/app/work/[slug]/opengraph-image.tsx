@@ -4,7 +4,7 @@ import { OgCard, ogContentType, ogFonts, ogSize } from "@/lib/og-card";
 import { PERSON_NAME } from "@/lib/site";
 
 /**
- * The case-study fill: the anonymised sector, the decision, and the name in
+ * The case-study fill: the sector (the client where it is named), the decision, and the name in
  * the corner (#16).
  *
  * This is the fill the whole template exists for. A case study pasted into a

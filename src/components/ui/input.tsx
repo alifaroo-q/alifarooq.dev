@@ -4,28 +4,16 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * shadcn's `Input`, with its colour classes brought onto the site's tokens.
+ * shadcn's `Input`, on the site's tokens.
  *
- * Three changes from what the registry ships, and each is a rule from
- * `globals.css` rather than a preference:
+ * It always sits inside a `.paper` card, which is what makes the same field read
+ * correctly on a peach sky and on the night's navy: the card resets the tokens
+ * to day ink on cream, so nothing here ever has to know the hour.
  *
- * - **The `dark:` overrides are gone.** #11 forbids a manual `dark:` colour on
- *   a component: the theme is chosen by the reader's system and every value
- *   already resolves per ground, so a second set of colours here would be a
- *   second source of truth that only one theme ever reads.
- * - **Invalid reads the error tokens.** `--error-line` is the border and
- *   `--error-bg` the fill, both measured in #20 and #21. The fill is only
- *   correct because this form sits on the page ground — `--error-bg` is 1.01:1
- *   on the raised surface, so an input inside a card would need a different
- *   answer.
- * - **Disabled is a token pair, not an opacity.** 50% of a ramp this tight
- *   lands under any usable floor and cannot be measured; `--foreground-
- *   disabled` and `--action-disabled` both clear 3:1 and can (#20).
- *
- * There is no focus ring here. `globals.css` states one for every interactive
- * element, in the accent, which belongs to the ground — so it is already right
- * in both themes and inside a flipped row. A second ring on this element would
- * be the same job done twice, differently.
+ * - Invalid reads the error tokens, a warm tint with a red edge.
+ * - Disabled is a token pair, not an opacity.
+ * - There is no focus ring here. `globals.css` states one for every
+ *   interactive element, in coral, so a second would be the same job twice.
  */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
@@ -33,7 +21,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        "w-full min-w-0 border border-input bg-transparent px-3 py-2 text-body transition-colors placeholder:text-foreground-label",
+        "w-full min-w-0 rounded-[var(--radius)] border-2 border-input bg-background-raised px-3 py-2.5 text-body transition-colors placeholder:text-foreground-label",
         "disabled:cursor-not-allowed disabled:border-action-disabled disabled:text-foreground-disabled",
         "aria-invalid:border-error-line aria-invalid:bg-error-bg",
         className,

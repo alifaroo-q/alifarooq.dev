@@ -1,40 +1,42 @@
 /**
- * The name at the top of the home page, split into words the runtime can move
- * one at a time.
+ * The page's h1, with its entrance and its one accented phrase.
  *
- * The split is in the MARKUP, not in a script that rewrites the heading after
- * it loads: a reader without JavaScript gets the same `<h1>` with the same
- * words, and there is no frame where the name is one shape and then another.
- *
- * Two boxes per word, and the outer one is doing the work. The clip is what
- * makes a word rise OUT of the line rather than over the line above it, and a
- * transform cannot clip itself.
- *
- * The space between words is a real space, never a margin. A margin here reads
- * as "AliFarooq" to a screen reader and to anyone copying the name out of the
- * page.
+ * Each word sits in its own clip so it can rise into view on its own beat (the
+ * motion hooks are `data-headline` and `data-word`, read by `motion-runtime`).
+ * The clip is given room at the bottom so an italic descender is not cut, and
+ * the accent words are real `em` elements, so the emphasis is in the document
+ * and not only on the screen.
  */
 export function Headline({
-  children,
+  lead,
+  accent,
+  tail,
   className,
 }: {
-  children: string;
+  lead: string;
+  accent: string;
+  tail: string;
   className?: string;
 }) {
-  const words = children.split(" ");
-
+  const parts = [
+    ...lead.split(" ").map((word) => ({ word, accent: false })),
+    ...accent.split(" ").map((word) => ({ word, accent: true })),
+    ...tail.split(" ").map((word) => ({ word, accent: false })),
+  ].map((part, i) => ({ ...part, key: `${i}-${part.word}` }));
   return (
-    // `data-headline` is the hook `motion-runtime.tsx` reads. It carries no
-    // duration and no curve, like every other hook on the site.
     <h1 className={className} data-headline>
-      {words.map((word, i) => (
-        <span key={word}>
-          <span className="inline-block overflow-hidden align-bottom">
+      {parts.map((part, i) => (
+        <span key={part.key}>
+          <span className="-mb-[0.14em] inline-block overflow-hidden pb-[0.14em] align-bottom">
             <span className="inline-block" data-word>
-              {word}
+              {part.accent ? (
+                <em className="accent">{part.word}</em>
+              ) : (
+                part.word
+              )}
             </span>
           </span>
-          {i < words.length - 1 ? " " : null}
+          {i < parts.length - 1 ? " " : null}
         </span>
       ))}
     </h1>
