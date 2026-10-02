@@ -73,12 +73,7 @@ export const ogFonts = [
  * sits below it. The fills differ only in what they put in the slots and how
  * large the headline is set.
  *
- * - **Home** — the name, then the umbrella role under the rule.
- * - **Case study** — the `sector` eyebrow (client and what it is), the `decision`, then the
- *   name small in the corner. Clients are named where the work
- *   may be shown, and the one that stays anonymous is anonymous in the field
- *   itself, so the card cannot name one that the page does not.
- * - **Open source** — the repo name, then the conviction line under the rule.
+ * The home card fills it with the name, then the umbrella role under the rule.
  */
 export function OgCard({
   eyebrow,

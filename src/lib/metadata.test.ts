@@ -1,11 +1,5 @@
-import { allCaseStudies, allOpenSources } from "content-collections";
 import { describe, expect, it } from "vitest";
-import {
-  HOME_TITLE,
-  pageMetadata,
-  rootMetadata,
-  titleWithSuffix,
-} from "./metadata";
+import { HOME_TITLE, pageMetadata, rootMetadata } from "./metadata";
 import { SITE_URL } from "./site";
 
 /**
@@ -62,53 +56,4 @@ describe("rootMetadata", () => {
     expect(HOME_TITLE).toBe("Ali Farooq — Software engineer");
     expect(root.openGraph?.title).toBe(HOME_TITLE);
   });
-});
-
-describe("the strings the head prints", () => {
-  const authored = [
-    ...allCaseStudies.map((doc) => ({
-      name: doc.slug,
-      title: doc.decision,
-      description: doc.description,
-    })),
-    ...allOpenSources.map((doc) => ({
-      name: doc.slug,
-      title: doc.title,
-      description: doc.description,
-    })),
-  ];
-
-  it.each(authored)(
-    "$name: no npm scope reaches metadata (#22)",
-    ({ title, description }) => {
-      // A scope is how you GET the code; the URL is where the argument for it
-      // lives. Neither belongs in a title or a description.
-      expect(title).not.toMatch(/@[\w-]+\//);
-      expect(description).not.toMatch(/@[\w-]+\//);
-    },
-  );
-
-  it.each(authored)(
-    "$name: the title does not restate the name",
-    ({ title }) => {
-      // The suffix adds it.
-      expect(title).not.toContain("Ali Farooq");
-    },
-  );
-
-  it.each(authored)(
-    "$name: the suffixed title survives the ~60-character cut",
-    ({ title }) => {
-      // #16 wrote this as a 40 to 55 character band on `decision`, but the
-      // band was only ever a proxy. What matters is the string a search
-      // result shows, suffix included — and asserting that stops the band
-      // being mistaken for a rule about copy: `22 modules, one transaction
-      // boundary` is 36 characters and was never the problem.
-      //
-      // #6 shortened one heading from 60 to 47 to get inside this, and the
-      // slug was renamed with it. Anything longer now fails here rather than
-      // in a search result nobody is watching.
-      expect(titleWithSuffix(title).length).toBeLessThanOrEqual(60);
-    },
-  );
 });

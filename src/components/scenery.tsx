@@ -306,6 +306,183 @@ export function Clouds() {
 }
 
 /* --------------------------------------------------------------------------
+   Morning: the fish harbour. Boats hauled up on the sand, crates, gulls.
+   -------------------------------------------------------------------------- */
+
+/** A wooden fishing boat, side on, prow to the right, keel at the origin. */
+function Boat({
+  x,
+  y,
+  scale = 1,
+  flip = false,
+  hull,
+  band,
+}: {
+  x: number;
+  y: number;
+  scale?: number;
+  flip?: boolean;
+  hull: string;
+  band: string;
+}) {
+  return (
+    <g
+      transform={`translate(${x} ${y}) scale(${flip ? -scale : scale} ${scale})`}
+    >
+      <path
+        d="M-6 -44 L4 -34 H128 L162 -70 L170 -66 L146 -14 Q138 0 116 0 H22 Q4 0 -2 -24Z"
+        fill={hull}
+        stroke="#10333d"
+        strokeLinejoin="round"
+        strokeWidth="2.5"
+      />
+      <path d="M2 -30 H132 L127 -21 H6Z" fill={band} />
+      <path
+        d="M16 -10 H120 M40 -27 v6 M70 -27 v6 M100 -27 v6"
+        fill="none"
+        stroke="#10333d"
+        strokeWidth="2"
+      />
+      <rect
+        fill="#fffaf0"
+        height="20"
+        stroke="#10333d"
+        strokeWidth="2"
+        width="34"
+        x="30"
+        y="-54"
+      />
+      <path
+        d="M86 -34 V-108 M86 -100 L118 -40"
+        stroke="#10333d"
+        strokeWidth="3"
+      />
+    </g>
+  );
+}
+
+/** A gull as two arcs. */
+function Gull({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
+  return (
+    <path
+      d={`M${x} ${y} q${7 * s} ${-8 * s} ${14 * s} 0 q${7 * s} ${-8 * s} ${14 * s} 0`}
+      fill="none"
+      stroke="#10333d"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2.5"
+    />
+  );
+}
+
+/** A fish crate, slats and all. */
+function Crate({ x, y, fill }: { x: number; y: number; fill: string }) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <rect
+        fill={fill}
+        height="22"
+        stroke="#10333d"
+        strokeWidth="2"
+        width="38"
+        y="-22"
+      />
+      <path d="M0 -11 H38" stroke="#10333d" strokeWidth="1.5" />
+      <path d="M5 -22 q5 -6 10 0 q5 -6 10 0 q5 -6 10 0" fill="#c9d6d2" />
+    </g>
+  );
+}
+
+export function FishMarket() {
+  return (
+    <Scene>
+      <Layer depth={0.15}>
+        <rect fill="#bfdcd8" height="180" width="1440" y="225" />
+        <g fill="#7fa9ae">
+          <path
+            d="M120 240 H260 L248 252 H132Z M170 240 V196 M210 240 V204"
+            stroke="#7fa9ae"
+            strokeWidth="3"
+          />
+          <path
+            d="M1010 238 H1180 L1166 252 H1022Z M1060 238 V188 M1120 238 V198"
+            stroke="#7fa9ae"
+            strokeWidth="3"
+          />
+          <path
+            d="M1240 244 H1330 L1320 254 H1250Z M1284 244 V214"
+            stroke="#7fa9ae"
+            strokeWidth="3"
+          />
+        </g>
+        {[0, 1, 2].map((i) => (
+          <rect
+            fill="#fffaf0"
+            height="3"
+            key={i}
+            opacity={0.7 - i * 0.15}
+            rx="1.5"
+            width={90 - i * 20}
+            x={560 + i * 30}
+            y={236 + i * 10}
+          />
+        ))}
+      </Layer>
+      <Layer depth={0.3}>
+        <Gull x={420} y={140} />
+        <Gull s={0.8} x={470} y={118} />
+        <Gull s={0.7} x={880} y={150} />
+        <Gull s={1.1} x={940} y={104} />
+      </Layer>
+      <Layer depth={0.5}>
+        <path
+          d="M0 284 C160 274 320 292 520 282 S900 270 1100 286 S1340 278 1440 282 V400 H0Z"
+          fill="#8cc2bd"
+        />
+        <path
+          d="M0 284 C160 274 320 292 520 282 S900 270 1100 286 S1340 278 1440 282"
+          fill="none"
+          stroke="#fffaf0"
+          strokeDasharray="12 20"
+          strokeLinecap="round"
+          strokeWidth="3"
+        />
+      </Layer>
+      <Layer depth={0.8}>
+        <path
+          d="M0 318 C220 306 420 326 660 316 S1120 304 1440 320 V400 H0Z"
+          fill="#ead2a0"
+        />
+        <Boat band="#2e8f98" hull="#f2b93b" scale={0.9} x={150} y={330} />
+        <Boat band="#c24e2c" flip hull="#fffaf0" scale={0.8} x={1300} y={326} />
+      </Layer>
+      <path
+        d="M0 352 C210 342 440 362 690 354 S1140 340 1440 352 V400 H0Z"
+        fill="#e2c38a"
+      />
+      <path
+        d="M0 352 C210 342 440 362 690 354 S1140 340 1440 352"
+        fill="none"
+        stroke="#cfa767"
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+      <Boat band="#f2b93b" hull="#d9573a" scale={1.15} x={760} y={384} />
+      <Crate fill="#2e8f98" x={560} y={384} />
+      <Crate fill="#2e8f98" x={600} y={386} />
+      <Crate fill="#f6e6c4" x={580} y={364} />
+      <Crate fill="#d9573a" x={1010} y={388} />
+      <path
+        d="M440 390 q20 -14 46 -2 q-20 8 -46 2Z"
+        fill="#10333d"
+        opacity="0.25"
+      />
+      <ellipse cx="320" cy="384" fill="#cfa767" rx="16" ry="4" />
+    </Scene>
+  );
+}
+
+/* --------------------------------------------------------------------------
    Noon: the port. Skyline, a dome, gantry cranes, containers, a cargo ship.
    -------------------------------------------------------------------------- */
 
@@ -502,6 +679,177 @@ export function Dunes() {
         strokeLinecap="round"
         strokeWidth="3"
       />
+    </Scene>
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Early evening: Sea View. The promenade, a ferris wheel, stalls, the lamps
+   coming on.
+   -------------------------------------------------------------------------- */
+
+/** A ferris wheel on an A-frame, hub at the origin. */
+function Wheel({ x, y, r }: { x: number; y: number; r: number }) {
+  const spokes = Array.from({ length: 12 }, (_, i) => (i * Math.PI) / 6);
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <path
+        d={`M0 0 L${-r * 0.55} ${r + 34} M0 0 L${r * 0.55} ${r + 34}`}
+        stroke="#4a3a5c"
+        strokeWidth="6"
+      />
+      <g>
+        <circle fill="none" r={r} stroke="#4a3a5c" strokeWidth="4" />
+        <circle fill="none" r={r * 0.82} stroke="#4a3a5c" strokeWidth="2" />
+        {spokes.map((a) => (
+          <path
+            d={`M0 0 L${(Math.cos(a) * r).toFixed(1)} ${(Math.sin(a) * r).toFixed(1)}`}
+            key={a}
+            stroke="#4a3a5c"
+            strokeWidth="2"
+          />
+        ))}
+        {spokes.map((a, i) => (
+          <circle
+            cx={(Math.cos(a) * r).toFixed(1)}
+            cy={(Math.sin(a) * r).toFixed(1)}
+            fill={i % 2 ? "#f2b93b" : "#e0664a"}
+            key={a}
+            r="7"
+            stroke="#4a3a5c"
+            strokeWidth="2"
+          />
+        ))}
+      </g>
+      <circle fill="#f2b93b" r="8" stroke="#4a3a5c" strokeWidth="3" />
+    </g>
+  );
+}
+
+/** A promenade lamp, just lit. */
+function Lamp({ x, y }: { x: number; y: number }) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <circle cy="-92" fill="#fff4d6" opacity="0.6" r="18" />
+      <path
+        d="M0 0 V-86 M0 -86 q0 -10 -10 -10"
+        fill="none"
+        stroke="#3a2f4d"
+        strokeWidth="4"
+      />
+      <path
+        d="M0 -86 q0 -10 10 -10"
+        fill="none"
+        stroke="#3a2f4d"
+        strokeWidth="4"
+      />
+      <circle cx="-10" cy="-92" fill="#fbe7b8" r="5" />
+      <circle cx="10" cy="-92" fill="#fbe7b8" r="5" />
+      <rect fill="#3a2f4d" height="6" width="14" x="-7" y="-6" />
+    </g>
+  );
+}
+
+/** A food stall: a cart under a striped awning. */
+function Stall({ x, y, stripe }: { x: number; y: number; stripe: string }) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <path d="M6 -40 V0 M90 -40 V0" stroke="#3a2f4d" strokeWidth="4" />
+      <rect
+        fill="#fffaf0"
+        height="26"
+        stroke="#3a2f4d"
+        strokeWidth="2.5"
+        width="96"
+        y="-26"
+      />
+      <circle cx="48" cy="-13" fill="#f2b93b" r="5" />
+      <path
+        d="M-8 -40 H104 L96 -62 H0Z"
+        fill="#fffaf0"
+        stroke="#3a2f4d"
+        strokeLinejoin="round"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M8 -40 L14 -62 H30 L28 -40Z M48 -40 L46 -62 H62 L68 -40Z M88 -40 L80 -62 H92 L104 -40Z"
+        fill={stripe}
+      />
+      <path
+        d="M-8 -40 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0"
+        fill={stripe}
+        stroke="#3a2f4d"
+        strokeWidth="2"
+      />
+    </g>
+  );
+}
+
+export function SeaView() {
+  return (
+    <Scene>
+      <Layer depth={0.15}>
+        <circle cx="1120" cy="232" fill="#fbe7b8" opacity="0.5" r="58" />
+        <circle cx="1120" cy="232" fill="#fde9c2" r="36" />
+        <rect fill="#d99482" height="170" width="1440" y="232" />
+        {[0, 1, 2, 3].map((i) => (
+          <rect
+            fill="#fde9c2"
+            height="3"
+            key={i}
+            opacity={0.8 - i * 0.16}
+            rx="1.5"
+            width={90 - i * 18}
+            x={1075 + i * 9}
+            y={242 + i * 9}
+          />
+        ))}
+      </Layer>
+      <Layer depth={0.35}>
+        <path
+          d="M0 270 C200 262 380 276 600 268 S1000 258 1200 270 S1380 264 1440 268 V400 H0Z"
+          fill="#c27b78"
+        />
+        <path
+          d="M0 270 C200 262 380 276 600 268 S1000 258 1200 270 S1380 264 1440 268"
+          fill="none"
+          stroke="#fde9c2"
+          strokeDasharray="12 18"
+          strokeLinecap="round"
+          strokeWidth="3"
+        />
+      </Layer>
+      <Layer depth={0.55}>
+        <path
+          d="M0 292 C260 284 520 298 780 290 S1220 282 1440 292 V400 H0Z"
+          fill="#e7b98a"
+        />
+        <Wheel r={92} x={250} y={178} />
+      </Layer>
+      <Layer depth={0.8}>
+        <path d="M0 330 H1440 V400 H0Z" fill="#d9a56f" />
+        <path d="M0 330 H1440 M0 314 H1440" stroke="#3a2f4d" strokeWidth="3" />
+        <path
+          d={Array.from({ length: 49 }, (_, i) => `M${i * 30} 314 V330`).join(
+            " ",
+          )}
+          stroke="#3a2f4d"
+          strokeWidth="2.5"
+        />
+        {[90, 520, 900, 1330].map((lx) => (
+          <Lamp key={lx} x={lx} y={330} />
+        ))}
+      </Layer>
+      <path d="M0 366 H1440 V400 H0Z" fill="#c9915d" />
+      <path
+        d="M0 366 H1440"
+        stroke="#b07a48"
+        strokeDasharray="40 6"
+        strokeWidth="3"
+      />
+      <Stall stripe="#c24e2c" x={600} y={372} />
+      <Stall stripe="#2e8f98" x={730} y={374} />
+      <Stall stripe="#f2b93b" x={1110} y={372} />
     </Scene>
   );
 }

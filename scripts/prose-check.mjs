@@ -29,7 +29,7 @@
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, extname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -39,8 +39,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
  *
  * `instead of` and `rather than` are included knowing they catch plain factual
  * contrasts as well as rhetorical ones. That is the right way round: the
- * checker raises the count and a person decides which kind it is. The three
- * case studies came out at 1, 2 and 4 and every one survived that read.
+ * checker raises the count and a person decides which kind it is.
  */
 export const REVERSAL = [
   /\brather than\b/gi,
@@ -136,33 +135,6 @@ export function stringsFromCode(src) {
   return out;
 }
 
-/**
- * Copy out of an `.mdx` file: the quoted frontmatter values and the prose.
- *
- * Fenced code goes first. A code block is the one place in a case study where
- * a line has no sentence in it at all, and counting it would report the sample
- * rather than the writing around it.
- */
-export function stringsFromMdx(src) {
-  const out = [];
-  const fm = src.match(/^---\n([\s\S]*?)\n---/);
-  let body = src;
-  if (fm) {
-    body = src.slice(fm[0].length);
-    for (const line of fm[1].split("\n")) {
-      const kv = line.match(/^(\w+):\s*"([\s\S]*)"$/);
-      if (kv && looksLikeCopy(kv[2])) out.push(kv[2]);
-    }
-  }
-  body = body.replace(/```[\s\S]*?```/g, "");
-  for (const para of body.split(/\n{2,}/)) {
-    const t = para.trim();
-    if (!t || t.startsWith("#") || t.startsWith(">")) continue;
-    if (looksLikeCopy(t)) out.push(t.replace(/\s+/g, " "));
-  }
-  return out;
-}
-
 const sentences = (s) =>
   s
     .split(/(?<=[.!?])\s+/)
@@ -227,7 +199,7 @@ export function measure(strings) {
   return m;
 }
 
-/** Every file that can hold copy: the MDX collections and the app source. */
+/** Every file that can hold copy: the app source. */
 export function copyFiles(root) {
   const walk = (dir, out = []) => {
     for (const name of readdirSync(dir)) {
@@ -241,7 +213,6 @@ export function copyFiles(root) {
   return walk(root).filter((p) => {
     const r = relative(root, p);
     if (r.includes("/ui/") || /\.test\.[tj]sx?$/.test(r)) return false;
-    if (r.startsWith("content/") && extname(p) === ".mdx") return true;
     return r.startsWith("src/") && /\.tsx?$/.test(p);
   });
 }
@@ -251,8 +222,7 @@ export function report(root) {
   let all = [];
   for (const p of copyFiles(root)) {
     const src = readFileSync(p, "utf8");
-    const strings =
-      extname(p) === ".mdx" ? stringsFromMdx(src) : stringsFromCode(src);
+    const strings = stringsFromCode(src);
     if (!strings.length) continue;
     all = all.concat(strings);
     rows.push({ file: relative(root, p), m: measure(strings) });

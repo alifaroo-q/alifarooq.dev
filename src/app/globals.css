@@ -44,8 +44,7 @@
   --spacing-figure: 1.75rem;
   --spacing-group: 3rem;
   --spacing-section: 5rem;
-  /* The floating header: its height plus the gap above it. Anchors and the
-     sticky detail column both clear it. */
+  /* The floating header: its height plus the gap above it. Anchors clear it. */
   --spacing-header: 5.25rem;
 
   --ease-arrive: cubic-bezier(0.22, 1, 0.36, 1);
@@ -198,6 +197,10 @@
   --sky-a: #f6c9a6;
   --sky-b: #fbe6c8;
 }
+.hour-morning {
+  --sky-a: #cfe6ea;
+  --sky-b: #f5ecd6;
+}
 .hour-noon {
   --sky-a: #cde9e6;
   --sky-b: #e9f5ec;
@@ -205,6 +208,14 @@
 .hour-golden {
   --sky-a: #f4d98f;
   --sky-b: #f3c783;
+}
+.hour-evening {
+  --sky-a: #f4c39a;
+  --sky-b: #e9a690;
+  /* The bottom of the sky is dark enough that text steps down a tone to keep
+     4.5:1, as at dusk. */
+  --foreground-muted: #1f3d47;
+  --foreground-label: #234049;
 }
 .hour-dusk {
   --sky-a: #eeb89f;
@@ -283,22 +294,7 @@
   border-radius: 999px 999px var(--radius) var(--radius);
 }
 
-a.paper {
-  transition:
-    translate var(--duration-hover) var(--ease-arrive),
-    box-shadow var(--duration-hover) var(--ease-arrive);
-}
-a.paper:hover,
-a.paper:focus-visible {
-  translate: -2px -2px;
-  box-shadow: 9px 9px 0 0 var(--shadow-ink);
-}
-a.paper:active {
-  translate: 4px 4px;
-  box-shadow: 2px 2px 0 0 var(--shadow-ink);
-}
-
-/* A small paper pill: the hour cues and the back link. It owns its own
+/* A small paper pill: the hour cues. It owns its own
    shadow and its own press, and it is never positioned with a transform,
    because a hover that rewrites `translate` on an element centred by
    `translate` moves it out from under the pointer and the hover flickers. The
@@ -438,8 +434,10 @@ em.accent {
   transition: background-size var(--duration-hover) var(--ease-arrive);
 }
 [data-nav]:hover,
-html[data-hour="noon"] [data-nav="work"],
-html[data-hour="golden"] [data-nav="open-source"],
+html[data-hour="morning"] [data-nav="full-stack"],
+html[data-hour="noon"] [data-nav="data"],
+html[data-hour="golden"] [data-nav="cloud"],
+html[data-hour="evening"] [data-nav="ai"],
 html[data-hour="dusk"] [data-nav="about"] {
   background-size: 100% 3px;
 }
@@ -450,30 +448,11 @@ html[data-hour="dusk"] [data-nav="about"] {
   color: var(--coral);
 }
 
-/* The detail pages' section tracking: the section in view is full ink and the
-   rest recede. */
-[data-part] {
-  transition:
-    opacity 180ms linear,
-    color 180ms linear;
-}
-[data-tracking] [data-part][data-state="focus"] {
-  color: var(--coral);
-}
-[data-tracking] [data-part][data-state="dim"] {
-  opacity: 0.32;
-}
-[data-tracking] [data-section-index] [data-part][data-state="dim"] {
-  opacity: 0.65;
-}
-
 /* --------------------------------------------------------------------------
    Motion. One authored thing per place, all of it off for reduced motion.
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  [data-part],
-  a.paper,
   .pill,
   .key,
   [data-nav] {

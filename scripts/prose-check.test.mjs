@@ -3,18 +3,16 @@ import {
   looksLikeCopy,
   measure,
   stringsFromCode,
-  stringsFromMdx,
   stripComments,
 } from "./prose-check.mjs";
 
 /**
- * The three ways this checker could report a confident wrong number.
+ * The two ways this checker could report a confident wrong number.
  *
  * It could count the comments, which in this repo are longer than the copy and
  * full of the exact punctuation the rules are about. It could count a Tailwind
- * class list as a sentence and drag every average down with it. Or it could
- * count a code fence in a case study as prose. All three would still print a
- * table, and nobody reading the table could tell.
+ * class list as a sentence and drag every average down with it. Both would
+ * still print a table, and nobody reading the table could tell.
  */
 
 describe("stripComments", () => {
@@ -59,34 +57,6 @@ describe("stringsFromCode", () => {
     expect(stringsFromCode(src)).toEqual([
       "Cache and lock. The reads are the easy part.",
     ]);
-  });
-});
-
-describe("stringsFromMdx", () => {
-  it("takes frontmatter values and prose, and leaves the code fence", () => {
-    const src = [
-      "---",
-      'decision: "The handle goes in the signature"',
-      'constraint: "One write crossed four owners and had to land whole."',
-      "order: 3",
-      "---",
-      "",
-      "I passed it in, and paid for it in thirty-four files.",
-      "",
-      "```ts",
-      "const performedBy = await this.resolvePerformedBy(...);",
-      "```",
-    ].join("\n");
-
-    const out = stringsFromMdx(src);
-    expect(out).toContain(
-      "One write crossed four owners and had to land whole.",
-    );
-    expect(out).toContain(
-      "I passed it in, and paid for it in thirty-four files.",
-    );
-    expect(out.some((s) => s.includes("resolvePerformedBy"))).toBe(false);
-    expect(out.some((s) => s.includes("order"))).toBe(false);
   });
 });
 

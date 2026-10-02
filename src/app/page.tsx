@@ -1,18 +1,24 @@
-import { allCaseStudies } from "content-collections";
 import { ContactFooter } from "@/components/contact-footer";
 import { Cue } from "@/components/cue";
 import { Headline } from "@/components/headline";
 import { Portrait } from "@/components/portrait";
-import { Clouds, Dunes, Dusk, Port, Shore } from "@/components/scenery";
+import {
+  Clouds,
+  Dunes,
+  Dusk,
+  FishMarket,
+  Port,
+  SeaView,
+  Shore,
+} from "@/components/scenery";
 import { SectionHead } from "@/components/section-head";
 import { SiteHeader } from "@/components/site-header";
-import { StackStrip } from "@/components/stack-strip";
+import { BRAND_MARKS } from "@/lib/brand-marks";
 import {
   ACTION_CLASS,
   BASE_LOCATION,
   BASE_UTC,
   CONTACT_EMAIL,
-  OPEN_SOURCE_CONVICTION,
   PERSON_NAME,
   PERSON_ROLE,
   PERSON_ROLES,
@@ -20,30 +26,21 @@ import {
   PROFILE_URLS,
   SITE_URL,
 } from "@/lib/site";
-import { STACK_CUE } from "@/lib/stack";
-import { cn } from "@/lib/utils";
 
 /**
  * The home page.
  *
- * The page is one day on the Karachi coast. The fold is dawn, Work is noon at
- * the port, Open source is the golden hour, About is dusk, and Contact is the
+ * The page is one day on the Karachi coast. The fold is dawn, the four stack
+ * hours run from morning to early evening, About is dusk, and Contact is the
  * night. Each hour ends in a band of scenery and a cue that names the next
  * one, stamped with its time, so the order of the sections is carried by the
  * clock and not by numbers.
  *
  * The copy lives here in TSX and not in an MDX singleton: a singleton makes
  * the schema the layout, and moving a slot would then be a content migration.
- * The case studies are the other way round, free-form prose with a few fields,
- * so they are a collection.
  *
  * Nothing here sets a colour. Every value arrives as a token through a class;
  * see the header of `globals.css`.
- *
- * Order is fixed: fold, Work, Open source, About, Contact. Work comes first
- * because the reader arrives from a resume asking what was built at work, and
- * because the case studies cannot link to code, so the repos carry the
- * verifiability and read better after the claims they back.
  */
 
 const person = {
@@ -63,121 +60,141 @@ const person = {
  */
 const fold = {
   headline: {
-    lead: "I build software that",
-    accent: "keeps working",
-    tail: "when things break.",
+    lead: "I build full-stack products with",
+    accent: "AI",
+    tail: "inside them.",
   },
   sentence:
-    "Two years of AI-automation systems, taken end to end: the database, the queues, the integrations and the dashboard on top.",
+    "Two years of client products at Zenkoders. Next.js on the front, NestJS and Postgres behind it, shipped on AWS, with LLM features and agents on top.",
   title: PERSON_ROLE,
-  range: "backend, full-stack and AI product",
+  range: "full-stack and AI product",
   caption: "Good morning from Karachi",
-  cue: { time: "12:00", label: "Noon at the port ↓" },
+  cue: { time: "08:30", label: "Morning at the fish market ↓" },
 };
 
-/**
- * Tints for the three case studies, in `order`. The same three colours colour
- * the tags in the fold, so a reader can follow a failure from the headline to
- * the card that answers it.
- */
-const TINTS = [
-  { tag: "bg-[#f6c8b6]", dot: "bg-coral" },
-  { tag: "bg-[#f9dc8d]", dot: "bg-saffron" },
-  { tag: "bg-[#bfe0e0]", dot: "bg-sea" },
-] as const;
-
-const work = {
-  lead: "Three decisions and",
-  accent: "what they cost",
-  intro:
-    "This is client work, and I name the client where I can. Each card is one decision I would defend, along with the bill that came with it.",
-  cue: { time: "16:30", label: "Golden hour: the code ↓" },
-};
+type Tool = { label: string; mark?: keyof typeof BRAND_MARKS };
 
 /**
- * The open-source block. It carries no mechanism: the mechanism may only
- * appear below a link, which is what makes the split with the case studies
- * safe, since nothing here can leak upward into the page that shares its
- * subject.
- *
- * The weight is uneven on purpose. Three equal cards would claim a production
- * line, and the claim is the opposite: a conviction held twice. So the
- * conviction leads, `drizzle-tx` is the big card, and the two that started it
- * sit beside it. Only `drizzle-tx` has a page to click into.
- *
- * No npm scope appears here. A scope is how you GET the code; the URL is where
- * the argument for it lives.
+ * The stack, one group per hour. `id` is the anchor the nav and About link to,
+ * and `hour` is the sky class and the `data-hour` the nav lights from.
  */
-const openSource = {
-  lead: "Two libraries and",
-  accent: "one argument",
-  conviction: OPEN_SOURCE_CONVICTION,
-  retrofit:
-    "Four months later I hit the same wall and answered it the other way.",
-  featured: {
-    name: "drizzle-tx",
-    pitch:
-      "I let the handle travel with the request, so it stops showing up in signatures that never touch the database. Drizzle only undoes work when something throws. This library never throws.",
-    href: "/open-source/drizzle-tx",
-    label: "Read how it holds →",
+const HOURS = [
+  {
+    id: "full-stack",
+    hour: "morning",
+    time: "08:30",
+    lead: "One",
+    accent: "language,",
+    tail: "front to back",
+    line: "TypeScript from the browser to the database. NestJS on the server, Next.js for the dashboards on top.",
+    tools: [
+      { label: "Node.js", mark: "nodedotjs" },
+      { label: "Next.js", mark: "nextdotjs" },
+      { label: "NestJS", mark: "nestjs" },
+    ],
+    Scenery: FishMarket,
+    cue: { time: "12:00", label: "Noon at the port ↓" },
   },
-  origin: [
-    {
-      name: "result-kit",
-      pitch:
-        "Where I started. I had built this by hand once already: thirty-nine static methods, and six of them were ever called from outside.",
-      href: "https://github.com/alifaroo-q/result-kit",
-      page: "/open-source/result-kit",
-      pageLabel: "Why there are no classes in it →",
-    },
-    {
-      name: "result-kit-lint",
-      pitch:
-        "Lint rules that fail the build when a result goes unchecked. Without them, the convention holds for as long as I remember to keep it.",
-      href: "https://github.com/alifaroo-q/result-kit-lint",
-    },
-  ],
-  published: "Both are published on npm.",
-  cue: { time: "18:40", label: "Dusk, a little about me ↓" },
-};
+  {
+    id: "data",
+    hour: "noon",
+    time: "12:00",
+    lead: "Where the",
+    accent: "data",
+    tail: "lives",
+    line: "Postgres is my default store, and I put the rules that must hold in it. Redis for cache, locks and BullMQ queues.",
+    tools: [
+      { label: "Postgres", mark: "postgresql" },
+      { label: "Redis", mark: "redis" },
+    ],
+    Scenery: Port,
+    cue: { time: "16:30", label: "Golden hour on the dunes ↓" },
+  },
+  {
+    id: "cloud",
+    hour: "golden",
+    time: "16:30",
+    lead: "From a commit to",
+    accent: "production",
+    line: "Docker images, built and tested in GitHub Actions, shipped to AWS.",
+    tools: [
+      { label: "Docker", mark: "docker" },
+      { label: "AWS", mark: "amazonwebservices" },
+      { label: "GitHub Actions", mark: "githubactions" },
+      { label: "CI/CD" },
+    ],
+    Scenery: Dunes,
+    cue: { time: "17:45", label: "Evening at Sea View ↓" },
+  },
+  {
+    id: "ai",
+    hour: "evening",
+    time: "17:45",
+    lead: "Models in the product,",
+    accent: "agents",
+    tail: "at my desk",
+    line: "AI voice booking, Gmail automation and document extraction, built on OpenAI and LangChain. I write code with Claude Code, Copilot and Cursor every day.",
+    tools: [
+      { label: "LLMs" },
+      { label: "Agents" },
+      { label: "OpenAI", mark: "openai" },
+      { label: "LangChain", mark: "langchain" },
+      { label: "Claude Code", mark: "claude" },
+      { label: "GitHub Copilot", mark: "githubcopilot" },
+      { label: "Cursor", mark: "cursor" },
+    ],
+    Scenery: SeaView,
+    cue: { time: "18:40", label: "Dusk, a little about me ↓" },
+  },
+] satisfies {
+  id: string;
+  hour: string;
+  time: string;
+  lead: string;
+  accent: string;
+  tail?: string;
+  line: string;
+  tools: Tool[];
+  Scenery: () => React.JSX.Element;
+  cue: { time: string; label: string };
+}[];
 
 const about = {
   lead: "A bit about",
   accent: "me",
   bio: [
-    "I have been a software engineer at Zenkoders since 2024, across the backend, the AI features and the dashboards of client products. Most of what you see here is client work, so it carries their names.",
+    "I have been a software engineer at Zenkoders since 2024, across the backend, the AI features and the dashboards of client products.",
     "The problems I get handed are the ones where being wrong is expensive.",
   ],
   /**
-   * The four titles, each with the work that backs it. Every sentence restates
-   * something already on this site or the resume, and each link goes to the page
-   * that holds the evidence, so the range is something a reader can check.
+   * The four titles, each linked to the stack hour that backs it. Every
+   * sentence restates something already on this site or the resume.
    */
   rolesLabel: "Four ways I work",
   roles: [
     {
       title: "Backend engineer",
       line: "NestJS, PostgreSQL and BullMQ queues, with the rules that must hold kept in the database.",
-      href: "/work/the-money-rule-in-the-database-not-the-service",
-      label: "The money rule →",
+      href: "#data",
+      label: "Data, at noon →",
     },
     {
       title: "Software engineer",
       line: "Features taken end to end, from the schema to the release, in client products across healthcare, fintech and SaaS.",
-      href: "#work",
-      label: "Three decisions →",
+      href: "#cloud",
+      label: "Cloud and CI/CD, at golden hour →",
     },
     {
       title: "AI product engineer",
       line: "AI voice booking, Gmail automation and document extraction. I treat what a model returns like any other input from outside.",
-      href: "/work/treating-google-as-a-system-that-will-fail",
-      label: "The automation case →",
+      href: "#ai",
+      label: "AI, in the evening →",
     },
     {
       title: "Full-stack engineer",
       line: "The Next.js dashboard on top of the queues and the database, and this site.",
-      href: "/stack",
-      label: "The stack →",
+      href: "#full-stack",
+      label: "Full-stack, in the morning →",
     },
   ],
   rows: [
@@ -200,8 +217,6 @@ const about = {
   resumeLabel: "The whole thing, dated and on one page →",
   cue: { time: "21:30", label: "Night, say hello ↓" },
 };
-
-const stack = { href: "/stack", label: STACK_CUE };
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -239,8 +254,6 @@ function HourCue({
 }
 
 export default function Home() {
-  const caseStudies = allCaseStudies.toSorted((a, b) => a.order - b.order);
-
   return (
     <>
       <script
@@ -257,7 +270,7 @@ export default function Home() {
           data-hour="dawn"
         >
           <Clouds />
-          <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+3.5rem)] md:pb-[calc(var(--scene-h)*0.6+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
+          <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.6+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
             <div className="order-2 lg:order-1" data-enter>
               <Portrait />
               <p className="mt-figure text-center text-foreground-muted">
@@ -299,8 +312,8 @@ export default function Home() {
                 {person.hours}
               </p>
               <div className="mt-figure flex flex-wrap items-center gap-x-8 gap-y-4">
-                <a className={ACTION_CLASS} href="#work">
-                  <Cue label="Explore my work ↘" />
+                <a className={ACTION_CLASS} href="#full-stack">
+                  <Cue label="What I build with ↘" />
                 </a>
                 <a
                   className="hit font-semibold ink-link"
@@ -312,134 +325,64 @@ export default function Home() {
             </div>
           </div>
           <Shore />
-          <HourCue href="#work" label={fold.cue.label} time={fold.cue.time} />
-        </section>
-
-        {/* Noon. */}
-        <section
-          aria-labelledby="work"
-          className="hour hour-noon pt-section pb-[calc(var(--scene-h)*0.8+6rem)]"
-          data-hour="noon"
-        >
-          <SectionHead accent={work.accent} id="work" lead={work.lead}>
-            {work.intro}
-          </SectionHead>
-          <div className="wrap mt-group grid gap-8 lg:grid-cols-3 lg:gap-6 xl:gap-10">
-            {caseStudies.map((caseStudy, i) => (
-              <a
-                className="paper group flex flex-col p-6 md:p-7 lg:p-6 xl:p-7"
-                data-reveal
-                href={`/work/${caseStudy.slug}`}
-                id={`work-${caseStudy.order}`}
-                key={caseStudy.slug}
-              >
-                <div className="lg:min-h-[3.1rem]">
-                  <span
-                    className={cn(
-                      "inline-block rounded-[1.1rem] border-2 border-ink px-3 py-1 font-medium text-ink text-xs leading-snug",
-                      TINTS[i]?.tag,
-                    )}
-                  >
-                    {caseStudy.sector}
-                  </span>
-                </div>
-                <h3 className="mt-flow font-bold text-[clamp(1.375rem,2.2vw,1.75rem)] leading-[1.15] tracking-tight lg:min-h-[3.45em]">
-                  {caseStudy.decision}
-                </h3>
-                <p className="mt-flow text-foreground-muted">
-                  {caseStudy.constraint}
-                </p>
-                <p className="mt-auto pt-figure font-semibold text-accent">
-                  <Cue label={caseStudy.artifactLabel} />
-                </p>
-              </a>
-            ))}
-          </div>
-          <Port />
           <HourCue
-            href="#open-source"
-            label={work.cue.label}
-            time={work.cue.time}
+            href="#full-stack"
+            label={fold.cue.label}
+            time={fold.cue.time}
           />
         </section>
 
-        {/* Golden hour. */}
-        <section
-          aria-labelledby="open-source"
-          className="hour hour-golden pt-section pb-[calc(var(--scene-h)*0.8+6rem)]"
-          data-hour="golden"
-        >
-          <SectionHead
-            accent={openSource.accent}
-            id="open-source"
-            lead={openSource.lead}
+        {HOURS.map(({ Scenery, ...hour }, i) => (
+          <section
+            aria-labelledby={hour.id}
+            className={`hour hour-${hour.hour} pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]`}
+            data-hour={hour.hour}
+            key={hour.id}
           >
-            {openSource.conviction}
-          </SectionHead>
-          <div className="wrap mt-group grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
-            <a
-              className="paper flex flex-col gap-figure p-6 md:p-8"
-              data-reveal
-              href={openSource.featured.href}
+            <SectionHead
+              accent={hour.accent}
+              id={hour.id}
+              lead={hour.lead}
+              tail={hour.tail}
             >
-              <div>
-                <span className="inline-block rounded-full border-2 border-ink bg-saffron px-3 py-1 font-medium text-ink text-xs">
-                  Has a write-up
-                </span>
-                <h3 className="mt-flow font-bold text-[clamp(1.75rem,3.4vw,3rem)] leading-[1.05] tracking-tight">
-                  {openSource.featured.name}
-                </h3>
-              </div>
-              {/* Beside the pair, the card is taller than its words. The name
-                  holds the top and the argument sits on the floor with its
-                  link, so the space between reads as the card's own. */}
-              <div className="lg:mt-auto">
-                <p className="max-w-measure text-foreground-muted lg:text-lg">
-                  {openSource.featured.pitch}
-                </p>
-                <p className="mt-figure font-semibold text-accent">
-                  <Cue label={openSource.featured.label} />
-                </p>
-              </div>
-            </a>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-1 lg:gap-10">
-              {openSource.origin.map((repo) => (
-                <div className="paper p-6" data-reveal key={repo.name}>
-                  <h3 className="font-bold text-xl tracking-tight">
-                    {repo.name}
-                  </h3>
-                  <p className="mt-tight text-foreground-muted">{repo.pitch}</p>
-                  <p className="mt-flow text-sm">
-                    <a className="hit ink-link" href={repo.href}>
-                      {repo.href.replace("https://", "")}
-                    </a>
-                  </p>
-                  {repo.page && repo.pageLabel ? (
-                    <p className="mt-tight font-semibold text-accent text-sm">
-                      <a className="hit" href={repo.page}>
-                        <Cue label={repo.pageLabel} />
-                      </a>
-                    </p>
+              {hour.line}
+            </SectionHead>
+            <ul className="wrap mt-group flex flex-wrap gap-4 md:gap-6">
+              {hour.tools.map((tool: Tool) => (
+                <li
+                  className="paper flex items-center gap-3 px-5 py-4 font-bold font-display text-lg tracking-tight md:text-xl"
+                  data-reveal
+                  key={tool.label}
+                >
+                  {tool.mark ? (
+                    <svg
+                      aria-hidden="true"
+                      className="size-6 shrink-0"
+                      fill="currentColor"
+                      focusable="false"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d={BRAND_MARKS[tool.mark].d} />
+                    </svg>
                   ) : null}
-                </div>
+                  {tool.label}
+                </li>
               ))}
-            </div>
-          </div>
-          <p className="wrap mt-group max-w-measure text-foreground-muted">
-            {openSource.retrofit} {openSource.published}
-          </p>
-          <Dunes />
-          <HourCue
-            href="#about"
-            label={openSource.cue.label}
-            time={openSource.cue.time}
-          />
-        </section>
+            </ul>
+            <Scenery />
+            <HourCue
+              href={`#${HOURS[i + 1]?.id ?? "about"}`}
+              label={hour.cue.label}
+              time={hour.cue.time}
+            />
+          </section>
+        ))}
 
         {/* Dusk. */}
         <section
           aria-labelledby="about"
-          className="hour hour-dusk pt-section pb-[calc(var(--scene-h)*0.8+6rem)]"
+          className="hour hour-dusk pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
           data-hour="dusk"
         >
           <SectionHead accent={about.accent} id="about" lead={about.lead}>
@@ -505,9 +448,6 @@ export default function Home() {
                   <p className="mt-flow text-foreground-muted">{row.line}</p>
                 </div>
               ))}
-              <div className="paper p-6 md:p-7" data-reveal>
-                <StackStrip href={stack.href} label={stack.label} />
-              </div>
             </div>
           </div>
           <p className="wrap mt-group font-semibold" data-reveal>

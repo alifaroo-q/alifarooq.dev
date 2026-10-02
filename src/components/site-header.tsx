@@ -8,8 +8,7 @@ import { Cue } from "@/components/cue";
  * the hour in view from `html[data-hour]` (see `hour-watcher.tsx` and the
  * `[data-nav]` rules), so this stays a server component.
  *
- * Links are root-relative, `/#work` and not `#work`, because the detail pages
- * wear the same bar and a bare hash would resolve against their own path.
+ * One link per stack hour, then About.
  */
 export function SiteHeader({
   name,
@@ -36,13 +35,19 @@ export function SiteHeader({
             aria-label="Primary"
             className="flex gap-2.5 font-medium min-[400px]:gap-3 sm:gap-6"
           >
-            <a className="hit py-1" data-nav="work" href="/#work">
-              Work
+            <a className="hit py-1" data-nav="full-stack" href="#full-stack">
+              Full-stack
             </a>
-            <a className="hit py-1" data-nav="open-source" href="/#open-source">
-              Open source
+            <a className="hit py-1" data-nav="data" href="#data">
+              Data
             </a>
-            <a className="hit py-1" data-nav="about" href="/#about">
+            <a className="hit py-1" data-nav="cloud" href="#cloud">
+              Cloud
+            </a>
+            <a className="hit py-1" data-nav="ai" href="#ai">
+              AI
+            </a>
+            <a className="hit py-1" data-nav="about" href="#about">
               About
             </a>
           </nav>

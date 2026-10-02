@@ -1,15 +1,9 @@
 /**
  * The analytics surface — one script, one event, one property (#5, #13, #31).
  *
- * The site exists to answer one question for its owner: do the case studies
- * move anyone to make contact? That is an **ordered sequence**, home →
- * case-study detail → contact section reached, and only the first two steps
- * are page views. The third is a scroll position, so it has to be sent as an
- * event, and the event has to say which page it fired on — the contact footer
- * is on every page (#8), so without the page the funnel cannot separate
- * "reached contact after reading a case study" from "scrolled past it on the
- * way down the home page." That distinction is the whole reason an ordered
- * funnel was chosen over a pair of counters.
+ * The site exists to answer one question for its owner: does the page move
+ * anyone to make contact? Reaching the contact section is a scroll position,
+ * not a page view, so it is sent as an event.
  */
 
 /**

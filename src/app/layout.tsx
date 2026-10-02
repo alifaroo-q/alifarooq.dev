@@ -48,7 +48,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 /** The home description. It is not the headline: the headline says the claim, this says what is behind it. */
 const description =
-  "Software engineer in Karachi, working remotely across backend, full-stack and AI product work. Case studies on what held up when things broke.";
+  "Software engineer in Karachi, working remotely across backend, full-stack and AI product work.";
 
 /**
  * `metadataBase`, the title template, and the home page's own `<head>` (#16).
@@ -56,7 +56,7 @@ const description =
  * The template applies to child segments only, which is why the home title is
  * `title.default` rather than a fourth literal of the name. `og:image` and
  * `twitter:image` are not here: `opengraph-image.tsx` is the file convention
- * that fills them, per route, so a case study cannot inherit the home card.
+ * that fills them.
  */
 export const metadata: Metadata = rootMetadata(description);
 

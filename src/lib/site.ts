@@ -87,14 +87,3 @@ export const PROFILE_URLS = [
   "https://github.com/alifaroo-q",
   "https://www.linkedin.com/in/alifarooqdev",
 ];
-
-/**
- * #14's conviction specimen, stated once (#7).
- *
- * The home page prints it as the open-source block's lead, and the
- * `/open-source/<slug>` share card prints it under the repo name. One string,
- * because a card that paraphrases the page it links to is a card that is
- * already out of date.
- */
-export const OPEN_SOURCE_CONVICTION =
-  "Failure should be part of what a function returns, not something you find out about in production.";
