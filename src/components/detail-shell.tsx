@@ -46,7 +46,7 @@ export function DetailShell({
         >
           <div className="flex flex-wrap items-center gap-3">
             <a
-              className="pill gap-2 px-3.5 py-1.5 font-semibold text-sm"
+              className="pill min-h-11 gap-2 px-3.5 py-1.5 font-semibold text-sm"
               href={backHref}
             >
               <Arrow dir={180} /> {backLabel}
@@ -63,7 +63,7 @@ export function DetailShell({
           </p>
         </div>
         <SectionTracking
-          className="wrap grid pb-section lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-14"
+          className="wrap grid grid-cols-1 pb-section lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-14"
           id="main"
         >
           <div className="order-2 py-10 lg:order-1 lg:pb-[33svh]">

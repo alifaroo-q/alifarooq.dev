@@ -21,9 +21,9 @@ export function SiteHeader({
   return (
     <header className="fixed inset-x-0 top-3 z-30" data-site-header>
       <div className="wrap">
-        <div className="paper flex h-14 items-center justify-between gap-3 px-4 text-sm md:px-5">
+        <div className="paper flex h-14 items-center justify-between gap-2 whitespace-nowrap px-3 text-[0.8125rem] min-[400px]:gap-3 min-[400px]:px-4 min-[400px]:text-sm md:px-5">
           <a
-            className="font-bold font-display text-lg tracking-tight md:text-xl"
+            className="flex h-11 items-center font-bold font-display text-lg tracking-tight md:text-xl"
             href="/"
           >
             <span className="md:hidden">af</span>
@@ -32,18 +32,21 @@ export function SiteHeader({
               .
             </span>
           </a>
-          <nav aria-label="Primary" className="flex gap-3 font-medium sm:gap-6">
-            <a className="py-1" data-nav="work" href="/#work">
+          <nav
+            aria-label="Primary"
+            className="flex gap-2.5 font-medium min-[400px]:gap-3 sm:gap-6"
+          >
+            <a className="hit py-1" data-nav="work" href="/#work">
               Work
             </a>
-            <a className="py-1" data-nav="open-source" href="/#open-source">
+            <a className="hit py-1" data-nav="open-source" href="/#open-source">
               Open source
             </a>
-            <a className="py-1" data-nav="about" href="/#about">
+            <a className="hit py-1" data-nav="about" href="/#about">
               About
             </a>
           </nav>
-          <a className="font-semibold ink-link" href={resumeHref}>
+          <a className="hit font-semibold ink-link" href={resumeHref}>
             <Cue label="Resume ↗" />
           </a>
         </div>

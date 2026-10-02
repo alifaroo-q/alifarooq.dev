@@ -226,7 +226,7 @@ function HourCue({
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-[calc(var(--scene-h)+0.25rem)] z-10 flex justify-center md:bottom-6">
       <a
-        className="pill pointer-events-auto gap-3 whitespace-nowrap px-4 py-2 text-sm"
+        className="pill pointer-events-auto min-h-11 gap-3 whitespace-nowrap px-4 py-2 text-sm"
         href={href}
       >
         <span className="font-mono text-foreground-label text-xs">{time}</span>
@@ -258,7 +258,7 @@ export default function Home() {
         >
           <Clouds />
           <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+3.5rem)] md:pb-[calc(var(--scene-h)*0.5+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
-            <div className="order-2 lg:order-1" data-reveal>
+            <div className="order-2 lg:order-1" data-enter>
               <Portrait />
               <p className="mt-figure text-center text-foreground-muted">
                 <span className="font-mono text-foreground-label text-xs">
@@ -303,7 +303,7 @@ export default function Home() {
                   <Cue label="Explore my work ↘" />
                 </a>
                 <a
-                  className="font-semibold ink-link"
+                  className="hit font-semibold ink-link"
                   href={`mailto:${person.email}`}
                 >
                   <Cue label="Say hello ↗" />
@@ -405,13 +405,13 @@ export default function Home() {
                   </h3>
                   <p className="mt-tight text-foreground-muted">{repo.pitch}</p>
                   <p className="mt-flow text-sm">
-                    <a className="ink-link" href={repo.href}>
+                    <a className="hit ink-link" href={repo.href}>
                       {repo.href.replace("https://", "")}
                     </a>
                   </p>
                   {repo.page && repo.pageLabel ? (
                     <p className="mt-tight font-semibold text-accent text-sm">
-                      <a href={repo.page}>
+                      <a className="hit" href={repo.page}>
                         <Cue label={repo.pageLabel} />
                       </a>
                     </p>
@@ -454,7 +454,7 @@ export default function Home() {
                     <dd className="mt-1 text-foreground-muted">
                       {role.line}
                       <span className="mt-1 block font-semibold text-accent text-sm">
-                        <a href={role.href}>
+                        <a className="hit" href={role.href}>
                           <Cue label={role.label} />
                         </a>
                       </span>
@@ -506,7 +506,7 @@ export default function Home() {
             </div>
           </div>
           <p className="wrap mt-figure font-semibold" data-reveal>
-            <a className="ink-link" href={person.resumeHref}>
+            <a className="hit ink-link" href={person.resumeHref}>
               <Cue label={about.resumeLabel} />
             </a>
           </p>

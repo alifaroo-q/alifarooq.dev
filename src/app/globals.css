@@ -388,9 +388,28 @@ em.accent {
   text-decoration-color: currentColor;
 }
 
+/* A text link whose line is shorter than a thumb. The tap area grows to 44px
+   tall around it without moving a single line of the layout. */
+.hit {
+  position: relative;
+}
+.hit::after {
+  content: "";
+  position: absolute;
+  inset: calc(50% - 22px) -0.25rem;
+}
+
 /* --------------------------------------------------------------------------
    Page chrome
    -------------------------------------------------------------------------- */
+
+/* Below 400px the bar takes a narrower gutter than the page, so the four
+   links keep one line each down to a 320px screen. */
+@media (max-width: 399px) {
+  [data-site-header] .wrap {
+    padding-inline: 0.75rem;
+  }
+}
 
 .skip-link {
   position: absolute;

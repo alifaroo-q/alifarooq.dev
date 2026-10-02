@@ -607,7 +607,7 @@ export function Stars() {
       ))}
       <svg
         aria-hidden="true"
-        className="absolute top-[7%] right-[8%] h-auto w-16 md:w-24"
+        className="absolute top-6 right-[8%] h-auto w-14 md:top-[7%] md:w-24"
         focusable="false"
         viewBox="0 0 100 100"
       >

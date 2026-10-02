@@ -40,7 +40,7 @@ export function ContactFooter({ compact = false }: { compact?: boolean }) {
           <p className="text-[clamp(1.125rem,2vw,1.375rem)]">
             Or write to{" "}
             <a
-              className="ink-link font-semibold"
+              className="hit ink-link font-semibold"
               href={`mailto:${CONTACT_EMAIL}`}
             >
               {CONTACT_EMAIL}
@@ -54,7 +54,7 @@ export function ContactFooter({ compact = false }: { compact?: boolean }) {
           <ul className="mt-tight flex flex-wrap gap-2.5">
             {REMOTE_REGIONS.map((region) => (
               <li
-                className="rounded-full border-2 border-cream px-3.5 py-1 font-medium text-sm"
+                className="rounded-full border-2 border-cream bg-background px-3.5 py-1 font-medium text-sm"
                 key={region}
               >
                 {region}

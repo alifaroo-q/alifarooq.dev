@@ -99,7 +99,7 @@ export default function StackPage() {
             {item.proof ? (
               <p className="mt-flow">
                 <a
-                  className="font-semibold text-accent text-sm"
+                  className="hit font-semibold text-accent text-sm"
                   href={item.proof.href}
                 >
                   <Cue label={item.proof.label} />

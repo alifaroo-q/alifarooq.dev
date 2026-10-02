@@ -5,7 +5,8 @@
  * the whole thing is about 60 rects of markup with no image to fetch. It is
  * awake until the page reaches night, when CSS swaps it for the lying-down pose
  * (`html[data-hour="night"]`), and it is decoration only: hidden from assistive
- * tech and unable to take a click.
+ * tech and unable to take a click. Below 640px the text runs the full width,
+ * so a fixed sprite would sit on words; it stays off there.
  *
  * Rows are written without trailing dots and padded to the grid width, so a
  * row can be edited without recounting it.
@@ -85,7 +86,7 @@ export function Camel() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed right-3 bottom-3 z-20 origin-bottom-right scale-[0.55] md:right-5 md:bottom-4 md:scale-100"
+      className="pointer-events-none fixed right-3 bottom-3 z-20 hidden origin-bottom-right scale-[0.55] sm:block md:right-5 md:bottom-4 md:scale-100"
       data-camel=""
     >
       <div className="relative" data-pose="awake">

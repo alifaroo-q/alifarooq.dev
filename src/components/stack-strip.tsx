@@ -51,7 +51,7 @@ export function StackStrip({
         ))}
       </ul>
       <p className="mt-flow font-semibold text-accent">
-        <a href={href}>
+        <a className="hit" href={href}>
           <Cue label={label} />
         </a>
       </p>
