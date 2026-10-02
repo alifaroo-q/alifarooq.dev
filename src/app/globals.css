@@ -50,8 +50,11 @@
 
   --ease-arrive: cubic-bezier(0.22, 1, 0.36, 1);
   /* How tall a scenery band is. Fixed, so it costs no layout shift; a section
-     pads its foot by about half of it so content never sits on the water. */
-  --scene-h: clamp(14rem, 24vw, 22rem);
+     pads its foot by about half of it so content never sits on the water. The
+     ceiling is high enough that a wide screen still shows the crane tops, the
+     sails and the lighthouse: the band is cropped from the top, so a short
+     band on a wide screen loses the tallest things in it. */
+  --scene-h: clamp(14rem, 24vw, 34rem);
   --duration-hover: 140ms;
   --duration-page: 220ms;
   --duration-enter: 520ms;

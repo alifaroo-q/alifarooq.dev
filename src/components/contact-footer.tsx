@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 export function ContactFooter({ compact = false }: { compact?: boolean }) {
   return (
     <footer
-      className="hour hour-night pt-section pb-[calc(var(--scene-h)*0.6+3rem)]"
+      className="hour hour-night pt-section pb-[calc(var(--scene-h)*0.85+3rem)]"
       data-hour="night"
     >
       <Stars />

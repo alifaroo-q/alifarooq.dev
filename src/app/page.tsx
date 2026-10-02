@@ -257,7 +257,7 @@ export default function Home() {
           data-hour="dawn"
         >
           <Clouds />
-          <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+3.5rem)] md:pb-[calc(var(--scene-h)*0.5+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
+          <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+3.5rem)] md:pb-[calc(var(--scene-h)*0.6+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
             <div className="order-2 lg:order-1" data-enter>
               <Portrait />
               <p className="mt-figure text-center text-foreground-muted">
@@ -324,10 +324,10 @@ export default function Home() {
           <SectionHead accent={work.accent} id="work" lead={work.lead}>
             {work.intro}
           </SectionHead>
-          <div className="wrap mt-group grid gap-8 lg:grid-cols-3 lg:gap-10">
+          <div className="wrap mt-group grid gap-8 lg:grid-cols-3 lg:gap-6 xl:gap-10">
             {caseStudies.map((caseStudy, i) => (
               <a
-                className="paper group flex flex-col p-6 md:p-7"
+                className="paper group flex flex-col p-6 md:p-7 lg:p-6 xl:p-7"
                 data-reveal
                 href={`/work/${caseStudy.slug}`}
                 id={`work-${caseStudy.order}`}
@@ -376,9 +376,9 @@ export default function Home() {
           >
             {openSource.conviction}
           </SectionHead>
-          <div className="wrap mt-group grid gap-8 lg:gap-10">
+          <div className="wrap mt-group grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
             <a
-              className="paper grid gap-x-10 gap-y-figure p-6 md:grid-cols-[1fr_auto] md:items-end md:p-8"
+              className="paper flex flex-col gap-figure p-6 md:p-8"
               data-reveal
               href={openSource.featured.href}
             >
@@ -386,18 +386,23 @@ export default function Home() {
                 <span className="inline-block rounded-full border-2 border-ink bg-saffron px-3 py-1 font-medium text-ink text-xs">
                   Has a write-up
                 </span>
-                <h3 className="mt-flow font-bold text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.05] tracking-tight">
+                <h3 className="mt-flow font-bold text-[clamp(1.75rem,3.4vw,3rem)] leading-[1.05] tracking-tight">
                   {openSource.featured.name}
                 </h3>
-                <p className="mt-flow max-w-measure text-foreground-muted">
+              </div>
+              {/* Beside the pair, the card is taller than its words. The name
+                  holds the top and the argument sits on the floor with its
+                  link, so the space between reads as the card's own. */}
+              <div className="lg:mt-auto">
+                <p className="max-w-measure text-foreground-muted lg:text-lg">
                   {openSource.featured.pitch}
                 </p>
+                <p className="mt-figure font-semibold text-accent">
+                  <Cue label={openSource.featured.label} />
+                </p>
               </div>
-              <p className="font-semibold text-accent">
-                <Cue label={openSource.featured.label} />
-              </p>
             </a>
-            <div className="grid gap-8 md:grid-cols-2 lg:gap-10">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-1 lg:gap-10">
               {openSource.origin.map((repo) => (
                 <div className="paper p-6" data-reveal key={repo.name}>
                   <h3 className="font-bold text-xl tracking-tight">
@@ -467,7 +472,7 @@ export default function Home() {
           <div className="wrap mt-group grid items-start gap-8 lg:grid-cols-2 lg:gap-10">
             {about.rows.slice(0, 1).map((row) => (
               <div className="paper p-6 md:p-7" data-reveal key={row.span}>
-                <h3 className="mt-tight font-bold text-xl leading-tight tracking-tight">
+                <h3 className="font-bold text-xl leading-tight tracking-tight">
                   {row.title}
                 </h3>
                 <p className="mt-1 font-mono text-foreground-label text-xs">
@@ -491,7 +496,7 @@ export default function Home() {
             <div className="grid gap-8 lg:gap-10">
               {about.rows.slice(1).map((row) => (
                 <div className="paper p-6 md:p-7" data-reveal key={row.span}>
-                  <h3 className="mt-tight font-bold text-xl leading-tight tracking-tight">
+                  <h3 className="font-bold text-xl leading-tight tracking-tight">
                     {row.title}
                   </h3>
                   <p className="mt-1 font-mono text-foreground-label text-xs">
@@ -505,7 +510,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <p className="wrap mt-figure font-semibold" data-reveal>
+          <p className="wrap mt-group font-semibold" data-reveal>
             <a className="hit ink-link" href={person.resumeHref}>
               <Cue label={about.resumeLabel} />
             </a>
