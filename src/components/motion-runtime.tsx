@@ -35,6 +35,7 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useLayoutEffect } from "react";
+import { CONTACT_SENT } from "@/lib/contact-sent";
 
 const useBeforePaint =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -78,6 +79,8 @@ const MOTION = {
   walk: 56,
   /** Pixels a scenery layer travels per unit of its `--depth`. */
   drift: 26,
+  /** Seconds for the lighthouse beam to go round once. */
+  sweep: 2.4,
 };
 
 /**
@@ -276,6 +279,28 @@ const EFFECTS: [selector: string, effect: Effect][] = [
         },
       );
       return undefined;
+    },
+  ],
+
+  // THE LIGHTHOUSE answers a sent message: its beam sweeps round once from
+  // the lamp. It waits for the form's event, so nothing moves until then.
+  [
+    "[data-beam]",
+    (beam) => {
+      const sweep = () => {
+        gsap.fromTo(
+          beam,
+          { rotation: 0 },
+          {
+            rotation: 360,
+            svgOrigin: "1290 178",
+            duration: MOTION.sweep,
+            ease: "power1.inOut",
+          },
+        );
+      };
+      document.addEventListener(CONTACT_SENT, sweep);
+      return () => document.removeEventListener(CONTACT_SENT, sweep);
     },
   ],
 

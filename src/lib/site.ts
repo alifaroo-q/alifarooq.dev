@@ -9,6 +9,9 @@
  */
 export const CONTACT_EMAIL = "hello@alifarooq.dev";
 
+/** The built resume. The header and the contact section both link it. */
+export const RESUME_HREF = "/resume.pdf";
+
 /**
  * The site's one action style: the saffron key, defined once in `globals.css`.
  * The fold's call to action and the contact form's submit are the same

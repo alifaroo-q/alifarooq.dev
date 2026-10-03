@@ -18,6 +18,7 @@ import {
   ELAPSED_FIELD,
   HONEYPOT_FIELD,
 } from "@/lib/contact";
+import { CONTACT_SENT } from "@/lib/contact-sent";
 import { ACTION_CLASS, CONTACT_EMAIL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -119,6 +120,7 @@ export function ContactForm() {
 
     if (answer?.ok) {
       setStatus("sent");
+      document.dispatchEvent(new Event(CONTACT_SENT));
       return;
     }
 
@@ -138,8 +140,13 @@ export function ContactForm() {
 
   if (status === "sent") {
     return (
-      <p className="border border-border-strong px-5 py-4" role="status">
-        Sent. I'll reply from {CONTACT_EMAIL}.
+      <p className="grid min-h-96 content-center gap-3" role="status">
+        <span className="font-bold font-display text-[clamp(2.125rem,5vw,3.75rem)] leading-none tracking-[-0.03em]">
+          Sent.
+        </span>{" "}
+        <span className="text-lg">
+          I'll reply within 24 hours from {CONTACT_EMAIL}.
+        </span>
       </p>
     );
   }

@@ -9,6 +9,7 @@ import {
   GITHUB_URL,
   LINKEDIN_URL,
   REMOTE_REGIONS,
+  RESUME_HREF,
 } from "@/lib/site";
 
 /**
@@ -29,7 +30,9 @@ export function ContactFooter() {
         Full-time remote, contract or a single project. Tell me what you need
         and I reply within 24 hours.
       </SectionHead>
-      <div className="wrap mt-group grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:gap-16">
+      {/* On a phone the form comes straight after the ways to reach me, and
+          the details about where I work follow it. */}
+      <div className="wrap mt-group grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:grid-rows-[auto_1fr] lg:gap-x-16">
         <div className="max-w-measure">
           <p className="text-[clamp(1.125rem,2vw,1.375rem)]">
             Or write to{" "}
@@ -41,6 +44,14 @@ export function ContactFooter() {
             </a>
             .
           </p>
+          <p className="mt-tight font-semibold">
+            <a
+              className="ink-link inline-flex min-h-11 items-center"
+              href={RESUME_HREF}
+            >
+              <Cue label="Or grab my resume ↗" />
+            </a>
+          </p>
           <p className="mt-flow flex flex-wrap gap-x-6 gap-y-2 font-semibold">
             <a className="hit ink-link" href={GITHUB_URL}>
               <Cue label="GitHub ↗" />
@@ -49,7 +60,12 @@ export function ContactFooter() {
               <Cue label="LinkedIn ↗" />
             </a>
           </p>
-          <p className="mt-group text-[clamp(1rem,1.6vw,1.125rem)]">
+        </div>
+        <div className="paper p-6 md:p-8 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <ContactFormSlot />
+        </div>
+        <div className="max-w-measure">
+          <p className="text-[clamp(1rem,1.6vw,1.125rem)]">
             I work remotely from {BASE_LOCATION}, {BASE_UTC}, with flexible
             hours. Open to roles in:
           </p>
@@ -68,9 +84,6 @@ export function ContactFooter() {
           <p className="mt-figure font-mono text-foreground-label text-xs">
             24°51′N 67°00′E · {BASE_LOCATION} · {BASE_UTC}
           </p>
-        </div>
-        <div className="paper p-6 md:p-8">
-          <ContactFormSlot />
         </div>
       </div>
       <Harbour />

@@ -32,6 +32,7 @@ import {
   PERSON_ROLE,
   PORTRAIT_SRC,
   PROFILE_URLS,
+  RESUME_HREF,
   SITE_URL,
 } from "@/lib/site";
 
@@ -56,7 +57,7 @@ const person = {
   location: `${BASE_LOCATION.split(",")[0]} (${BASE_UTC})`,
   availability: "Open to remote roles",
   hours: "Flexible hours",
-  resumeHref: "/resume.pdf",
+  resumeHref: RESUME_HREF,
 };
 
 /**
