@@ -1,7 +1,7 @@
 import { Cue } from "@/components/cue";
 
 const STANCE =
-  "AI agents write most of the code now. My job is everything around the code: what to build, how it should work, and how it runs for the client.";
+  "I own the system around the model: the data, the queues, the guards and the person who checks its work.";
 const SUB =
   "I work close to the client. I learn how their business runs, then build a tool that fits it.";
 const CLOSING =
