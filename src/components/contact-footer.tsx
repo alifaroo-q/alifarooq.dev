@@ -25,7 +25,7 @@ export function ContactFooter() {
       data-hour="night"
     >
       <Stars />
-      <SectionHead accent="job" id="contact" lead="Bring me a">
+      <SectionHead accent="project?" id="contact" lead="Got a role or a">
         Full-time remote, contract or a single project. Tell me what you need
         and I reply within 24 hours.
       </SectionHead>

@@ -18,11 +18,11 @@ const LOOP = [
   },
   {
     step: "De-risk",
-    line: "I design the data first, then test the riskiest part before I build anything else.",
+    line: "I find the part most likely to fail and test it first. I design the data before anything else.",
   },
   {
     step: "Spike",
-    line: "I build two or three rough versions of an idea and keep the best one.",
+    line: "A spike is a quick, rough build to learn something. I build two or three and keep the best idea.",
   },
   {
     step: "Ship and iterate",

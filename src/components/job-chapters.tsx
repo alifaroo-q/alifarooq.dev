@@ -228,7 +228,8 @@ function CompactCard({ job }: { job: Job }) {
       <Quote className="mt-4" job={job} />
       <details className="group mt-auto pt-2 text-foreground-muted text-sm">
         <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-accent">
-          Read more<span className="sr-only"> about {job.client}</span>
+          Role and what I built
+          <span className="sr-only"> for {job.client}</span>
           <span className="ml-2 inline-flex group-open:rotate-180">
             <Arrow dir={90} />
           </span>

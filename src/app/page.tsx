@@ -134,14 +134,35 @@ const TOOL_GROUPS: { title: string; tools: Tool[] }[] = [
 ];
 
 /** The agent skills Ali wrote. */
-const MY_SKILLS = [
-  "react-state",
-  "typescript",
-  "roadmap",
-  "ping",
-  "show-me",
-  "quit-thinking-and-look",
-  "vitest-test-coverage",
+const MY_SKILLS: { slug: string; does: string }[] = [
+  {
+    slug: "react-state",
+    does: "Decides where a React value lives and how it changes.",
+  },
+  {
+    slug: "typescript",
+    does: "Config, migration and type errors in TypeScript 6 and 7.",
+  },
+  {
+    slug: "roadmap",
+    does: "Plans a project as phases, in the order to build them.",
+  },
+  {
+    slug: "ping",
+    does: "Turns a vague message from a client into a clear ask and one plan.",
+  },
+  {
+    slug: "show-me",
+    does: "Explains a topic with small diagrams and sketches.",
+  },
+  {
+    slug: "quit-thinking-and-look",
+    does: "Finds the root cause of a bug by looking before fixing.",
+  },
+  {
+    slug: "vitest-test-coverage",
+    does: "Writes and reviews Vitest tests for business logic and the database.",
+  },
 ];
 
 /** The AI systems with a diagram, in the order the fold's Proof strip names them. */
@@ -561,10 +582,13 @@ export default function Home() {
             <h3 className="font-bold font-display text-xl tracking-tight">
               Skills I wrote for my agents
             </h3>
-            <ul className="mt-figure flex flex-wrap gap-3">
+            <ul className="mt-figure grid max-w-4xl gap-x-10 gap-y-3 md:grid-cols-2">
               {MY_SKILLS.map((skill) => (
-                <li className="chip px-3 py-1.5 font-mono text-sm" key={skill}>
-                  {skill}
+                <li key={skill.slug}>
+                  {skill.does}{" "}
+                  <code className="font-mono text-foreground-label text-xs">
+                    {skill.slug}
+                  </code>
                 </li>
               ))}
             </ul>
@@ -586,7 +610,7 @@ export default function Home() {
           />
           <Caravan stops={STOPS} />
           <Dusk />
-          <HourCue href="#contact" label="Bring me a job ↓" time="21:30" />
+          <HourCue href="#contact" label="Get in touch ↓" time="21:30" />
         </section>
       </main>
 

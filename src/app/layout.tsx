@@ -48,7 +48,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 /** The home description. It is not the headline: the headline says the claim, this says what is behind it. */
 const description =
-  "AI full-stack engineer in Karachi, working remotely across backend, full-stack and AI product work.";
+  "AI full-stack engineer in Karachi. I build products with AI inside them: an AI caller that 7,000 inbound leads a month go through, and an email assistant that drafts sourced replies for a person to check.";
 
 /**
  * `metadataBase`, the title template, and the home page's own `<head>` (#16).
