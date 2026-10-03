@@ -684,6 +684,177 @@ export function Dunes() {
 }
 
 /* --------------------------------------------------------------------------
+   Early evening: Sea View. The promenade, a ferris wheel, stalls, the lamps
+   coming on.
+   -------------------------------------------------------------------------- */
+
+/** A ferris wheel on an A-frame, hub at the origin. */
+function Wheel({ x, y, r }: { x: number; y: number; r: number }) {
+  const spokes = Array.from({ length: 12 }, (_, i) => (i * Math.PI) / 6);
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <path
+        d={`M0 0 L${-r * 0.55} ${r + 34} M0 0 L${r * 0.55} ${r + 34}`}
+        stroke="#4a3a5c"
+        strokeWidth="6"
+      />
+      <g>
+        <circle fill="none" r={r} stroke="#4a3a5c" strokeWidth="4" />
+        <circle fill="none" r={r * 0.82} stroke="#4a3a5c" strokeWidth="2" />
+        {spokes.map((a) => (
+          <path
+            d={`M0 0 L${(Math.cos(a) * r).toFixed(1)} ${(Math.sin(a) * r).toFixed(1)}`}
+            key={a}
+            stroke="#4a3a5c"
+            strokeWidth="2"
+          />
+        ))}
+        {spokes.map((a, i) => (
+          <circle
+            cx={(Math.cos(a) * r).toFixed(1)}
+            cy={(Math.sin(a) * r).toFixed(1)}
+            fill={i % 2 ? "#f2b93b" : "#e0664a"}
+            key={a}
+            r="7"
+            stroke="#4a3a5c"
+            strokeWidth="2"
+          />
+        ))}
+      </g>
+      <circle fill="#f2b93b" r="8" stroke="#4a3a5c" strokeWidth="3" />
+    </g>
+  );
+}
+
+/** A promenade lamp, just lit. */
+function Lamp({ x, y }: { x: number; y: number }) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <circle cy="-92" fill="#fff4d6" opacity="0.6" r="18" />
+      <path
+        d="M0 0 V-86 M0 -86 q0 -10 -10 -10"
+        fill="none"
+        stroke="#3a2f4d"
+        strokeWidth="4"
+      />
+      <path
+        d="M0 -86 q0 -10 10 -10"
+        fill="none"
+        stroke="#3a2f4d"
+        strokeWidth="4"
+      />
+      <circle cx="-10" cy="-92" fill="#fbe7b8" r="5" />
+      <circle cx="10" cy="-92" fill="#fbe7b8" r="5" />
+      <rect fill="#3a2f4d" height="6" width="14" x="-7" y="-6" />
+    </g>
+  );
+}
+
+/** A food stall: a cart under a striped awning. */
+function Stall({ x, y, stripe }: { x: number; y: number; stripe: string }) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <path d="M6 -40 V0 M90 -40 V0" stroke="#3a2f4d" strokeWidth="4" />
+      <rect
+        fill="#fffaf0"
+        height="26"
+        stroke="#3a2f4d"
+        strokeWidth="2.5"
+        width="96"
+        y="-26"
+      />
+      <circle cx="48" cy="-13" fill="#f2b93b" r="5" />
+      <path
+        d="M-8 -40 H104 L96 -62 H0Z"
+        fill="#fffaf0"
+        stroke="#3a2f4d"
+        strokeLinejoin="round"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M8 -40 L14 -62 H30 L28 -40Z M48 -40 L46 -62 H62 L68 -40Z M88 -40 L80 -62 H92 L104 -40Z"
+        fill={stripe}
+      />
+      <path
+        d="M-8 -40 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0 q7 8 14 0"
+        fill={stripe}
+        stroke="#3a2f4d"
+        strokeWidth="2"
+      />
+    </g>
+  );
+}
+
+export function SeaView() {
+  return (
+    <Scene>
+      <Layer depth={0.15}>
+        <circle cx="1120" cy="232" fill="#fbe7b8" opacity="0.5" r="58" />
+        <circle cx="1120" cy="232" fill="#fde9c2" r="36" />
+        <rect fill="#d99482" height="170" width="1440" y="232" />
+        {[0, 1, 2, 3].map((i) => (
+          <rect
+            fill="#fde9c2"
+            height="3"
+            key={i}
+            opacity={0.8 - i * 0.16}
+            rx="1.5"
+            width={90 - i * 18}
+            x={1075 + i * 9}
+            y={242 + i * 9}
+          />
+        ))}
+      </Layer>
+      <Layer depth={0.35}>
+        <path
+          d="M0 270 C200 262 380 276 600 268 S1000 258 1200 270 S1380 264 1440 268 V400 H0Z"
+          fill="#c27b78"
+        />
+        <path
+          d="M0 270 C200 262 380 276 600 268 S1000 258 1200 270 S1380 264 1440 268"
+          fill="none"
+          stroke="#fde9c2"
+          strokeDasharray="12 18"
+          strokeLinecap="round"
+          strokeWidth="3"
+        />
+      </Layer>
+      <Layer depth={0.55}>
+        <path
+          d="M0 292 C260 284 520 298 780 290 S1220 282 1440 292 V400 H0Z"
+          fill="#e7b98a"
+        />
+        <Wheel r={92} x={250} y={178} />
+      </Layer>
+      <Layer depth={0.8}>
+        <path d="M0 330 H1440 V400 H0Z" fill="#d9a56f" />
+        <path d="M0 330 H1440 M0 314 H1440" stroke="#3a2f4d" strokeWidth="3" />
+        <path
+          d={Array.from({ length: 49 }, (_, i) => `M${i * 30} 314 V330`).join(
+            " ",
+          )}
+          stroke="#3a2f4d"
+          strokeWidth="2.5"
+        />
+        {[90, 520, 900, 1330].map((lx) => (
+          <Lamp key={lx} x={lx} y={330} />
+        ))}
+      </Layer>
+      <path d="M0 366 H1440 V400 H0Z" fill="#c9915d" />
+      <path
+        d="M0 366 H1440"
+        stroke="#b07a48"
+        strokeDasharray="40 6"
+        strokeWidth="3"
+      />
+      <Stall stripe="#c24e2c" x={600} y={372} />
+      <Stall stripe="#2e8f98" x={730} y={374} />
+      <Stall stripe="#f2b93b" x={1110} y={372} />
+    </Scene>
+  );
+}
+
+/* --------------------------------------------------------------------------
    Dusk: the sun going into the sea, and a line of camels on the sand.
    -------------------------------------------------------------------------- */
 

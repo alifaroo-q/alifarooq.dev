@@ -20,6 +20,8 @@ colors:
   sky-noon-b: "#e9f5ec"
   sky-golden-a: "#f4d98f"
   sky-golden-b: "#f3c783"
+  sky-evening-a: "#f4c39a"
+  sky-evening-b: "#e9a690"
   sky-dusk-a: "#eeb89f"
   sky-dusk-b: "#d89aa3"
   sky-night-a: "#12304a"
@@ -119,7 +121,7 @@ components:
 
 **Creative North Star: "One Day on the Karachi Coast"**
 
-The page is a clock. Scrolling carries the reader from dawn through morning, noon and golden hour to dusk and night, and each section is a different hour with its own sky gradient and a band of hand-built SVG scenery in that hour's light: shoreline and dhow, a fish harbour with boats, crates and gulls, port cranes and skyline, dunes and palms, a dusk beach with camels, a night harbour with a lighthouse and stars. There is no light/dark switch; the dark half of the day is the Contact section and is met by scrolling.
+The page is a clock. Scrolling carries the reader from dawn through morning, noon, golden hour and evening to dusk and night, and each section is a different hour with its own sky gradient and a band of hand-built SVG scenery in that hour's light: shoreline and dhow, a fish harbour with boats, crates and gulls, port cranes and skyline, dunes and palms, the Sea View promenade with a ferris wheel and stalls, a dusk beach with camels, a night harbour with a lighthouse and stars. There is no light/dark switch; the dark half of the day is the Contact section and is met by scrolling.
 
 Everything that carries content is cut paper: a sand card, a 2px ink border, a hard offset ink shadow with no blur, and corners of 4px. Cards sit on the sky and stay legible on every hour because a card re-declares its own ink and paper tokens. Headings are bold grotesque with a single italic serif word in coral. A pixel camel walks the beach and lies down to sleep at night. The voice is warm and plain, and the page is illustrated, not decorated: scenery is behind the content and never read.
 
@@ -146,7 +148,7 @@ A coastal day: sun-warmed grounds, deep sea-ink for everything that must be read
 - **Deep Sea Ink** (#10333d): all text on day grounds, every border, every card shadow, and the page background behind the night.
 - **Sand Paper** (#fffaf0): card surface and the lightest tone.
 - **Cream** (#fbefd8): default body background and the night's text colour.
-- **Muted Ink** (#34545d) and **Label Ink** (#3f5f68): secondary text and small labels, tinted from the ink and never grey; both clear 4.5:1 on the day skies. Dusk steps both darker (#1f3d47, #234049).
+- **Muted Ink** (#34545d) and **Label Ink** (#3f5f68): secondary text and small labels, tinted from the ink and never grey; both clear 4.5:1 on the day skies. Evening and dusk step both darker (#1f3d47, #234049).
 - **Sand Border** (#c9bfa8): hairlines inside cards.
 - **Error Brick** (#a82a1c): form errors only.
 
@@ -154,7 +156,7 @@ A coastal day: sun-warmed grounds, deep sea-ink for everything that must be read
 The mascot and the caravan have their own fills: camel tan (#e3b564) and its shade (#bf8d43), caravan tan (#e2a95a), the ghost camel (#f3d9c9) and the dusk trail (#f1c9a6). The portrait's dawn sun is #f8d99a with a #fbe9c7 glow. All are tokens in `globals.css`.
 
 ### Skies
-Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pale aqua (#cde9e6 to #e9f5ec), golden amber (#f4d98f to #f3c783), dusk rose-plum (#eeb89f to #d89aa3), night navy (#12304a to #0a1a2b). The accent word on dusk is plum (#6b1f42); at night it is saffron. Each pair is a `--sky-<hour>-a/b` token; the sections read them, and so does the strip behind the fixed header, which takes the `-a` tone of the hour in view.
+Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pale aqua (#cde9e6 to #e9f5ec), golden amber (#f4d98f to #f3c783), evening apricot (#f4c39a to #e9a690), dusk rose-plum (#eeb89f to #d89aa3), night navy (#12304a to #0a1a2b). The accent word on dusk is plum (#6b1f42); at night it is saffron. Each pair is a `--sky-<hour>-a/b` token; the sections read them, and so does the strip behind the fixed header, which takes the `-a` tone of the hour in view.
 
 ### Named Rules
 **The Token Rule.** Nothing outside `globals.css` sets a colour in a component. Components say `text-foreground` or `bg-background`; the value comes from whichever ancestor last redefined the token (an `.hour-*` section, or a `.paper` card).
@@ -183,7 +185,7 @@ Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pa
 
 ## Layout
 
-One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically, in this order: the fold (dawn), Work (morning), How I work (noon), Tools (golden), About (dusk) and Contact (night); each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px. Below 1024px the arch portrait is hidden and a 40px round portrait sits on the name line under the h1; the dawn caption moves under the status row. Tools is three groups of wrapping chip rows, 0.75rem apart and 1rem from 768px. Work leads with two flagship chapters, two columns from 1024px, then compact cards three-up at large, stretched to one height so their disclosures line up. How I work's five steps climb as stairs from 768px and run as a sideways snap row on a phone. About is three caravan stops, three-up from 768px. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`, and section headings with 5.25rem plus 1.5rem. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
+One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically, in this order: the fold (dawn), Work (morning), How I work (noon), Tools (golden), a Sea View scenery band with no content (evening), About (dusk) and Contact (night); each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px. Below 1024px the arch portrait is hidden and a 40px round portrait sits on the name line under the h1; the dawn caption moves under the status row. Tools is three groups of wrapping chip rows, 0.75rem apart and 1rem from 768px. Work leads with two flagship chapters, two columns from 1024px, then compact cards three-up at large, stretched to one height so their disclosures line up. How I work's five steps climb as stairs from 768px and run as a sideways snap row on a phone. About is three caravan stops, three-up from 768px. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`, and section headings with 5.25rem plus 1.5rem. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
 
 ## Elevation & Depth
 

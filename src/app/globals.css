@@ -85,6 +85,8 @@
   --sky-noon-b: #e9f5ec;
   --sky-golden-a: #f4d98f;
   --sky-golden-b: #f3c783;
+  --sky-evening-a: #f4c39a;
+  --sky-evening-b: #e9a690;
   --sky-dusk-a: #eeb89f;
   --sky-dusk-b: #d89aa3;
   --sky-night-a: #12304a;
@@ -243,6 +245,14 @@
 .hour-golden {
   --sky-a: var(--sky-golden-a);
   --sky-b: var(--sky-golden-b);
+}
+.hour-evening {
+  --sky-a: var(--sky-evening-a);
+  --sky-b: var(--sky-evening-b);
+  /* The bottom of the sky is dark enough that text steps down a tone to keep
+     4.5:1, as at dusk. */
+  --foreground-muted: #1f3d47;
+  --foreground-label: #234049;
 }
 .hour-dusk {
   --sky-a: var(--sky-dusk-a);
@@ -495,6 +505,9 @@ html[data-hour="noon"] {
 }
 html[data-hour="golden"] {
   --header-sky: var(--sky-golden-a);
+}
+html[data-hour="evening"] {
+  --header-sky: var(--sky-evening-a);
 }
 html[data-hour="dusk"] {
   --header-sky: var(--sky-dusk-a);

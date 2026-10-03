@@ -18,6 +18,7 @@ import {
   Dusk,
   FishMarket,
   Port,
+  SeaView,
   Shore,
 } from "@/components/scenery";
 import { SectionHead } from "@/components/section-head";
@@ -40,8 +41,8 @@ import {
  * The home page.
  *
  * The page is one day on the Karachi coast. The fold is dawn, the three middle
- * hours run from morning to golden hour, About is dusk, and Contact is the
- * night. Each hour ends in a band of scenery and a cue that names the next
+ * hours run from morning to golden hour, a band of Sea View marks the early
+ * evening, About is dusk, and Contact is the night. Each hour ends in a band of scenery and a cue that names the next
  * one, stamped with its time, so the order of the sections is carried by the
  * clock and not by numbers.
  *
@@ -597,6 +598,15 @@ export default function Home() {
           <Dunes />
           <HourCue href="#about" label="About ↓" time="18:40" />
         </section>
+
+        {/* Early evening: Sea View, met by scrolling. */}
+        <div
+          aria-hidden="true"
+          className="hour hour-evening h-[calc(var(--scene-h)+6rem)]"
+          data-hour="evening"
+        >
+          <SeaView />
+        </div>
 
         {/* Dusk: where I've been, where I'm going. */}
         <section
