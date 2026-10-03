@@ -10,7 +10,7 @@ web
 
 Two audiences, equal weight (confirmed):
 
-- **Hiring managers and engineering leads.** They arrive from a resume or LinkedIn profile and are deciding whether to interview Ali Farooq. The home page is written for this reader. It runs in this order: the fold, Full-stack, Data, Cloud and CI/CD, AI, About, Contact.
+- **Hiring managers and engineering leads.** They arrive from a resume or LinkedIn profile and are deciding whether to interview Ali Farooq. The home page is written for this reader. It runs in this order: the fold, Work, How I work, Tools, client words, About, Contact. The nav links Work, How I work, Tools, About and Contact.
 - **Prospective clients.** They are deciding whether to hire Ali for contract or project work. The contact form and the address in the fold and footer are their path.
 
 ## Product Purpose
@@ -25,9 +25,9 @@ The site is one page. Surfaces in the codebase:
 
 ## Positioning
 
-Confirmed by the user (2026-10-03): the angle is full-stack and AI. The headline is "I build full-stack products with *AI* inside them." The sentence under it is "Two years of client products at Zenkoders. Next.js on the front, NestJS and Postgres behind it, shipped on AWS, with LLM features and agents on top." The title line reads "Software engineer / full-stack and AI product".
+Confirmed by the user (2026-10-03): the angle is "AI builder". The page must prove "AI full-stack engineer" in ten seconds by leading with AI systems shipped (the AI voice caller, the email assistant with search and a person who approves), not with coding assistants. The headline is "I build full-stack products with *AI* inside them." The sentence under it names two years at Zenkoders and the 7,000 inbound leads a month that go through the AI caller.
 
-The umbrella title is still "Software engineer" (page title, share card). Ali works as a backend engineer, software engineer, AI product engineer and full-stack engineer (confirmed 2026-10-02). The four titles are printed as "Four ways I work" in About. Each links to the stack hour that backs it: Backend to Data, Software to Cloud, AI product to AI, Full-stack to Full-stack. Every sentence restates something already on the site or resume; no new claims.
+The one title is "AI full-stack engineer" (`PERSON_ROLE`): the fold, the page title, the share card and the `Person` block all print it. Under the title, a Proof strip names three systems (AI voice caller, email assistant, restaurant voice AI), each with one figure and a link to its chapter in Work. Every sentence restates something already on the site or resume; no new claims.
 
 ## Availability
 
@@ -38,7 +38,7 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 ## Operating Context
 
 - Visitors skim first. The site is one page, and the resume holds the dated detail for readers who want more.
-- Most of the work is client work and cannot link to code. As of 2026-10-02 the user chose to name clients. About names Numlix, Mach 1 and Voxena. The new resume (`public/resume.pdf`, supplied by the user) names Numlix, Mach 1, Voxena and Billy's Garage.
+- Most of the work is client work and cannot link to code. As of 2026-10-02 the user chose to name clients. Work names HCPA, Voxena, Mach 1, Tenley, Numlix, MyCFO, Billy's Garage and MarkRegistry. The new resume (`public/resume.pdf`, supplied by the user) names Numlix, Mach 1, Voxena and Billy's Garage.
 - A resume PDF is built from `resume/resume.html` by `pnpm resume:build`.
 
 ## Capabilities and Constraints
@@ -46,7 +46,9 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 - Next.js 16 App Router, React 19, Tailwind 4, `@base-ui/react`, GSAP motion. There is no MDX or content system; the home copy lives in `page.tsx`. Package manager is pnpm, Node 24.
 - CI gates that design work must not break: JS bundle budget (`budget:js`), Lighthouse report (`budget:perf`), a11y scan (`budget:a11y`) and a prose check (`pnpm prose`). The prose check encodes the house voice.
 - Colour is applied only through tokens in `globals.css`; components set no raw colour values.
-- The stack is four hours on the home page: Full-stack at 08:30, Data at 12:00, Cloud and CI/CD at 16:30, AI at 17:45. Each hour has one line and a row of paper chips. A chip has a mono Simple Icons mark, except concepts such as LLMs, Agents and CI/CD, which have none. The hours state no skill levels.
+- Work leads with three flagship chapters (AI caller, email assistant, restaurant voice AI), each with a step-by-step system diagram and a detail card that folds shut below 768px. The rest of the client work is a row of compact cards whose detail opens on demand, then a list of smaller jobs and result-kit.
+- Tools is three groups of flat chips: "AI I ship", "The stack under it" and "AI I build with", then the agent skills Ali wrote. A chip has a mono Simple Icons mark where one exists. The chips state no skill levels.
+- Motion is one registry: markup carries `data-*` hooks and `EFFECTS` in `src/components/motion-runtime.tsx` says what each hook does, all inside `prefers-reduced-motion: no-preference`.
 - Contact: `hello@alifarooq.dev`, which the user will forward to `alifarooq122@gmail.com` (set up at the mail/DNS provider, not in this repo). The resume prints the gmail address directly. GitHub `alifaroo-q`; LinkedIn `alifarooqdev`.
 
 ## Brand Commitments
@@ -58,9 +60,11 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 
 ## Evidence on Hand
 
-- The Zenkoders row in About, with two figures: 7,000 inbound leads a month booked against a calendar, and 100 consultants drafting email through it.
+- The Proof strip and the flagship chapters, with their figures: 7,000 inbound leads a month through the AI caller, 31 to 49 bookings a week from its SMS follow-up, 40 to 50 emails a day per consultant.
+- The client words row: four short quotes from clients (HCPA and Numlix), unedited, credited by client name only.
+- The About caravan: the gold medal (2024) and the Excellence in Work award (2026).
 - Resume at `public/resume.pdf`.
-- Not on hand, so future work must not fabricate them: testimonials, traffic or revenue metrics, awards, press.
+- Not on hand, so future work must not fabricate them: more testimonials than the quotes above, quotes credited to a named person, traffic or revenue metrics, press.
 
 ## Product Principles
 

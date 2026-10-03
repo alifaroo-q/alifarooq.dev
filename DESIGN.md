@@ -27,6 +27,13 @@ colors:
   sky-night-a: "#12304a"
   sky-night-b: "#0a1a2b"
   dusk-accent: "#6b1f42"
+  camel: "#e3b564"
+  camel-shade: "#bf8d43"
+  caravan: "#e2a95a"
+  caravan-ghost: "#f3d9c9"
+  trail: "#f1c9a6"
+  sun: "#f8d99a"
+  sun-glow: "#fbe9c7"
 typography:
   display:
     fontFamily: "Bricolage Grotesque, ui-sans-serif, system-ui, sans-serif"
@@ -92,10 +99,10 @@ components:
     backgroundColor: "{colors.paper}"
     rounded: "{rounded.arch}"
   tool-chip:
-    backgroundColor: "{colors.paper}"
+    backgroundColor: "{colors.cream}"
     textColor: "{colors.ink}"
     rounded: "{rounded.paper}"
-    padding: "16px 20px"
+    padding: "10px 16px"
   hour-cue:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink}"
@@ -120,7 +127,7 @@ Everything that carries content is cut paper: a sand card, a 2px ink border, a h
 
 **Key Characteristics:**
 - Hour-of-the-day grounds: seven sky gradients, one per section, night flips the ink.
-- Hard-shadow paper cards, no blur anywhere, press-down hover.
+- Hard-shadow paper cards, no blur anywhere, press-down hover. Labels that are not controls are flat chips with a hairline.
 - One saffron primary action per view.
 - One italic serif accent word per heading.
 - Original SVG scenery, drifting on scroll by depth; a pixel camel mascot.
@@ -144,6 +151,9 @@ A coastal day: sun-warmed grounds, deep sea-ink for everything that must be read
 - **Muted Ink** (#34545d) and **Label Ink** (#3f5f68): secondary text and small labels, tinted from the ink and never grey; both clear 4.5:1 on the day skies. Evening and dusk step both darker (#1f3d47, #234049).
 - **Sand Border** (#c9bfa8): hairlines inside cards.
 - **Error Brick** (#a82a1c): form errors only.
+
+### Illustration
+The mascot and the caravan have their own fills: camel tan (#e3b564) and its shade (#bf8d43), caravan tan (#e2a95a), the ghost camel (#f3d9c9) and the dusk trail (#f1c9a6). The portrait's dawn sun is #f8d99a with a #fbe9c7 glow. All are tokens in `globals.css`.
 
 ### Skies
 Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pale aqua (#cde9e6 to #e9f5ec), golden amber (#f4d98f to #f3c783), evening apricot (#f4c39a to #e9a690), dusk rose-plum (#eeb89f to #d89aa3), night navy (#12304a to #0a1a2b). The accent word on dusk is plum (#6b1f42); at night it is saffron.
@@ -175,7 +185,7 @@ Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pa
 
 ## Layout
 
-One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically; each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px, text first on mobile. Each stack hour is a wrapping row of tool chips, 1rem apart and 1.5rem from 768px. About is two-up. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
+One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically, in this order: the fold (dawn), Work (morning), How I work (noon), Tools (golden), client words (evening), About (dusk) and Contact (night); each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px, text first on mobile. Tools is three groups of wrapping chip rows, 0.75rem apart and 1rem from 768px. Work leads with three flagship chapters, two columns from 1024px, then compact cards four-up at large. How I work's five steps climb as stairs from 768px and run as a sideways snap row on a phone. About is three caravan stops, three-up from 768px. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
 
 ## Elevation & Depth
 
@@ -184,8 +194,9 @@ Depth is hard, never soft. Surfaces lift by a flat offset shadow in ink with zer
 ### Shadow Vocabulary
 - **Card** (`box-shadow: 6px 6px 0 0 var(--shadow-ink)`): every `.paper`.
 - **Key** (`4px 4px 0 0 ink`; hover `6px 6px`; pressed `1px 1px`).
-- **Small chip** (`3px 3px 0 0` on the hour cue).
-- **Night** (`--shadow-ink: #04101c`, key border cream): shadows deepen to near-black on navy.
+- **Small pill** (`3px 3px 0 0` on the hour cue).
+- **Chip** (none): a label that is not a control stays flat, so a hard shadow always means "press me" or "this is a card".
+- **Night** (`--shadow-ink: cream`): a dark shadow vanishes on navy, so paper at night casts a cream one. The fixed header does the same while the night is in view.
 
 ### Named Rules
 **The Hard Shadow Rule.** Shadows are offset, solid and blurless, and they move on press. A blurred or glowing shadow does not belong to this world.
@@ -206,20 +217,28 @@ Cut paper: 4px corners on cards, buttons, inputs and the header. Two deliberate 
 - **`.paper`:** Sand Paper fill, ink text, 2px ink border, 4px radius, 6px hard shadow. Padding 24px, 28-32px from 768px. Redefines the tokens so contents read as day ink on any hour. Linked cards use hover/press motion.
 
 ### Chips
-- **Tool chip:** a `.paper` card per tool in a stack hour, with bold display text at 18px, 20px from 768px. A 24px mono Simple Icons mark sits before the name and takes `currentColor`. Concepts such as LLMs, Agents and CI/CD have no mark, so they show the name only. The marks live in `src/lib/brand-marks.ts`.
+- **`.chip`:** a label that is not a control: the hour's background, a 1px `border-strong` hairline, 4px radius, no shadow. Used for tool chips, the agent skills and the remote regions at night.
+- **Tool chip:** a `.chip` per tool, bold display text, with a 20px mono Simple Icons mark before the name that takes `currentColor`. Tools with no mark (Vapi, Twilio, pgvector, BullMQ, Vision model) show the name only. The marks live in `src/lib/brand-marks.ts`.
+
+### Work
+- **Proof strip:** one `.paper` card in the fold, three cells (AI voice caller, email assistant, restaurant voice AI), each a link to its chapter with one figure under it.
+- **Flagship chapter:** title, client, a labelled Result or Problem line in italic serif, a short paragraph, then the system as a row of paper steps joined by drawn arrows (a column on a phone). The role, what was built and the stack sit in a paper `<details>` card that is shut below 768px and always open above it, with no script.
+- **Compact card:** a `.paper` card per remaining client job, with a "Read more" disclosure.
+- **Client words:** four unedited quotes under a 2px ink rule, credited by client name.
 
 ### Inputs / Fields
 - Shadcn input and textarea restyled to the tokens: ink border, 4px radius, coral label on focus-within, error brick for failure. They sit inside a `.paper` card at night.
 
 ### Navigation
-- **Header:** a fixed `.paper` bar, 56px high: lower-case wordmark with a coral dot ("af." on mobile), Full-stack, Data, Cloud, AI, About, and a resume link with a drawn arrow. The link for the hour in view gets a 3px coral underline (`html[data-hour]` written by the hour watcher); hover does the same.
+- **Header:** a fixed `.paper` bar, 56px high: lower-case wordmark with a coral dot ("af." on mobile), Work, How I work ("How" on mobile), Tools, About, Contact, and a resume link with a drawn arrow ("CV" on mobile). The link for the hour in view gets a 3px coral underline (`html[data-hour]` written by the hour watcher, on mount and on every change); hover does the same.
 
 ### Hour Cue
 - A full-round paper pill riding the foot of each scenery band: a mono time, then a semibold label naming the next hour with a drawn arrow. It is the section-to-section link.
 
 ### Scenery And Mascot
 - **Scenery:** one SVG band per hour, in layers carrying `data-layer` and a `--depth`; layers drift against scroll by depth times 26px, scrubbed by ScrollTrigger in the motion runtime. Clouds, twinkling stars, swaying palms, bobbing dhow and a pulsing lighthouse beam are slow and decorative, hidden from assistive tech.
-- **Camel:** a pixel sprite built from rects (ink, tan, shadow-tan, coral), two-step walk by day that only steps while the page scrolls, lying with floating z's at night. Motion honours `prefers-reduced-motion`; all of it is off in that mode.
+- **Camel:** a pixel sprite built from rects (ink, tan, shadow-tan, coral), two-step walk by day that only steps while the page scrolls, lying with floating z's at night. It is hidden below 640px, where text runs the full width, and drawn at 55% until 1600px, so it walks in the side margin without crossing the cards. Motion honours `prefers-reduced-motion`; all of it is off in that mode.
+- **Motion registry:** markup carries `data-*` hooks (`data-land`, `data-diagram`, `data-count`, `data-roll`, `data-camel`, scenery layers) and `EFFECTS` in `src/components/motion-runtime.tsx` is the one table that says what each does. Server markup is the final state; every effect sits inside `prefers-reduced-motion: no-preference`.
 
 ## Do's and Don'ts
 
@@ -239,5 +258,5 @@ Cut paper: 4px corners on cards, buttons, inputs and the header. Two deliberate 
 
 ## Known drift (not canonized)
 
-- Components carry some raw hex values (the portrait's sun disc, scenery fills, the camel palette) against the Token Rule. Scenery and sprite fills are art and are tolerable. The sun disc is a one-off and should become a token if reused.
+- The scenery SVGs (`src/components/scenery.tsx`) still carry raw hex fills against the Token Rule. They are art and tolerable. The camel, caravan and portrait sun now use tokens.
 - The direction contract named slightly different hexes (paper #fbf5e6, saffron #f0b53c, coral #e0664a) and "tiny uppercase chapter labels"; the build uses the values above and mono labels are sentence-case times.
