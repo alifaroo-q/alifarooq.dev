@@ -434,10 +434,10 @@ em.accent {
   transition: background-size var(--duration-hover) var(--ease-arrive);
 }
 [data-nav]:hover,
-html[data-hour="morning"] [data-nav="full-stack"],
-html[data-hour="noon"] [data-nav="data"],
-html[data-hour="golden"] [data-nav="cloud"],
-html[data-hour="evening"] [data-nav="ai"],
+html[data-hour="morning"] [data-nav="work"],
+html[data-hour="noon"] [data-nav="how"],
+html[data-hour="golden"] [data-nav="tools"],
+html[data-hour="evening"] [data-nav="words"],
 html[data-hour="dusk"] [data-nav="about"] {
   background-size: 100% 3px;
 }

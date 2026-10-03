@@ -53,7 +53,7 @@ describe("rootMetadata", () => {
   });
 
   it("keeps the home page free of the suffix", () => {
-    expect(HOME_TITLE).toBe("Ali Farooq — Software engineer");
+    expect(HOME_TITLE).toBe("Ali Farooq — AI-native full-stack engineer");
     expect(root.openGraph?.title).toBe(HOME_TITLE);
   });
 });

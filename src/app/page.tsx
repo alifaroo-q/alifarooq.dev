@@ -1,6 +1,13 @@
+import { Caravan, type Stop } from "@/components/caravan";
 import { ContactFooter } from "@/components/contact-footer";
 import { Cue } from "@/components/cue";
 import { Headline } from "@/components/headline";
+import { HowIWork } from "@/components/how-i-work";
+import {
+  type Job,
+  JobChapters,
+  type SmallJob,
+} from "@/components/job-chapters";
 import { Portrait } from "@/components/portrait";
 import {
   Clouds,
@@ -18,9 +25,7 @@ import {
   ACTION_CLASS,
   BASE_LOCATION,
   BASE_UTC,
-  CONTACT_EMAIL,
   PERSON_NAME,
-  PERSON_ROLE,
   PERSON_ROLES,
   PORTRAIT_SRC,
   PROFILE_URLS,
@@ -48,15 +53,12 @@ const person = {
   location: `${BASE_LOCATION.split(",")[0]} (${BASE_UTC})`,
   availability: "Open to remote roles",
   hours: "Flexible hours",
-  email: CONTACT_EMAIL,
   resumeHref: "/resume.pdf",
 };
 
 /**
  * The fold. The headline makes the claim, the sentence under it says what is
- * behind the claim, and one line names the umbrella title and the range under
- * it. Four titles side by side read as a keyword list, so the four live in
- * About, each next to the work that backs it.
+ * behind the claim, and one line names the job title and the range under it.
  */
 const fold = {
   headline: {
@@ -65,158 +67,235 @@ const fold = {
     tail: "inside them.",
   },
   sentence:
-    "Two years of client products at Zenkoders. Next.js on the front, NestJS and Postgres behind it, shipped on AWS, with LLM features and agents on top.",
-  title: PERSON_ROLE,
+    "Two years at Zenkoders shipping AI products for clients, front to back. I build with coding agents every day.",
+  title: "Software engineer",
   range: "full-stack and AI product",
   caption: "Good morning from Karachi",
-  cue: { time: "08:30", label: "Morning at the fish market ↓" },
+  cue: { time: "08:30", label: "What I built ↓" },
 };
 
 type Tool = { label: string; mark?: keyof typeof BRAND_MARKS };
 
-/**
- * The stack, one group per hour. `id` is the anchor the nav and About link to,
- * and `hour` is the sky class and the `data-hour` the nav lights from.
- */
-const HOURS = [
-  {
-    id: "full-stack",
-    hour: "morning",
-    time: "08:30",
-    lead: "One",
-    accent: "language,",
-    tail: "front to back",
-    line: "TypeScript from the browser to the database. NestJS on the server, Next.js for the dashboards on top.",
-    tools: [
-      { label: "Node.js", mark: "nodedotjs" },
-      { label: "Next.js", mark: "nextdotjs" },
-      { label: "NestJS", mark: "nestjs" },
-    ],
-    Scenery: FishMarket,
-    cue: { time: "12:00", label: "Noon at the port ↓" },
-  },
-  {
-    id: "data",
-    hour: "noon",
-    time: "12:00",
-    lead: "Where the",
-    accent: "data",
-    tail: "lives",
-    line: "Postgres is my default store, and I put the rules that must hold in it. Redis for cache, locks and BullMQ queues.",
-    tools: [
-      { label: "Postgres", mark: "postgresql" },
-      { label: "Redis", mark: "redis" },
-    ],
-    Scenery: Port,
-    cue: { time: "16:30", label: "Golden hour on the dunes ↓" },
-  },
-  {
-    id: "cloud",
-    hour: "golden",
-    time: "16:30",
-    lead: "From a commit to",
-    accent: "production",
-    line: "Docker images, built and tested in GitHub Actions, shipped to AWS.",
-    tools: [
-      { label: "Docker", mark: "docker" },
-      { label: "AWS", mark: "amazonwebservices" },
-      { label: "GitHub Actions", mark: "githubactions" },
-      { label: "CI/CD" },
-    ],
-    Scenery: Dunes,
-    cue: { time: "17:45", label: "Evening at Sea View ↓" },
-  },
-  {
-    id: "ai",
-    hour: "evening",
-    time: "17:45",
-    lead: "Models in the product,",
-    accent: "agents",
-    tail: "at my desk",
-    line: "AI voice booking, Gmail automation and document extraction, built on OpenAI and LangChain. I write code with Claude Code, Copilot and Cursor every day.",
-    tools: [
-      { label: "LLMs" },
-      { label: "Agents" },
-      { label: "OpenAI", mark: "openai" },
-      { label: "LangChain", mark: "langchain" },
-      { label: "Claude Code", mark: "claude" },
-      { label: "GitHub Copilot", mark: "githubcopilot" },
-      { label: "Cursor", mark: "cursor" },
-    ],
-    Scenery: SeaView,
-    cue: { time: "18:40", label: "Dusk, a little about me ↓" },
-  },
-] satisfies {
-  id: string;
-  hour: string;
-  time: string;
-  lead: string;
-  accent: string;
-  tail?: string;
-  line: string;
-  tools: Tool[];
-  Scenery: () => React.JSX.Element;
-  cue: { time: string; label: string };
-}[];
+const TOOLS: Tool[] = [
+  { label: "Node.js", mark: "nodedotjs" },
+  { label: "Next.js", mark: "nextdotjs" },
+  { label: "NestJS", mark: "nestjs" },
+  { label: "Postgres", mark: "postgresql" },
+  { label: "Redis", mark: "redis" },
+  { label: "Docker", mark: "docker" },
+  { label: "AWS", mark: "amazonwebservices" },
+  { label: "GitHub Actions", mark: "githubactions" },
+  { label: "OpenAI", mark: "openai" },
+  { label: "Claude Code", mark: "claude" },
+  { label: "GitHub Copilot", mark: "githubcopilot" },
+  { label: "Cursor", mark: "cursor" },
+];
 
-const about = {
-  lead: "A bit about",
-  accent: "me",
-  bio: [
-    "I have been a software engineer at Zenkoders since 2024, across the backend, the AI features and the dashboards of client products.",
-    "The problems I get handed are the ones where being wrong is expensive.",
-  ],
-  /**
-   * The four titles, each linked to the stack hour that backs it. Every
-   * sentence restates something already on this site or the resume.
-   */
-  rolesLabel: "Four ways I work",
-  roles: [
-    {
-      title: "Backend engineer",
-      line: "NestJS, PostgreSQL and BullMQ queues, with the rules that must hold kept in the database.",
-      href: "#data",
-      label: "Data, at noon →",
-    },
-    {
-      title: "Software engineer",
-      line: "Features taken end to end, from the schema to the release, in client products across healthcare, fintech and SaaS.",
-      href: "#cloud",
-      label: "Cloud and CI/CD, at golden hour →",
-    },
-    {
-      title: "AI product engineer",
-      line: "AI voice booking, Gmail automation and document extraction. I treat what a model returns like any other input from outside.",
-      href: "#ai",
-      label: "AI, in the evening →",
-    },
-    {
-      title: "Full-stack engineer",
-      line: "The Next.js dashboard on top of the queues and the database, and this site.",
-      href: "#full-stack",
-      label: "Full-stack, in the morning →",
-    },
-  ],
-  rows: [
-    {
-      span: "2024 to now",
-      title: "Software engineer, Zenkoders",
-      line: "Backend of client products in healthcare, fintech and SaaS, including Numlix, Mach 1 and Voxena. AI voice booking on BullMQ queues, Gmail automation, document extraction out of PDFs nobody controls.",
-      figures: [
-        { n: "7,000", of: "inbound leads a month, booked against a calendar" },
-        { n: "100", of: "consultants drafting email through it" },
-      ],
-    },
-    {
-      span: "2020 to 2024",
-      title: "BS Computer Software Engineering",
-      line: "DHA Suffa University. Gold medal, top of the batch.",
-      figures: [],
-    },
-  ],
-  resumeLabel: "The whole thing, dated and on one page →",
-  cue: { time: "21:30", label: "Night, say hello ↓" },
-};
+/** The clients' own words, unedited. Credit names the client only. */
+const QUOTES = [
+  {
+    text: "The virtual number was received and the SMS code arrived quickly, a few minutes later. The whole process went smoothly from start to finish.",
+    from: "Numlix",
+  },
+  {
+    text: "The call is much better by the way, seems pretty much perfect now!",
+    from: "HCPA",
+  },
+  {
+    text: "Perfect thank you, then lets push live asap! Exciting times",
+    from: "HCPA",
+  },
+  {
+    text: "Thank you so much for explaining this, Ali. That makes a lot of sense.",
+    from: "HCPA",
+  },
+];
+
+/** The agent skills Ali wrote. Borrowed ones are credited apart. */
+const MY_SKILLS = [
+  "react-state",
+  "typescript",
+  "roadmap",
+  "ping",
+  "show-me",
+  "quit-thinking-and-look",
+  "vitest-test-coverage",
+];
+
+/** The full jobs, oldest first by the month the work started. */
+const JOBS: Job[] = [
+  {
+    id: "job-mach1",
+    client: "Mach 1",
+    what: "Healthcare credentialing",
+    years: "2025",
+    stamp: "in-production",
+    role: "Main backend developer",
+    result: "A provider must pass every check before a site can approve them.",
+    about:
+      "Mach 1 helps healthcare sites take on new nurses and doctors. Before a provider can work, someone must check their licences, DEA, background and exclusion lists. The platform takes each provider through those checks online.",
+    built:
+      "The onboarding backend. Invite links, CV upload with AI parsing, e-signature, and the checks for licences, DEA, background and references, including Nursys and OIG.",
+    stack: "NestJS on Fastify, Prisma, Postgres, AWS",
+  },
+  {
+    id: "job-hcpa-caller",
+    client: "HCPA",
+    what: "AI caller",
+    years: "2025 to 2026",
+    stamp: "in-production",
+    role: "Lead, near-solo backend, main frontend",
+    result:
+      "7,000 inbound leads a month go through it. 31 to 49 bookings a week from SMS follow-up.",
+    about:
+      "New leads came in through Pipedrive but went cold before a sales rep could call. The system calls each lead with an AI voice agent, follows up by SMS, and books a meeting in a rep's calendar.",
+    built:
+      "The whole path from new lead to booking. It respects rep leave and holidays, and shares bookings fairly so new reps get them too. I found and fixed the bug that had dropped bookings to zero. I also built the admin panel.",
+    stack:
+      "NestJS, BullMQ, Redis, Postgres, Vapi, Twilio, Google Calendar, Next.js",
+  },
+  {
+    id: "job-voxena",
+    client: "Voxena",
+    what: "Restaurant voice AI",
+    years: "2026",
+    stamp: "handed-over",
+    role: "Main backend developer",
+    result: "Restaurants in Belgium miss calls in three languages.",
+    about:
+      "Voxena answers the phone for restaurants in Belgium, in French, English and Dutch. It takes reservations, cancellations and questions.",
+    built:
+      "The platform behind the voice agent. Sign-in, restaurant onboarding, menus, opening hours and FAQs, all in three languages.",
+    stack: "NestJS, Prisma, Postgres, AWS",
+  },
+  {
+    id: "job-hcpa-email",
+    client: "HCPA",
+    what: "Email assistant",
+    years: "2026",
+    stamp: "in-production",
+    role: "Solo backend, lead frontend",
+    result: "Each consultant gets 40 to 50 emails a day.",
+    about:
+      "The assistant reads each email, pulls the client's details and drafts a reply with sources. A consultant checks every draft before it is sent.",
+    built:
+      "Gmail sync, email sorting, client context from Pipedrive, and search over past cases and official sources. A guard against prompt injection and a lock against double sends.",
+    stack: "NestJS, Postgres with pgvector, BullMQ, Gmail API, OpenAI, Next.js",
+  },
+  {
+    id: "job-tenley",
+    client: "Tenley",
+    what: "Property-management SaaS",
+    years: "2026",
+    stamp: "in-production",
+    role: "Lead on a team of five",
+    result: "All billing now runs on Stripe, moved in 10 phases.",
+    about:
+      "Tenley puts a property company's units, tenants, staff and repair tickets in one app. Tenants can call a phone line and report an emergency to an AI voice agent.",
+    built: [
+      "Moved all billing to Stripe in 10 phases. Stripe now handles prices, invoices, retries and receipts.",
+      "Closed gaps where one company could read another company's data.",
+      "The emergency phone line: buy a number, give it to a company, link it to the voice agent.",
+      "A resident import that finds bad rows before anything is saved.",
+      "Faster page loads.",
+    ],
+    stack: "Next.js 16, Supabase, Stripe, Twilio, Vapi, Vercel",
+  },
+  {
+    id: "job-numlix",
+    client: "Numlix",
+    what: "SMS number marketplace",
+    years: "2026",
+    stamp: "in-production",
+    role: "Lead",
+    result: "The reconcile query went from 28.9 s to 0.5 s in production.",
+    about:
+      "Numlix sells virtual phone numbers for SMS codes, paid from a wallet. Money moves between users, the payment provider and SMS suppliers, so every balance must match.",
+    built:
+      "The wallet ledger, with refunds and crash recovery. A check every 15 minutes that matches our records to the payment provider. Access rules on every table.",
+    stack: "Next.js 16, Supabase, Drizzle, FedaPay",
+  },
+  {
+    id: "job-mycfo",
+    client: "MyCFO",
+    what: "Personal finance",
+    years: "2026",
+    stamp: "in-development",
+    role: "Solo",
+    result: "Normal budget apps assume one salary.",
+    about:
+      "MyCFO is a money app for people who earn a salary plus freelance or creator income. It shows how much they can really spend after business costs and the tax their side income will owe.",
+    built:
+      "I am turning the prototype into the real product, now near the end. Sign-up and onboarding, bank links with Plaid, and an engine that sorts money into business, personal, transfer and tax. AI suggests a category and the user confirms it. Stripe subscriptions.",
+    stack: "Next.js 16, Effect, Drizzle, Supabase, Plaid, Stripe, OpenAI",
+  },
+];
+
+const SMALL_JOBS: SmallJob[] = [
+  {
+    id: "job-rnd",
+    name: "R&D tax intake",
+    kind: "HCPA",
+    years: "2025 to 2026",
+    line: "An eligibility chatbot, AI sorting of ledger accounts, and a ledger processor that writes to Google Sheets.",
+  },
+  {
+    id: "job-ndis",
+    name: "NDIS documents",
+    kind: "HCPA",
+    years: "2025 to 2026",
+    line: "Reads NDIS PDFs with a vision model and fills the portal through a Chrome extension. Solo.",
+  },
+  {
+    id: "job-billys",
+    name: "Billy's Garage",
+    kind: "Client",
+    years: "2026",
+    line: "Garage management for UK garages: jobs, estimates customers approve by link, stock and online booking. Solo backend.",
+  },
+  {
+    id: "job-markregistry",
+    name: "MarkRegistry",
+    kind: "Client",
+    years: "2026",
+    line: "Turns 6.3 GB of government trademark reports into a searchable register of 228,404 records and 96,031 logos.",
+  },
+  {
+    id: "job-result-kit",
+    name: "result-kit",
+    kind: "Open source",
+    years: "2026",
+    line: "A TypeScript result type on npm, with lint rules for ESLint and Oxlint.",
+  },
+];
+
+/** Where I've been and where I'm going, oldest first. The last stop is open. */
+const STOPS: Stop[] = [
+  {
+    kind: "past",
+    place: "DHA Suffa University",
+    span: "2020 to 2024",
+    title: "BS Computer Software Engineering",
+    moments: [{ when: "2024", what: "Gold medal, top of the batch." }],
+  },
+  {
+    kind: "past",
+    place: "Zenkoders",
+    span: "Aug 2024 to Oct 2026",
+    title: "Trainee, then software engineer",
+    moments: [
+      { when: "Aug 2024", what: "Trainee." },
+      { when: "Oct 2024", what: "Software engineer." },
+      { when: "2026", what: "Excellence in Work award for delivery." },
+    ],
+  },
+  {
+    kind: "next",
+    span: "From Nov 2026",
+    title: "Next",
+    line: "Open to remote roles.",
+  },
+];
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -283,8 +362,8 @@ export default function Home() {
             <div className="order-1 lg:order-2" data-enter>
               <Headline
                 accent={fold.headline.accent}
-                className="max-w-[16ch] font-extrabold text-[clamp(2.5rem,6.2vw,4.75rem)] leading-[1.02] tracking-[-0.035em]"
                 lead={fold.headline.lead}
+                className="max-w-[16ch] font-extrabold text-[clamp(2.5rem,6.2vw,4.75rem)] leading-[1.02] tracking-[-0.035em]"
                 tail={fold.headline.tail}
               />
               <p className="mt-figure max-w-measure text-[clamp(1.0625rem,1.7vw,1.25rem)] text-foreground-muted leading-[1.6]">
@@ -312,155 +391,143 @@ export default function Home() {
                 {person.hours}
               </p>
               <div className="mt-figure flex flex-wrap items-center gap-x-8 gap-y-4">
-                <a className={ACTION_CLASS} href="#full-stack">
-                  <Cue label="What I build with ↘" />
+                <a className={ACTION_CLASS} href="#jobs">
+                  <Cue label="What I built ↘" />
                 </a>
-                <a
-                  className="hit font-semibold ink-link"
-                  href={`mailto:${person.email}`}
-                >
-                  <Cue label="Say hello ↗" />
+                <a className="hit font-semibold ink-link" href="#contact">
+                  <Cue label="Hire me ↓" />
                 </a>
               </div>
             </div>
           </div>
           <Shore />
-          <HourCue
-            href="#full-stack"
-            label={fold.cue.label}
-            time={fold.cue.time}
-          />
+          <HourCue href="#jobs" label={fold.cue.label} time={fold.cue.time} />
         </section>
 
-        {HOURS.map(({ Scenery, ...hour }, i) => (
-          <section
-            aria-labelledby={hour.id}
-            className={`hour hour-${hour.hour} pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]`}
-            data-hour={hour.hour}
-            key={hour.id}
-          >
-            <SectionHead
-              accent={hour.accent}
-              id={hour.id}
-              lead={hour.lead}
-              tail={hour.tail}
-            >
-              {hour.line}
-            </SectionHead>
-            <ul className="wrap mt-group flex flex-wrap gap-4 md:gap-6">
-              {hour.tools.map((tool: Tool) => (
-                <li
-                  className="paper flex items-center gap-3 px-5 py-4 font-bold font-display text-lg tracking-tight md:text-xl"
-                  data-reveal
-                  key={tool.label}
-                >
-                  {tool.mark ? (
-                    <svg
-                      aria-hidden="true"
-                      className="size-6 shrink-0"
-                      fill="currentColor"
-                      focusable="false"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d={BRAND_MARKS[tool.mark].d} />
-                    </svg>
-                  ) : null}
-                  {tool.label}
+        {/* Morning: the jobs. */}
+        <section
+          aria-labelledby="jobs"
+          className="hour hour-morning pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="morning"
+        >
+          <SectionHead accent="built" id="jobs" lead="What I">
+            Client work at Zenkoders since August 2024, and a few things of my
+            own.
+          </SectionHead>
+          <JobChapters jobs={JOBS} smallJobs={SMALL_JOBS} />
+          <FishMarket />
+          <HourCue href="#how" label="How I work ↓" time="12:00" />
+        </section>
+
+        {/* Noon: how I work. */}
+        <section
+          aria-labelledby="how"
+          className="hour hour-noon pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="noon"
+        >
+          <SectionHead accent="work" id="how" lead="How I" />
+          <HowIWork />
+          <Port />
+          <HourCue href="#tools" label="What I build with ↓" time="16:30" />
+        </section>
+
+        {/* Golden hour: the tools and the skills. */}
+        <section
+          aria-labelledby="tools"
+          className="hour hour-golden pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="golden"
+        >
+          <SectionHead accent="build" id="tools" lead="What I" tail="with" />
+          <ul className="wrap mt-group flex flex-wrap gap-3 md:gap-4">
+            {TOOLS.map((tool) => (
+              <li
+                className="paper flex items-center gap-2.5 px-4 py-2.5 font-bold font-display tracking-tight"
+                key={tool.label}
+              >
+                {tool.mark ? (
+                  <svg
+                    aria-hidden="true"
+                    className="size-5 shrink-0"
+                    fill="currentColor"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d={BRAND_MARKS[tool.mark].d} />
+                  </svg>
+                ) : null}
+                {tool.label}
+              </li>
+            ))}
+          </ul>
+          <div className="wrap mt-group">
+            <h3 className="font-bold font-display text-xl tracking-tight">
+              Skills I wrote for my agents
+            </h3>
+            <ul className="mt-figure flex flex-wrap gap-3">
+              {MY_SKILLS.map((skill) => (
+                <li className="paper px-3 py-1.5 font-mono text-sm" key={skill}>
+                  {skill}
                 </li>
               ))}
             </ul>
-            <Scenery />
-            <HourCue
-              href={`#${HOURS[i + 1]?.id ?? "about"}`}
-              label={hour.cue.label}
-              time={hour.cue.time}
-            />
-          </section>
-        ))}
+            <p className="mt-flow text-foreground-muted">
+              Also: Matt Pocock's skills, pstack, Superpowers.
+            </p>
+          </div>
+          <Dunes />
+          <HourCue href="#words" label="Words ↓" time="17:45" />
+        </section>
 
-        {/* Dusk. */}
+        {/* Evening: the clients' own words. */}
+        <section
+          aria-labelledby="words"
+          className="hour hour-evening pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
+          data-hour="evening"
+        >
+          <SectionHead accent="words" id="words" lead="Client" />
+          <div className="wrap mt-group">
+            <figure className="max-w-4xl">
+              <blockquote className="font-serif text-[clamp(1.75rem,3.4vw,2.75rem)] italic leading-tight tracking-[-0.01em]">
+                “{QUOTES[0].text}”
+              </blockquote>
+              <figcaption className="mt-5 font-mono text-foreground-label text-xs">
+                {QUOTES[0].from}
+              </figcaption>
+            </figure>
+            <ul className="mt-group grid gap-8 md:grid-cols-3">
+              {QUOTES.slice(1).map((q) => (
+                <li className="border-ink border-l-2 pl-5" key={q.text}>
+                  <figure>
+                    <blockquote className="font-serif text-xl italic leading-snug">
+                      “{q.text}”
+                    </blockquote>
+                    <figcaption className="mt-3 font-mono text-foreground-label text-xs">
+                      {q.from}
+                    </figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <SeaView />
+          <HourCue href="#about" label="About ↓" time="18:40" />
+        </section>
+
+        {/* Dusk: where I've been, where I'm going. */}
         <section
           aria-labelledby="about"
           className="hour hour-dusk pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
           data-hour="dusk"
         >
-          <SectionHead accent={about.accent} id="about" lead={about.lead}>
-            {about.bio[0]} {about.bio[1]}
-          </SectionHead>
-          <div className="wrap mt-group">
-            <div className="paper p-6 md:p-8" data-reveal>
-              <h3 className="font-bold text-xl tracking-tight">
-                {about.rolesLabel}
-              </h3>
-              <dl className="mt-figure grid gap-x-10 gap-y-figure md:grid-cols-2">
-                {about.roles.map((role) => (
-                  <div key={role.title}>
-                    <dt className="font-bold font-display text-lg tracking-tight">
-                      {role.title}
-                    </dt>
-                    <dd className="mt-1 text-foreground-muted">
-                      {role.line}
-                      <span className="mt-1 block font-semibold text-accent text-sm">
-                        <a className="hit" href={role.href}>
-                          <Cue label={role.label} />
-                        </a>
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-          <div className="wrap mt-group grid items-start gap-8 lg:grid-cols-2 lg:gap-10">
-            {about.rows.slice(0, 1).map((row) => (
-              <div className="paper p-6 md:p-7" data-reveal key={row.span}>
-                <h3 className="font-bold text-xl leading-tight tracking-tight">
-                  {row.title}
-                </h3>
-                <p className="mt-1 font-mono text-foreground-label text-xs">
-                  {row.span}
-                </p>
-                <p className="mt-flow text-foreground-muted">{row.line}</p>
-                <dl className="mt-figure space-y-3">
-                  {row.figures.map((figure) => (
-                    <div className="flex items-baseline gap-3" key={figure.n}>
-                      <dt className="font-bold font-display text-2xl tabular-nums">
-                        {figure.n}
-                      </dt>
-                      <dd className="text-foreground-muted text-sm">
-                        {figure.of}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            ))}
-            <div className="grid gap-8 lg:gap-10">
-              {about.rows.slice(1).map((row) => (
-                <div className="paper p-6 md:p-7" data-reveal key={row.span}>
-                  <h3 className="font-bold text-xl leading-tight tracking-tight">
-                    {row.title}
-                  </h3>
-                  <p className="mt-1 font-mono text-foreground-label text-xs">
-                    {row.span}
-                  </p>
-                  <p className="mt-flow text-foreground-muted">{row.line}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="wrap mt-group font-semibold" data-reveal>
-            <a className="hit ink-link" href={person.resumeHref}>
-              <Cue label={about.resumeLabel} />
-            </a>
-          </p>
-          <Dusk />
-          <HourCue
-            href="#contact"
-            label={about.cue.label}
-            time={about.cue.time}
+          <SectionHead
+            accent="going"
+            id="about"
+            lead="Where I've been, where I'm"
           />
+          <Caravan stops={STOPS} />
+          <Dusk />
+          <HourCue href="#contact" label="Bring me a job ↓" time="21:30" />
         </section>
       </main>
 

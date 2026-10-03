@@ -176,7 +176,7 @@ export function ContactForm() {
             <Textarea rows={6} {...props} {...register("message")} />
           )}
           error={errors.message}
-          label="Message"
+          label="What you need"
           name="message"
         />
       </FieldGroup>

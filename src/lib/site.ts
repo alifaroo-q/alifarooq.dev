@@ -39,7 +39,7 @@ export const SITE_NAME = "alifarooq.dev";
  * ends up claiming two different jobs, so both live here.
  */
 export const PERSON_NAME = "Ali Farooq";
-export const PERSON_ROLE = "Software engineer";
+export const PERSON_ROLE = "AI-native full-stack engineer";
 export const PERSON_ROLES = [
   "Backend engineer",
   "Software engineer",
