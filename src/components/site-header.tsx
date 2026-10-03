@@ -8,7 +8,8 @@ import { Cue } from "@/components/cue";
  * the hour in view from `html[data-hour]` (see `hour-watcher.tsx` and the
  * `[data-nav]` rules), so this stays a server component.
  *
- * One link per section.
+ * One link per section, except the client words, which sit between Tools and
+ * About and are met by scrolling.
  */
 export function SiteHeader({
   name,
@@ -20,7 +21,7 @@ export function SiteHeader({
   return (
     <header className="fixed inset-x-0 top-3 z-30" data-site-header>
       <div className="wrap">
-        <div className="paper flex h-14 items-center justify-between gap-2 whitespace-nowrap px-3 text-[0.8125rem] min-[400px]:gap-3 min-[400px]:px-4 min-[400px]:text-sm md:px-5">
+        <div className="paper flex h-14 items-center justify-between gap-2 whitespace-nowrap px-3 text-xs min-[400px]:gap-3 min-[400px]:px-4 min-[400px]:text-sm md:px-5">
           <a
             className="flex h-11 items-center font-bold font-display text-lg tracking-tight md:text-xl"
             href="/"
@@ -33,7 +34,7 @@ export function SiteHeader({
           </a>
           <nav
             aria-label="Primary"
-            className="flex gap-2.5 font-medium min-[400px]:gap-3 sm:gap-6"
+            className="flex gap-2 font-medium min-[400px]:gap-3 sm:gap-6"
           >
             <a className="hit py-1" data-nav="work" href="#jobs">
               Work
@@ -45,15 +46,20 @@ export function SiteHeader({
             <a className="hit py-1" data-nav="tools" href="#tools">
               Tools
             </a>
-            <a className="hit py-1" data-nav="words" href="#words">
-              Words
-            </a>
             <a className="hit py-1" data-nav="about" href="#about">
               About
             </a>
+            <a className="hit py-1" data-nav="contact" href="#contact">
+              Contact
+            </a>
           </nav>
           <a className="hit font-semibold ink-link" href={resumeHref}>
-            <Cue label="Resume ↗" />
+            <span className="min-[400px]:hidden">
+              <Cue label="CV ↗" />
+            </span>
+            <span className="hidden min-[400px]:inline">
+              <Cue label="Resume ↗" />
+            </span>
           </a>
         </div>
       </div>

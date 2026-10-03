@@ -402,7 +402,7 @@ em.accent {
    Page chrome
    -------------------------------------------------------------------------- */
 
-/* Below 400px the bar takes a narrower gutter than the page, so the four
+/* Below 400px the bar takes a narrower gutter than the page, so the five
    links keep one line each down to a 320px screen. */
 @media (max-width: 399px) {
   [data-site-header] .wrap {
@@ -437,8 +437,8 @@ em.accent {
 html[data-hour="morning"] [data-nav="work"],
 html[data-hour="noon"] [data-nav="how"],
 html[data-hour="golden"] [data-nav="tools"],
-html[data-hour="evening"] [data-nav="words"],
-html[data-hour="dusk"] [data-nav="about"] {
+html[data-hour="dusk"] [data-nav="about"],
+html[data-hour="night"] [data-nav="contact"] {
   background-size: 100% 3px;
 }
 
