@@ -1,4 +1,5 @@
 import { Arrow, Cue } from "@/components/cue";
+import { Figures } from "@/components/figures";
 
 export type Stamp = "in-production" | "in-development" | "handed-over";
 
@@ -58,7 +59,7 @@ function Line({ line, className }: { line: Job["line"]; className: string }) {
   return (
     <p className={className}>
       <span className={`mr-2 not-italic ${LABEL}`}>{line.kind}</span>
-      {line.text}
+      <Figures text={line.text} />
     </p>
   );
 }
@@ -104,7 +105,11 @@ function Flow({ job }: { job: Flagship }) {
               strokeWidth="2"
               viewBox="0 0 40 24"
             >
-              <path d="M3 12H36M29 5l7 7-7 7" data-diagram-path />
+              <path
+                d="M3 12H36M29 5l7 7-7 7"
+                data-diagram-path
+                pathLength={1}
+              />
             </svg>
           ) : null}
           <div
@@ -212,7 +217,10 @@ export function JobChapters({
       <h3 className="mt-section font-bold font-display text-xl tracking-tight">
         More client work
       </h3>
-      <ul className="mt-figure grid items-start gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <ul
+        className="mt-figure grid items-start gap-8 md:grid-cols-2 lg:grid-cols-4"
+        data-land
+      >
         {jobs.map((job) => (
           <CompactCard job={job} key={job.id} />
         ))}

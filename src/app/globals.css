@@ -240,7 +240,7 @@
 }
 
 /* The scenery sits behind the content and is never read. Each layer carries a
-   `data-layer` so the scroll-driven drift below can move them at their own
+   `data-layer` so the motion runtime can drift them at their own
    speeds. */
 .scene {
   position: absolute;
@@ -286,7 +286,16 @@
   color: var(--ink);
   border: 2px solid var(--ink);
   border-radius: var(--radius);
-  box-shadow: 6px 6px 0 0 var(--shadow-ink);
+  box-shadow: calc(var(--lift, 1) * 6px) calc(var(--lift, 1) * 6px) 0 0
+    var(--shadow-ink);
+}
+
+/* How far a paper card stands off the page, 0 to 1. The motion runtime lands
+   a card by growing it; registered so a nested card does not inherit it. */
+@property --lift {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
 }
 
 /* The portrait's window: a doorway arch. */
@@ -516,28 +525,6 @@ html[data-hour="night"] [data-nav="contact"] {
   }
 }
 
-/* Scenery drift. Layers move against the scroll by an amount that grows with
-   their `--depth`, so the far hills barely shift and the near shore holds
-   still. Pure CSS scroll-driven animation: no script, no client bundle, and a
-   browser without it simply shows the scenery still. */
-@keyframes drift {
-  from {
-    translate: 0 calc(var(--depth, 1) * 26px);
-  }
-  to {
-    translate: 0 calc(var(--depth, 1) * -26px);
-  }
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .scene [data-layer] {
-      animation: drift linear both;
-      animation-timeline: view();
-      animation-range: entry 0% exit 100%;
-    }
-  }
-}
-
 /* Slow things in the sky and on the water. */
 @keyframes cloud {
   from {
@@ -587,17 +574,20 @@ html[data-hour="night"] [data-nav="contact"] {
   }
 }
 
-/* The mascot: awake all day, asleep at night. */
+/* The mascot: awake all day, asleep at night. Its two stride frames are
+   stacked; the motion runtime picks one by writing `data-step` as the page
+   scrolls, so it only walks while the reader does. */
+[data-camel] [data-stride="b"],
+[data-camel][data-step="b"] [data-stride="a"] {
+  visibility: hidden;
+}
+[data-camel][data-step="b"] [data-stride="b"] {
+  visibility: visible;
+}
+[data-camel][data-step="b"] [data-pose="awake"] {
+  translate: 0 -3px;
+}
 @media (prefers-reduced-motion: no-preference) {
-  [data-camel] [data-pose="awake"] {
-    animation: camel-step 0.9s steps(2, jump-none) infinite;
-  }
-  [data-camel] [data-stride="a"] {
-    animation: stride-a 0.9s steps(1, end) infinite;
-  }
-  [data-camel] [data-stride="b"] {
-    animation: stride-b 0.9s steps(1, end) infinite;
-  }
   [data-camel] [data-zzz] {
     animation: zzz 3.2s ease-out infinite;
   }
@@ -612,31 +602,6 @@ html[data-hour="night"] [data-camel] [data-pose="awake"] {
 html[data-hour="night"] [data-camel] [data-pose="sleep"] {
   display: block;
 }
-@keyframes camel-step {
-  50% {
-    translate: 0 -3px;
-  }
-}
-@keyframes stride-a {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes stride-b {
-  0%,
-  49% {
-    opacity: 0;
-  }
-  50%,
-  100% {
-    opacity: 1;
-  }
-}
 @keyframes zzz {
   from {
     opacity: 0;
@@ -649,4 +614,29 @@ html[data-hour="night"] [data-camel] [data-pose="sleep"] {
     opacity: 0;
     translate: 6px -10px;
   }
+}
+
+/* A figure that counts and a time that rolls. The runtime lays an aria-hidden
+   copy over the real text; the real glyphs go see-through under it, by fill
+   and not by colour, so screen readers and search keep the real value. */
+[data-count] {
+  position: relative;
+  font-variant-numeric: tabular-nums;
+}
+[data-roll] {
+  position: relative;
+}
+:has(> [data-copy]) {
+  -webkit-text-fill-color: transparent;
+}
+[data-copy] {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  text-align: right;
+  white-space: pre;
+  -webkit-text-fill-color: currentColor;
+}
+[data-copy] > span {
+  display: block;
 }

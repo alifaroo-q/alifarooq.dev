@@ -218,8 +218,8 @@ Cut paper: 4px corners on cards, buttons, inputs and the header. Two deliberate 
 - A full-round paper pill riding the foot of each scenery band: a mono time, then a semibold label naming the next hour with a drawn arrow. It is the section-to-section link.
 
 ### Scenery And Mascot
-- **Scenery:** one SVG band per hour, in layers carrying `data-layer` and a `--depth`; layers drift against scroll by depth times 26px using CSS scroll-driven animation (no script). Clouds, twinkling stars, swaying palms, bobbing dhow and a pulsing lighthouse beam are slow and decorative, hidden from assistive tech.
-- **Camel:** a pixel sprite built from rects (ink, tan, shadow-tan, coral), two-step walk by day, lying with floating z's at night. Motion honours `prefers-reduced-motion`; all of it is off in that mode.
+- **Scenery:** one SVG band per hour, in layers carrying `data-layer` and a `--depth`; layers drift against scroll by depth times 26px, scrubbed by ScrollTrigger in the motion runtime. Clouds, twinkling stars, swaying palms, bobbing dhow and a pulsing lighthouse beam are slow and decorative, hidden from assistive tech.
+- **Camel:** a pixel sprite built from rects (ink, tan, shadow-tan, coral), two-step walk by day that only steps while the page scrolls, lying with floating z's at night. Motion honours `prefers-reduced-motion`; all of it is off in that mode.
 
 ## Do's and Don'ts
 

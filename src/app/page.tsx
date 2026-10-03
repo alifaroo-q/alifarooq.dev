@@ -1,6 +1,7 @@
 import { Caravan, type Stop } from "@/components/caravan";
 import { ContactFooter } from "@/components/contact-footer";
 import { Cue } from "@/components/cue";
+import { Figures } from "@/components/figures";
 import { Headline } from "@/components/headline";
 import { HowIWork } from "@/components/how-i-work";
 import {
@@ -405,7 +406,9 @@ function HourCue({
         className="pill pointer-events-auto min-h-11 gap-3 whitespace-nowrap px-4 py-2 text-sm"
         href={href}
       >
-        <span className="font-mono text-foreground-label text-xs">{time}</span>
+        <span className="font-mono text-foreground-label text-xs" data-roll>
+          {time}
+        </span>
         <span className="font-semibold">
           <Cue label={label} />
         </span>
@@ -449,7 +452,7 @@ export default function Home() {
                 tail={fold.headline.tail}
               />
               <p className="mt-figure max-w-measure text-[clamp(1.0625rem,1.7vw,1.25rem)] text-foreground-muted leading-[1.6]">
-                {fold.sentence}
+                <Figures text={fold.sentence} />
               </p>
               <p className="mt-figure font-bold font-display text-[clamp(1.0625rem,1.8vw,1.3125rem)] tracking-tight">
                 {PERSON_ROLE}
@@ -483,7 +486,7 @@ export default function Home() {
                       <Cue label={`${p.system} →`} />
                     </a>
                     <p className="mt-1 text-foreground-muted text-sm">
-                      {p.metric}
+                      <Figures text={p.metric} />
                     </p>
                   </li>
                 ))}

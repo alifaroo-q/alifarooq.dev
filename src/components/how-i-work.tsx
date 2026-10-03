@@ -117,7 +117,7 @@ export function HowIWork() {
   return (
     <div className="wrap mt-group">
       <Stance />
-      <ol className="mt-group grid gap-5 md:grid-cols-5 md:items-end">
+      <ol className="mt-group grid gap-5 md:grid-cols-5 md:items-end" data-land>
         {LOOP.map((s, i) => (
           <li
             className="paper p-5 md:mb-[calc(var(--step)*2.5rem)]"
