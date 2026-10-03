@@ -10,7 +10,7 @@ web
 
 Two audiences, equal weight (confirmed):
 
-- **Hiring managers and engineering leads.** They arrive from a resume or LinkedIn profile and are deciding whether to interview Ali Farooq. The home page is written for this reader. It runs in this order: the fold, Work, How I work, Tools, client words, About, Contact. The nav links Work, How I work, Tools, About and Contact.
+- **Hiring managers and engineering leads.** They arrive from a resume or LinkedIn profile and are deciding whether to interview Ali Farooq. The home page is written for this reader. It runs in this order: the fold, Work, How I work, Tools, About, Contact. The nav links Work, How I work, Tools, About and Contact.
 - **Prospective clients.** They are deciding whether to hire Ali for contract or project work. The contact form and the address in the fold and footer are their path.
 
 ## Product Purpose
@@ -27,7 +27,7 @@ The site is one page. Surfaces in the codebase:
 
 Confirmed by the user (2026-10-03): the angle is "AI builder". The page must prove "AI full-stack engineer" in ten seconds by leading with AI systems shipped (the AI voice caller, the email assistant with search and a person who approves), not with coding assistants. The headline is "I build full-stack products with *AI* inside them." The sentence under it names two years at Zenkoders and the 7,000 inbound leads a month that go through the AI caller.
 
-The one title is "AI full-stack engineer" (`PERSON_ROLE`): the fold, the page title, the share card and the `Person` block all print it. Under the title, a Proof strip names three systems (AI voice caller, email assistant, restaurant voice AI), each with one figure and a link to its chapter in Work. Every sentence restates something already on the site or resume; no new claims.
+The one title is "AI full-stack engineer" (`PERSON_ROLE`): the fold, the page title, the share card and the `Person` block all print it. Under the headline sits the name line ("Ali Farooq · AI full-stack engineer", with a small portrait on a phone), then the sentence, then a Proof strip that names three systems (AI voice caller, email assistant, restaurant voice AI), each with one figure and a link into Work. The restaurant link opens its card's detail. The primary CTA follows, inside the first 844px on a 390px phone, and the status row comes after it. Every sentence restates something already on the site or resume; no new claims.
 
 ## Availability
 
@@ -46,8 +46,8 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 - Next.js 16 App Router, React 19, Tailwind 4, `@base-ui/react`, GSAP motion. There is no MDX or content system; the home copy lives in `page.tsx`. Package manager is pnpm, Node 24.
 - CI gates that design work must not break: JS bundle budget (`budget:js`), Lighthouse report (`budget:perf`), a11y scan (`budget:a11y`) and a prose check (`pnpm prose`). The prose check encodes the house voice.
 - Colour is applied only through tokens in `globals.css`; components set no raw colour values.
-- Work leads with three flagship chapters (AI caller, email assistant, restaurant voice AI), each with a step-by-step system diagram and a detail card that folds shut below 768px. The rest of the client work is a row of compact cards whose detail opens on demand, then a list of smaller jobs and result-kit.
-- Tools is three groups of flat chips: "AI I ship", "The stack under it" and "AI I build with", then the agent skills Ali wrote. A chip has a mono Simple Icons mark where one exists. The chips state no skill levels.
+- Work leads with two flagship chapters (AI caller, email assistant), each with a step-by-step system diagram and a detail card that folds shut below 768px. The caller draws its diagram as a row under the text; the email assistant stands its diagram as a column beside the text. Every job leads with a "Result" line. The rest of the client work (the restaurant voice AI among it) is a row of compact cards whose detail opens on demand, then a list of smaller jobs and result-kit.
+- Tools is three groups of flat hairline tags: "AI I ship", "The stack under it" and "AI I build with", then the agent skills Ali wrote, each a plain line on what it does followed by its slug in mono. A tag has a mono Simple Icons mark where one exists. The tags state no skill levels.
 - Motion is one registry: markup carries `data-*` hooks and `EFFECTS` in `src/components/motion-runtime.tsx` says what each hook does, all inside `prefers-reduced-motion: no-preference`.
 - Contact: `hello@alifarooq.dev`, which the user will forward to `alifarooq122@gmail.com` (set up at the mail/DNS provider, not in this repo). The resume prints the gmail address directly. GitHub `alifaroo-q`; LinkedIn `alifarooqdev`.
 
@@ -61,10 +61,10 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 ## Evidence on Hand
 
 - The Proof strip and the flagship chapters, with their figures: 7,000 inbound leads a month through the AI caller, 31 to 49 bookings a week from its SMS follow-up, 40 to 50 emails a day per consultant.
-- The client words row: four short quotes from clients (HCPA and Numlix), unedited, credited by client name only.
+- Client words: two outcome quotes, unedited and credited by client name only. The HCPA quote sits under the AI caller, the Numlix quote on the Numlix card. There is no separate Client words section.
 - The About caravan: the gold medal (2024) and the Excellence in Work award (2026).
 - Resume at `public/resume.pdf`.
-- Not on hand, so future work must not fabricate them: more testimonials than the quotes above, quotes credited to a named person, traffic or revenue metrics, press.
+- Not on hand, so future work must not fabricate them: more testimonials than the quotes on hand (two shown, two thank-you notes left out), quotes credited to a named person, traffic or revenue metrics, press.
 
 ## Product Principles
 
