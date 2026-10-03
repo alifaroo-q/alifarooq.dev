@@ -76,6 +76,22 @@
   --sun: #f8d99a;
   --sun-glow: #fbe9c7;
 
+  /* The skies, one pair per hour. The sections and the bar's backing read them. */
+  --sky-dawn-a: #f6c9a6;
+  --sky-dawn-b: #fbe6c8;
+  --sky-morning-a: #cfe6ea;
+  --sky-morning-b: #f5ecd6;
+  --sky-noon-a: #cde9e6;
+  --sky-noon-b: #e9f5ec;
+  --sky-golden-a: #f4d98f;
+  --sky-golden-b: #f3c783;
+  --sky-evening-a: #f4c39a;
+  --sky-evening-b: #e9a690;
+  --sky-dusk-a: #eeb89f;
+  --sky-dusk-b: #d89aa3;
+  --sky-night-a: #12304a;
+  --sky-night-b: #0a1a2b;
+
   --background: var(--cream);
   --background-raised: var(--paper);
   --foreground: var(--ink);
@@ -184,6 +200,11 @@
   :where([id]) {
     scroll-margin-top: var(--spacing-header);
   }
+  /* A section heading lands with room under the bar, and its own sky above it,
+     so the gap over the bar never shows the hour before. */
+  :where(h2[id]) {
+    scroll-margin-top: calc(var(--spacing-header) + 1.5rem);
+  }
 
   :where(a, button, input, textarea, select, [tabindex]):focus-visible {
     outline: 3px solid var(--coral);
@@ -210,40 +231,40 @@
   background: linear-gradient(to bottom, var(--sky-a), var(--sky-b));
 }
 .hour-dawn {
-  --sky-a: #f6c9a6;
-  --sky-b: #fbe6c8;
+  --sky-a: var(--sky-dawn-a);
+  --sky-b: var(--sky-dawn-b);
 }
 .hour-morning {
-  --sky-a: #cfe6ea;
-  --sky-b: #f5ecd6;
+  --sky-a: var(--sky-morning-a);
+  --sky-b: var(--sky-morning-b);
 }
 .hour-noon {
-  --sky-a: #cde9e6;
-  --sky-b: #e9f5ec;
+  --sky-a: var(--sky-noon-a);
+  --sky-b: var(--sky-noon-b);
 }
 .hour-golden {
-  --sky-a: #f4d98f;
-  --sky-b: #f3c783;
+  --sky-a: var(--sky-golden-a);
+  --sky-b: var(--sky-golden-b);
 }
 .hour-evening {
-  --sky-a: #f4c39a;
-  --sky-b: #e9a690;
+  --sky-a: var(--sky-evening-a);
+  --sky-b: var(--sky-evening-b);
   /* The bottom of the sky is dark enough that text steps down a tone to keep
      4.5:1, as at dusk. */
   --foreground-muted: #1f3d47;
   --foreground-label: #234049;
 }
 .hour-dusk {
-  --sky-a: #eeb89f;
-  --sky-b: #d89aa3;
+  --sky-a: var(--sky-dusk-a);
+  --sky-b: var(--sky-dusk-b);
   /* The sky is the darkest of the day's light grounds, so text on it steps down
      a tone to keep 4.5:1 against the bottom of the gradient. */
   --foreground-muted: #1f3d47;
   --foreground-label: #234049;
 }
 .hour-night {
-  --sky-a: #12304a;
-  --sky-b: #0a1a2b;
+  --sky-a: var(--sky-night-a);
+  --sky-b: var(--sky-night-b);
   --background: #0a1a2b;
   --foreground: #fbefd8;
   --foreground-muted: #c8d3d4;
@@ -455,6 +476,39 @@ em.accent {
   background-color: var(--saffron);
   color: var(--ink);
   border: 2px solid var(--ink);
+}
+
+/* The strip above the bar takes the sky of the hour in view, so text scrolling
+   under the bar does not show through the gap over it. */
+[data-site-header]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -0.75rem;
+  height: 2.5rem;
+  z-index: -1;
+  background: var(--header-sky, transparent);
+}
+html[data-hour="dawn"] {
+  --header-sky: var(--sky-dawn-a);
+}
+html[data-hour="morning"] {
+  --header-sky: var(--sky-morning-a);
+}
+html[data-hour="noon"] {
+  --header-sky: var(--sky-noon-a);
+}
+html[data-hour="golden"] {
+  --header-sky: var(--sky-golden-a);
+}
+html[data-hour="evening"] {
+  --header-sky: var(--sky-evening-a);
+}
+html[data-hour="dusk"] {
+  --header-sky: var(--sky-dusk-a);
+}
+html[data-hour="night"] {
+  --header-sky: var(--sky-night-a);
 }
 
 /* The bar floats over the night too, where an ink shadow would vanish. */

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Caravan, type Stop } from "@/components/caravan";
 import { ContactFooter } from "@/components/contact-footer";
 import { Cue } from "@/components/cue";
@@ -390,6 +391,16 @@ const personSchema = {
   sameAs: PROFILE_URLS,
 };
 
+/** The dawn caption: under the arch portrait on desktop, under the status row on a phone. */
+function Caption({ className }: { className: string }) {
+  return (
+    <p className={`text-foreground-muted ${className}`}>
+      <span className="font-mono text-foreground-label text-xs">06:10</span>{" "}
+      <em className="font-serif">{fold.caption}</em>
+    </p>
+  );
+}
+
 /** The line on the scenery that names the next hour and links to it. */
 function HourCue({
   href,
@@ -435,49 +446,38 @@ export default function Home() {
         >
           <Clouds />
           <div className="wrap grid min-h-svh content-center gap-12 pt-[calc(var(--spacing-header)+2rem)] pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.6+3rem)] lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-20">
-            <div className="order-2 lg:order-1" data-enter>
+            <div className="hidden lg:block" data-enter>
               <Portrait />
-              <p className="mt-figure text-center text-foreground-muted">
-                <span className="font-mono text-foreground-label text-xs">
-                  06:10
-                </span>{" "}
-                <em className="font-serif">{fold.caption}</em>
-              </p>
+              <Caption className="mt-figure text-center" />
             </div>
-            <div className="order-1 lg:order-2" data-enter>
+            <div data-enter>
               <Headline
                 accent={fold.headline.accent}
                 lead={fold.headline.lead}
                 className="max-w-[16ch] font-extrabold text-[clamp(2.5rem,6.2vw,4.75rem)] leading-[1.02] tracking-[-0.035em]"
                 tail={fold.headline.tail}
               />
-              <p className="mt-figure max-w-measure text-[clamp(1.0625rem,1.7vw,1.25rem)] text-foreground-muted leading-[1.6]">
+              <p className="mt-flow flex items-center gap-3 font-bold font-display text-[clamp(1.0625rem,1.8vw,1.3125rem)] tracking-tight">
+                <Image
+                  alt=""
+                  className="size-10 rounded-full border-2 border-ink object-cover object-top lg:hidden"
+                  height={80}
+                  sizes="40px"
+                  src={PORTRAIT_SRC}
+                  width={80}
+                />
+                <span>
+                  {PERSON_NAME}
+                  <span aria-hidden="true" className="mx-2">
+                    ·
+                  </span>
+                  {PERSON_ROLE}
+                </span>
+              </p>
+              <p className="mt-flow max-w-measure text-[clamp(1.0625rem,1.7vw,1.25rem)] text-foreground-muted leading-[1.6]">
                 <Figures text={fold.sentence} />
               </p>
-              <p className="mt-figure font-bold font-display text-[clamp(1.0625rem,1.8vw,1.3125rem)] tracking-tight">
-                {PERSON_ROLE}
-              </p>
-              <p className="mt-figure flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground-muted text-sm">
-                <span
-                  aria-hidden="true"
-                  className="inline-block size-2 rounded-full bg-sea"
-                  data-live
-                />
-                {[person.availability, person.location, person.hours].map(
-                  (item) => (
-                    <span className="whitespace-nowrap" key={item}>
-                      {item}
-                      <span aria-hidden="true" className="ml-3">
-                        ·
-                      </span>
-                    </span>
-                  ),
-                )}
-                <a className="hit font-semibold ink-link" href={GITHUB_URL}>
-                  <Cue label="GitHub ↗" />
-                </a>
-              </p>
-              <ul className="paper mt-figure grid sm:grid-cols-3">
+              <ul className="paper mt-flow grid sm:grid-cols-3">
                 {PROOF.map((p) => (
                   <li
                     className="border-border border-t-2 p-4 first:border-t-0 sm:border-t-0 sm:border-l-2 sm:first:border-l-0"
@@ -498,6 +498,27 @@ export default function Home() {
               <a className={`${ACTION_CLASS} mt-figure`} href="#contact">
                 <Cue label="Hire me ↓" />
               </a>
+              <p className="mt-figure flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground-muted text-sm">
+                <span
+                  aria-hidden="true"
+                  className="inline-block size-2 rounded-full bg-sea"
+                  data-live
+                />
+                {[person.availability, person.location, person.hours].map(
+                  (item) => (
+                    <span className="whitespace-nowrap" key={item}>
+                      {item}
+                      <span aria-hidden="true" className="ml-3">
+                        ·
+                      </span>
+                    </span>
+                  ),
+                )}
+                <a className="hit font-semibold ink-link" href={GITHUB_URL}>
+                  <Cue label="GitHub ↗" />
+                </a>
+              </p>
+              <Caption className="mt-tight lg:hidden" />
             </div>
           </div>
           <Shore />
