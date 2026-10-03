@@ -1,0 +1,21 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "charis sil",
+        "createdAt": "2026-10-03T09:52:03.216Z",
+        "reason": "user confirmed 2026-10-03: resume PDF must match the committed Charis SIL resume; resume is not part of the site type system"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": ["resume/resume.html"],
+        "createdAt": "2026-10-03T09:53:53.871Z",
+        "reason": "print resume: user asked (2026-10-03) for one page matching the committed Charis SIL PDF, which itself uses ~1.2 leading; 1.5 would push it to 2 pages"
+      }
+    ]
+  }
+}
