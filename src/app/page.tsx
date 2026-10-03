@@ -4,6 +4,7 @@ import { Cue } from "@/components/cue";
 import { Headline } from "@/components/headline";
 import { HowIWork } from "@/components/how-i-work";
 import {
+  type Flagship,
   type Job,
   JobChapters,
   type SmallJob,
@@ -73,7 +74,7 @@ const fold = {
   cue: { time: "08:30", label: "What I built ↓" },
 };
 
-/** Each figure is copied from its linked chapter in JOBS. Change both together. */
+/** Each figure is copied from its linked chapter in FLAGSHIPS. Change both together. */
 const PROOF: { system: string; metric: string; href: `#${string}` }[] = [
   {
     system: "AI voice caller",
@@ -130,12 +131,8 @@ const TOOL_GROUPS: { title: string; tools: Tool[] }[] = [
   },
 ];
 
-/** The clients' own words, unedited. Credit names the client only. */
+/** The clients' own words, unedited, the AI caller first. Credit names the client only. */
 const QUOTES = [
-  {
-    text: "The virtual number was received and the SMS code arrived quickly, a few minutes later. The whole process went smoothly from start to finish.",
-    from: "Numlix",
-  },
   {
     text: "The call is much better by the way, seems pretty much perfect now!",
     from: "HCPA",
@@ -147,6 +144,10 @@ const QUOTES = [
   {
     text: "Thank you so much for explaining this, Ali. That makes a lot of sense.",
     from: "HCPA",
+  },
+  {
+    text: "The virtual number was received and the SMS code arrived quickly, a few minutes later. The whole process went smoothly from start to finish.",
+    from: "Numlix",
   },
 ];
 
@@ -161,22 +162,8 @@ const MY_SKILLS = [
   "vitest-test-coverage",
 ];
 
-/** The full jobs, oldest first by the month the work started. */
-const JOBS: Job[] = [
-  {
-    id: "job-mach1",
-    client: "Mach 1",
-    what: "Healthcare credentialing",
-    years: "2025",
-    stamp: "in-production",
-    role: "Main backend developer",
-    result: "A provider must pass every check before a site can approve them.",
-    about:
-      "Mach 1 helps healthcare sites take on new nurses and doctors. Before a provider can work, someone must check their licences, DEA, background and exclusion lists. The platform takes each provider through those checks online.",
-    built:
-      "The onboarding backend. Invite links, CV upload with AI parsing, e-signature, and the checks for licences, DEA, background and references, including Nursys and OIG.",
-    stack: "NestJS on Fastify, Prisma, Postgres, AWS",
-  },
+/** The AI systems, in the order the fold's Proof strip names them. */
+const FLAGSHIPS: Flagship[] = [
   {
     id: "job-hcpa-caller",
     client: "HCPA",
@@ -184,28 +171,23 @@ const JOBS: Job[] = [
     years: "2025 to 2026",
     stamp: "in-production",
     role: "Lead, near-solo backend, main frontend",
-    result:
-      "7,000 inbound leads a month go through it. 31 to 49 bookings a week from SMS follow-up.",
+    line: {
+      kind: "Result",
+      text: "7,000 inbound leads a month go through it. 31 to 49 bookings a week from SMS follow-up.",
+    },
     about:
       "New leads came in through Pipedrive but went cold before a sales rep could call. The system calls each lead with an AI voice agent, follows up by SMS, and books a meeting in a rep's calendar.",
     built:
       "The whole path from new lead to booking. It respects rep leave and holidays, and shares bookings fairly so new reps get them too. I found and fixed the bug that had dropped bookings to zero. I also built the admin panel.",
     stack:
       "NestJS, BullMQ, Redis, Postgres, Vapi, Twilio, Google Calendar, Next.js",
-  },
-  {
-    id: "job-voxena",
-    client: "Voxena",
-    what: "Restaurant voice AI",
-    years: "2026",
-    stamp: "handed-over",
-    role: "Main backend developer",
-    result: "Restaurants in Belgium miss calls in three languages.",
-    about:
-      "Voxena answers the phone for restaurants in Belgium, in French, English and Dutch. It takes reservations, cancellations and questions.",
-    built:
-      "The platform behind the voice agent. Sign-in, restaurant onboarding, menus, opening hours and FAQs, all in three languages.",
-    stack: "NestJS, Prisma, Postgres, AWS",
+    flow: [
+      { tool: "Pipedrive", step: "New lead" },
+      { tool: "BullMQ", step: "Queue the call" },
+      { tool: "Vapi", step: "AI voice call" },
+      { tool: "Twilio", step: "SMS follow-up" },
+      { tool: "Google Calendar", step: "Meeting booked with a rep" },
+    ],
   },
   {
     id: "job-hcpa-email",
@@ -214,12 +196,66 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-production",
     role: "Solo backend, lead frontend",
-    result: "Each consultant gets 40 to 50 emails a day.",
+    line: {
+      kind: "Problem",
+      text: "Each consultant gets 40 to 50 emails a day.",
+    },
     about:
       "The assistant reads each email, pulls the client's details and drafts a reply with sources. A consultant checks every draft before it is sent.",
     built:
       "Gmail sync, email sorting, client context from Pipedrive, and search over past cases and official sources. A guard against prompt injection and a lock against double sends.",
     stack: "NestJS, Postgres with pgvector, BullMQ, Gmail API, OpenAI, Next.js",
+    flow: [
+      { tool: "Gmail API", step: "Sync and sort email" },
+      { tool: "Pipedrive", step: "Client details" },
+      { tool: "pgvector", step: "Search past cases and official sources" },
+      { tool: "OpenAI", step: "Draft a reply with sources" },
+      { tool: "Consultant", step: "Checks every draft before it is sent" },
+    ],
+  },
+  {
+    id: "job-voxena",
+    client: "Voxena",
+    what: "Restaurant voice AI",
+    years: "2026",
+    stamp: "handed-over",
+    role: "Main backend developer",
+    line: {
+      kind: "Problem",
+      text: "Restaurants in Belgium miss calls in three languages.",
+    },
+    about:
+      "Voxena answers the phone for restaurants in Belgium, in French, English and Dutch. It takes reservations, cancellations and questions.",
+    built:
+      "The platform behind the voice agent. Sign-in, restaurant onboarding, menus, opening hours and FAQs, all in three languages.",
+    stack: "NestJS, Prisma, Postgres, AWS",
+    flow: [
+      { tool: "Phone", step: "A guest calls the restaurant" },
+      { tool: "Voice agent", step: "Answers in French, English or Dutch" },
+      { tool: "My platform", step: "Menus, opening hours and FAQs" },
+      { tool: "Outcome", step: "Reservation, cancellation or answer" },
+    ],
+  },
+];
+
+/** The rest of the client work, oldest first by the month the work started. */
+const JOBS: Job[] = [
+  {
+    id: "job-mach1",
+    client: "Mach 1",
+    what: "Healthcare credentialing",
+    years: "2025",
+    stamp: "in-production",
+    role: "Main backend developer",
+    line: {
+      kind: "Problem",
+      text: "A provider must pass every check before a site can approve them.",
+    },
+    about:
+      "Mach 1 helps healthcare sites take on new nurses and doctors. Before a provider can work, someone must check their licences, DEA, background and exclusion lists. The platform takes each provider through those checks online.",
+    built:
+      "The onboarding backend. Invite links, CV upload with AI parsing, e-signature, and the checks for licences, DEA, background and references, including Nursys and OIG.",
+    stack: "NestJS on Fastify, Prisma, Postgres, AWS",
   },
   {
     id: "job-tenley",
@@ -228,7 +264,10 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-production",
     role: "Lead on a team of five",
-    result: "All billing now runs on Stripe, moved in 10 phases.",
+    line: {
+      kind: "Result",
+      text: "All billing now runs on Stripe, moved in 10 phases.",
+    },
     about:
       "Tenley puts a property company's units, tenants, staff and repair tickets in one app. Tenants can call a phone line and report an emergency to an AI voice agent.",
     built: [
@@ -247,7 +286,10 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-production",
     role: "Lead",
-    result: "The reconcile query went from 28.9 s to 0.5 s in production.",
+    line: {
+      kind: "Result",
+      text: "The reconcile query went from 28.9 s to 0.5 s in production.",
+    },
     about:
       "Numlix sells virtual phone numbers for SMS codes, paid from a wallet. Money moves between users, the payment provider and SMS suppliers, so every balance must match.",
     built:
@@ -261,7 +303,7 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-development",
     role: "Solo",
-    result: "Normal budget apps assume one salary.",
+    line: { kind: "Problem", text: "Normal budget apps assume one salary." },
     about:
       "MyCFO is a money app for people who earn a salary plus freelance or creator income. It shows how much they can really spend after business costs and the tax their side income will owe.",
     built:
@@ -465,7 +507,11 @@ export default function Home() {
             Client work at Zenkoders since August 2024, and a few things of my
             own.
           </SectionHead>
-          <JobChapters jobs={JOBS} smallJobs={SMALL_JOBS} />
+          <JobChapters
+            flagships={FLAGSHIPS}
+            jobs={JOBS}
+            smallJobs={SMALL_JOBS}
+          />
           <FishMarket />
           <HourCue href="#how" label="How I work ↓" time="12:00" />
         </section>
@@ -544,30 +590,20 @@ export default function Home() {
           data-hour="evening"
         >
           <SectionHead accent="words" id="words" lead="Client" />
-          <div className="wrap mt-group">
-            <figure className="max-w-4xl">
-              <blockquote className="font-serif text-[clamp(1.75rem,3.4vw,2.75rem)] italic leading-tight tracking-[-0.01em]">
-                “{QUOTES[0].text}”
-              </blockquote>
-              <figcaption className="mt-5 font-mono text-foreground-label text-xs">
-                {QUOTES[0].from}
-              </figcaption>
-            </figure>
-            <ul className="mt-group grid gap-8 md:grid-cols-3">
-              {QUOTES.slice(1).map((q) => (
-                <li className="border-ink border-l-2 pl-5" key={q.text}>
-                  <figure>
-                    <blockquote className="font-serif text-xl italic leading-snug">
-                      “{q.text}”
-                    </blockquote>
-                    <figcaption className="mt-3 font-mono text-foreground-label text-xs">
-                      {q.from}
-                    </figcaption>
-                  </figure>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="wrap mt-group grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {QUOTES.map((q) => (
+              <li className="border-ink border-t-2 pt-4" key={q.text}>
+                <figure>
+                  <blockquote className="text-lg leading-snug">
+                    “{q.text}”
+                  </blockquote>
+                  <figcaption className="mt-3 font-mono text-foreground-label text-xs">
+                    {q.from}
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
           <SeaView />
           <HourCue href="#about" label="About ↓" time="18:40" />
         </section>

@@ -1,4 +1,4 @@
-import { Cue } from "@/components/cue";
+import { Arrow, Cue } from "@/components/cue";
 
 export type Stamp = "in-production" | "in-development" | "handed-over";
 
@@ -15,11 +15,16 @@ export type Job = {
   years: string;
   stamp: Stamp;
   role: string;
-  /** The italic line: the outcome when there is one, else the problem. */
-  result: string;
+  /** The line under the name, labelled so a reader can tell which it is. */
+  line: { kind: "Result" | "Problem"; text: string };
   about: string;
   built: string | readonly string[];
   stack: string;
+};
+
+/** A flagship job also carries its system, drawn as a row of steps. */
+export type Flagship = Job & {
+  flow: readonly { tool: string; step: string }[];
 };
 
 export type SmallJob = {
@@ -31,80 +36,187 @@ export type SmallJob = {
   href?: string;
 };
 
-const LABEL =
-  "font-mono text-foreground-label text-xs uppercase tracking-[0.12em]";
+const LABEL = "font-mono text-foreground-label text-xs";
+
+function Meta({ job }: { job: Job }) {
+  return (
+    <p className={`flex flex-wrap items-center gap-x-3 gap-y-1 ${LABEL}`}>
+      {job.years}
+      <span aria-hidden="true">·</span>
+      <span className="inline-flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className={`inline-block size-2 rounded-full ${STAMP[job.stamp].dot}`}
+        />
+        {STAMP[job.stamp].label}
+      </span>
+    </p>
+  );
+}
+
+function Line({ line, className }: { line: Job["line"]; className: string }) {
+  return (
+    <p className={className}>
+      <span className={`mr-2 not-italic ${LABEL}`}>{line.kind}</span>
+      {line.text}
+    </p>
+  );
+}
+
+function Built({ built }: { built: Job["built"] }) {
+  return typeof built === "string" ? (
+    built
+  ) : (
+    <ul className="list-disc space-y-1 pl-5">
+      {built.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  );
+}
 
 /**
- * Each job is a short chapter: the client and its result on one side, the
- * paper card with the detail on the other. The sides swap per job on wide
- * screens so the list reads down the page as a story, not as a grid.
+ * The system as a row of paper steps joined by arrows. The list is its own
+ * text equivalent. `data-diagram-node` and `data-diagram-path` are the hooks
+ * for a draw-on in the motion runtime; nothing here animates.
+ */
+function Flow({ job }: { job: Flagship }) {
+  return (
+    <ol
+      aria-label={`${job.what}, step by step`}
+      className="flex flex-col items-center lg:col-span-2 lg:row-start-2 lg:flex-row lg:items-stretch"
+      data-diagram
+    >
+      {job.flow.map((s, i) => (
+        <li
+          className="flex w-full flex-col items-center lg:flex-1 lg:flex-row lg:items-stretch"
+          key={s.step}
+        >
+          {i > 0 ? (
+            <svg
+              aria-hidden="true"
+              className="my-1 h-6 w-10 shrink-0 rotate-90 lg:my-0 lg:rotate-0 lg:self-center"
+              fill="none"
+              focusable="false"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 40 24"
+            >
+              <path d="M3 12H36M29 5l7 7-7 7" data-diagram-path />
+            </svg>
+          ) : null}
+          <div
+            className="paper flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2 lg:flex-col lg:items-start lg:py-3"
+            data-diagram-node
+          >
+            <span className={LABEL}>{s.tool}</span>
+            <span className="font-semibold leading-snug">{s.step}</span>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function FlagshipChapter({ job }: { job: Flagship }) {
+  return (
+    <li className="grid items-start gap-8 lg:grid-cols-[1fr_1.1fr]" id={job.id}>
+      <div>
+        <Meta job={job} />
+        <h3 className="mt-2 font-bold text-[clamp(2.125rem,4.4vw,3.25rem)] leading-none tracking-[-0.03em]">
+          {job.what}
+        </h3>
+        <p className="mt-2 text-foreground-muted text-lg">{job.client}</p>
+        <Line
+          className="mt-5 max-w-md font-serif text-xl italic leading-snug"
+          line={job.line}
+        />
+        <p className="mt-5 max-w-measure text-foreground-muted">{job.about}</p>
+      </div>
+      <Flow job={job} />
+      <dl className="paper grid gap-4 p-6 text-foreground-muted md:p-8 lg:col-start-2 lg:row-start-1">
+        <div>
+          <dt className={LABEL}>Role</dt>
+          <dd className="mt-1 text-foreground">{job.role}</dd>
+        </div>
+        <div>
+          <dt className={LABEL}>What I built</dt>
+          <dd className="mt-1">
+            <Built built={job.built} />
+          </dd>
+        </div>
+        <div>
+          <dt className={LABEL}>Stack</dt>
+          <dd className="mt-1 font-mono text-sm">{job.stack}</dd>
+        </div>
+      </dl>
+    </li>
+  );
+}
+
+function CompactCard({ job }: { job: Job }) {
+  return (
+    <li className="paper flex flex-col p-5" id={job.id}>
+      <Meta job={job} />
+      <h3 className="mt-2 font-bold font-display text-2xl leading-tight tracking-tight">
+        {job.client}
+      </h3>
+      <p className="text-foreground-muted">{job.what}</p>
+      <Line
+        className="mt-3 font-serif text-lg italic leading-snug"
+        line={job.line}
+      />
+      <p className="mt-3 font-mono text-foreground-muted text-xs leading-relaxed">
+        {job.stack}
+      </p>
+      <details className="group mt-auto pt-2 text-foreground-muted text-sm">
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-accent">
+          Read more<span className="sr-only"> about {job.client}</span>
+          <span className="ml-2 inline-flex group-open:rotate-180">
+            <Arrow dir={90} />
+          </span>
+        </summary>
+        <p className="text-foreground">{job.about}</p>
+        <p className={`mt-3 ${LABEL}`}>{job.role}</p>
+        <div className="mt-1">
+          <Built built={job.built} />
+        </div>
+      </details>
+    </li>
+  );
+}
+
+/**
+ * The flagship systems lead, each with its diagram. The rest of the client
+ * work is a grid of cards whose detail opens on demand.
  */
 export function JobChapters({
+  flagships,
   jobs,
   smallJobs,
 }: {
+  flagships: readonly Flagship[];
   jobs: readonly Job[];
   smallJobs: readonly SmallJob[];
 }) {
   return (
     <div className="wrap mt-group">
-      <ol className="grid gap-16">
-        {jobs.map((job, i) => (
-          <li
-            className={`grid items-start gap-8 lg:grid-cols-[1fr_1.1fr] ${i % 2 ? "lg:[&>*:first-child]:order-2" : ""}`}
-            id={job.id}
-            key={job.id}
-          >
-            <div>
-              <p className="font-mono text-foreground-label text-xs">
-                {String(i + 1).padStart(2, "0")} · {job.years}
-              </p>
-              <h3 className="mt-2 font-bold text-[clamp(2.25rem,5vw,3.75rem)] leading-none tracking-[-0.03em]">
-                {job.client}
-              </h3>
-              <p className="mt-2 text-foreground-muted text-lg">{job.what}</p>
-              <p className="mt-6 max-w-md font-serif text-xl italic leading-snug">
-                {job.result}
-              </p>
-            </div>
-            <div className="paper p-6 md:p-8">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-                <span className="font-mono text-foreground-label text-xs">
-                  {job.role}
-                </span>
-                <span className="inline-flex items-center gap-2 font-mono text-foreground-label text-xs">
-                  <span
-                    aria-hidden="true"
-                    className={`inline-block size-2 rounded-full ${STAMP[job.stamp].dot}`}
-                  />
-                  {STAMP[job.stamp].label}
-                </span>
-              </div>
-              <p>{job.about}</p>
-              <dl className="mt-figure grid gap-4 text-foreground-muted">
-                <div>
-                  <dt className={LABEL}>What I built</dt>
-                  <dd className="mt-1">
-                    {typeof job.built === "string" ? (
-                      job.built
-                    ) : (
-                      <ul className="list-disc space-y-1 pl-5">
-                        {job.built.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt className={LABEL}>Stack</dt>
-                  <dd className="mt-1 font-mono text-sm">{job.stack}</dd>
-                </div>
-              </dl>
-            </div>
-          </li>
+      <ol className="grid gap-20">
+        {flagships.map((job) => (
+          <FlagshipChapter job={job} key={job.id} />
         ))}
       </ol>
+
+      <h3 className="mt-section font-bold font-display text-xl tracking-tight">
+        More client work
+      </h3>
+      <ul className="mt-figure grid items-start gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {jobs.map((job) => (
+          <CompactCard job={job} key={job.id} />
+        ))}
+      </ul>
 
       <h3 className="mt-group font-bold font-display text-xl tracking-tight">
         Smaller jobs, and my own
