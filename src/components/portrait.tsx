@@ -16,7 +16,7 @@ export function Portrait({ className }: { className?: string }) {
       <div className="relative mx-auto w-full max-w-[13rem] sm:max-w-[19rem]">
         <div
           aria-hidden="true"
-          className="absolute -top-8 -left-8 size-36 rounded-full bg-[#f8d99a] ring-[10px] ring-[#fbe9c7]/70 md:size-44"
+          className="absolute -top-8 -left-8 size-36 rounded-full bg-sun ring-[10px] ring-sun-glow/70 md:size-44"
         />
         <div className="paper arch relative overflow-hidden p-0">
           <Image

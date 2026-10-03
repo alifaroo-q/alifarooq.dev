@@ -463,12 +463,16 @@ export default function Home() {
                   className="inline-block size-2 rounded-full bg-sea"
                   data-live
                 />
-                {person.availability}
-                <span aria-hidden="true">·</span>
-                {person.location}
-                <span aria-hidden="true">·</span>
-                {person.hours}
-                <span aria-hidden="true">·</span>
+                {[person.availability, person.location, person.hours].map(
+                  (item) => (
+                    <span className="whitespace-nowrap" key={item}>
+                      {item}
+                      <span aria-hidden="true" className="ml-3">
+                        ·
+                      </span>
+                    </span>
+                  ),
+                )}
                 <a className="hit font-semibold ink-link" href={GITHUB_URL}>
                   <Cue label="GitHub ↗" />
                 </a>
@@ -546,7 +550,7 @@ export default function Home() {
               <ul className="mt-figure flex flex-wrap gap-3 md:gap-4">
                 {group.tools.map((tool) => (
                   <li
-                    className="paper flex items-center gap-2.5 px-4 py-2.5 font-bold font-display tracking-tight"
+                    className="chip gap-2.5 px-4 py-2.5 font-bold font-display tracking-tight"
                     key={tool.label}
                   >
                     {tool.mark ? (
@@ -573,7 +577,7 @@ export default function Home() {
             </h3>
             <ul className="mt-figure flex flex-wrap gap-3">
               {MY_SKILLS.map((skill) => (
-                <li className="paper px-3 py-1.5 font-mono text-sm" key={skill}>
+                <li className="chip px-3 py-1.5 font-mono text-sm" key={skill}>
                   {skill}
                 </li>
               ))}

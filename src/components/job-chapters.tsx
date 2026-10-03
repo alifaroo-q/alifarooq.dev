@@ -96,7 +96,7 @@ function Flow({ job }: { job: Flagship }) {
           {i > 0 ? (
             <svg
               aria-hidden="true"
-              className="my-1 h-6 w-10 shrink-0 rotate-90 lg:my-0 lg:rotate-0 lg:self-center"
+              className="my-1.5 h-5 w-8 shrink-0 rotate-90 lg:my-0 lg:h-6 lg:w-10 lg:rotate-0 lg:self-center"
               fill="none"
               focusable="false"
               stroke="currentColor"
@@ -127,7 +127,10 @@ function Flow({ job }: { job: Flagship }) {
 
 function FlagshipChapter({ job }: { job: Flagship }) {
   return (
-    <li className="grid items-start gap-8 lg:grid-cols-[1fr_1.1fr]" id={job.id}>
+    <li
+      className="grid items-start gap-6 md:gap-8 lg:grid-cols-[1fr_1.1fr]"
+      id={job.id}
+    >
       <div>
         <Meta job={job} />
         <h3 className="mt-2 font-bold text-[clamp(2.125rem,4.4vw,3.25rem)] leading-none tracking-[-0.03em]">
@@ -141,22 +144,34 @@ function FlagshipChapter({ job }: { job: Flagship }) {
         <p className="mt-5 max-w-measure text-foreground-muted">{job.about}</p>
       </div>
       <Flow job={job} />
-      <dl className="paper grid gap-4 p-6 text-foreground-muted md:p-8 lg:col-start-2 lg:row-start-1">
-        <div>
-          <dt className={LABEL}>Role</dt>
-          <dd className="mt-1 text-foreground">{job.role}</dd>
-        </div>
-        <div>
-          <dt className={LABEL}>What I built</dt>
-          <dd className="mt-1">
-            <Built built={job.built} />
-          </dd>
-        </div>
-        <div>
-          <dt className={LABEL}>Stack</dt>
-          <dd className="mt-1 font-mono text-sm">{job.stack}</dd>
-        </div>
-      </dl>
+      <details
+        className="paper group p-6 text-foreground-muted md:p-8 lg:col-start-2 lg:row-start-1"
+        data-open-wide
+      >
+        <summary className="-my-3 flex min-h-11 cursor-pointer items-center font-semibold text-accent">
+          Role, what I built and the stack
+          <span className="sr-only"> for the {job.what}</span>
+          <span className="ml-2 inline-flex group-open:rotate-180">
+            <Arrow dir={90} />
+          </span>
+        </summary>
+        <dl className="grid gap-4 pt-4 md:pt-0">
+          <div>
+            <dt className={LABEL}>Role</dt>
+            <dd className="mt-1 text-foreground">{job.role}</dd>
+          </div>
+          <div>
+            <dt className={LABEL}>What I built</dt>
+            <dd className="mt-1">
+              <Built built={job.built} />
+            </dd>
+          </div>
+          <div>
+            <dt className={LABEL}>Stack</dt>
+            <dd className="mt-1 font-mono text-sm">{job.stack}</dd>
+          </div>
+        </dl>
+      </details>
     </li>
   );
 }
@@ -208,7 +223,7 @@ export function JobChapters({
 }) {
   return (
     <div className="wrap mt-group">
-      <ol className="grid gap-20">
+      <ol className="grid gap-16 md:gap-20">
         {flagships.map((job) => (
           <FlagshipChapter job={job} key={job.id} />
         ))}

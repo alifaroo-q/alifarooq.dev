@@ -67,6 +67,15 @@
   --saffron: #f2b93b;
   --sea: #0b6673;
 
+  /* The illustration's own fills: the mascot, the caravan and the dawn sun. */
+  --camel: #e3b564;
+  --camel-shade: #bf8d43;
+  --caravan: #e2a95a;
+  --caravan-ghost: #f3d9c9;
+  --trail: #f1c9a6;
+  --sun: #f8d99a;
+  --sun-glow: #fbe9c7;
+
   --background: var(--cream);
   --background-raised: var(--paper);
   --foreground: var(--ink);
@@ -93,6 +102,13 @@
   --color-coral: var(--coral);
   --color-saffron: var(--saffron);
   --color-sea: var(--sea);
+  --color-camel: var(--camel);
+  --color-camel-shade: var(--camel-shade);
+  --color-caravan: var(--caravan);
+  --color-caravan-ghost: var(--caravan-ghost);
+  --color-trail: var(--trail);
+  --color-sun: var(--sun);
+  --color-sun-glow: var(--sun-glow);
 
   --color-background: var(--background);
   --color-background-raised: var(--background-raised);
@@ -236,7 +252,8 @@
   --border-strong: #fbefd8;
   --accent: #f2b93b;
   --accent-foreground: var(--ink);
-  --shadow-ink: #04101c;
+  /* A dark shadow vanishes on navy, so at night paper casts a cream one. */
+  --shadow-ink: var(--cream);
 }
 
 /* The scenery sits behind the content and is never read. Each layer carries a
@@ -330,6 +347,17 @@
   box-shadow: 1px 1px 0 0 var(--ink);
 }
 
+/* A label that is not a control: flat, with a hairline, so only buttons and
+   links carry the hard shadow that says "press me". */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
 /* The one primary action: saffron, pressed like a key. */
 .key {
   display: inline-flex;
@@ -362,10 +390,6 @@
   color: var(--foreground-disabled);
   box-shadow: none;
   translate: none;
-}
-.hour-night .key {
-  border-color: var(--cream);
-  box-shadow: 4px 4px 0 0 #04101c;
 }
 
 /* The heading's one italic word. Large text only, so the coral may be lighter
@@ -431,6 +455,11 @@ em.accent {
   background-color: var(--saffron);
   color: var(--ink);
   border: 2px solid var(--ink);
+}
+
+/* The bar floats over the night too, where an ink shadow would vanish. */
+html[data-hour="night"] [data-site-header] .paper {
+  --shadow-ink: var(--cream);
 }
 
 /* The nav lights the link of the hour the reader is in. `HourWatcher` writes
@@ -639,4 +668,19 @@ html[data-hour="night"] [data-camel] [data-pose="sleep"] {
 }
 [data-copy] > span {
   display: block;
+}
+
+/* A flagship's detail card folds shut on a phone and is always open from
+   768px, with no script. Where `::details-content` is not supported the card
+   stays a working disclosure at every width. */
+@supports selector(::details-content) {
+  @media (min-width: 768px) {
+    [data-open-wide]::details-content {
+      content-visibility: visible;
+      display: block;
+    }
+    [data-open-wide] > summary {
+      display: none;
+    }
+  }
 }

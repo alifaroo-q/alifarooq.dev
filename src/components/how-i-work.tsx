@@ -117,10 +117,18 @@ export function HowIWork() {
   return (
     <div className="wrap mt-group">
       <Stance />
-      <ol className="mt-group grid gap-5 md:grid-cols-5 md:items-end" data-land>
+      {/* Below md the stairs run sideways in a snap row, so the climb survives
+          a phone instead of becoming five stacked cards. */}
+      <ol
+        aria-label="How I work, step by step"
+        className="-mx-6 mt-group flex snap-x snap-mandatory scroll-px-6 [scrollbar-width:none] items-end gap-4 overflow-x-auto px-6 pt-2 pb-4 md:mx-0 md:grid md:grid-cols-5 md:gap-5 md:overflow-visible md:p-0"
+        data-land
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrolling region must take keyboard focus so it can be scrolled without a pointer.
+        tabIndex={0}
+      >
         {LOOP.map((s, i) => (
           <li
-            className="paper p-5 md:mb-[calc(var(--step)*2.5rem)]"
+            className="paper w-[15.5rem] shrink-0 snap-start p-5 mb-[calc(var(--step)*1.25rem)] md:w-auto md:mb-[calc(var(--step)*2.5rem)]"
             key={s.step}
             style={{ "--step": i } as React.CSSProperties}
           >

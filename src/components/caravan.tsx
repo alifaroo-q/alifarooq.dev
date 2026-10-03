@@ -14,8 +14,6 @@ export type Stop =
     }
   | { kind: "next"; span: string; title: string; line: string };
 
-const INK = "#10333d";
-
 const CAMEL_SHAPES = [
   <ellipse cx="50" cy="50" key="body" rx="30" ry="15" />,
   <path d="M34 42 Q50 10 66 40Z" key="hump" />,
@@ -37,29 +35,31 @@ function Camel({ ghost }: { ghost: boolean }) {
       <path
         d="M22 46 Q10 54 14 68"
         fill="none"
-        stroke={INK}
+        className="stroke-ink"
         strokeDasharray={ghost ? "5 5" : undefined}
         strokeLinecap="round"
         strokeWidth="4"
       />
       <g
         fill="none"
-        stroke={INK}
+        className="stroke-ink"
         strokeDasharray={ghost ? "6 5" : undefined}
         strokeLinejoin="round"
         strokeWidth="6"
       >
         {CAMEL_SHAPES}
       </g>
-      <g fill={ghost ? "#f3d9c9" : "#e2a95a"}>{CAMEL_SHAPES}</g>
+      <g className={ghost ? "fill-caravan-ghost" : "fill-caravan"}>
+        {CAMEL_SHAPES}
+      </g>
       {ghost ? null : (
         <>
-          <path d="M36 38 H66 L68 58 H34Z" fill="#c24e2c" />
-          <path d="M36 52 H68" stroke="#f2b93b" strokeWidth="3" />
+          <path d="M36 38 H66 L68 58 H34Z" className="fill-coral" />
+          <path d="M36 52 H68" className="stroke-saffron" strokeWidth="3" />
           {[38, 46, 54, 62].map((x) => (
-            <circle cx={x} cy="61" fill="#f2b93b" key={x} r="2.5" />
+            <circle cx={x} cy="61" className="fill-saffron" key={x} r="2.5" />
           ))}
-          <circle cx="104" cy="19" fill={INK} r="1.8" />
+          <circle cx="104" cy="19" className="fill-ink" r="1.8" />
         </>
       )}
     </svg>
@@ -79,7 +79,7 @@ export function Caravan({ stops }: { stops: readonly Stop[] }) {
         <path
           d="M0 20 C200 6 400 30 600 18 S1000 8 1200 20"
           fill="none"
-          stroke="#f1c9a6"
+          className="stroke-trail"
           strokeDasharray="10 14"
           strokeLinecap="round"
           strokeWidth="4"
