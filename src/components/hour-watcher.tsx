@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { hourAt } from "@/lib/hour-at";
 
 /**
  * Writes the hour the reader is in onto <html> as `data-hour`.
@@ -15,6 +16,14 @@ export function HourWatcher() {
     const hours = document.querySelectorAll<HTMLElement>("body [data-hour]");
     if (hours.length === 0) return;
     const root = document.documentElement;
+    const now = hourAt(
+      [...hours].map((el) => {
+        const { top, bottom } = el.getBoundingClientRect();
+        return { hour: el.dataset.hour, top, bottom };
+      }),
+      window.innerHeight * 0.49,
+    );
+    if (now) root.dataset.hour = now;
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
