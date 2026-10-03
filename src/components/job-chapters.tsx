@@ -16,16 +16,23 @@ export type Job = {
   years: string;
   stamp: Stamp;
   role: string;
-  /** The line under the name, labelled so a reader can tell which it is. */
-  line: { kind: "Result" | "Problem"; text: string };
+  /** What the work did, printed first under the name. */
+  result: string;
   about: string;
   built: string | readonly string[];
   stack: string;
+  /** The client's own words about this job, unedited, credited by client. */
+  quote?: string;
 };
 
-/** A flagship job also carries its system, drawn as a row of steps. */
+/**
+ * A flagship job also carries its system. `row` draws it across the chapter
+ * under the text; `column` stands it beside the text, so two flagships never
+ * share one shape.
+ */
 export type Flagship = Job & {
   flow: readonly { tool: string; step: string }[];
+  diagram: "row" | "column";
 };
 
 export type SmallJob = {
@@ -55,13 +62,22 @@ function Meta({ job }: { job: Job }) {
   );
 }
 
-function Line({ line, className }: { line: Job["line"]; className: string }) {
+function Result({ text, className }: { text: string; className: string }) {
   return (
     <p className={className}>
-      <span className={`mr-2 not-italic ${LABEL}`}>{line.kind}</span>
-      <Figures text={line.text} />
+      <span className={`mr-2 not-italic ${LABEL}`}>Result</span>
+      <Figures text={text} />
     </p>
   );
+}
+
+function Quote({ job, className }: { job: Job; className: string }) {
+  return job.quote ? (
+    <figure className={`border-ink border-t-2 pt-3 ${className}`}>
+      <blockquote className="leading-snug">“{job.quote}”</blockquote>
+      <figcaption className={`mt-2 ${LABEL}`}>{job.client}</figcaption>
+    </figure>
+  ) : null;
 }
 
 function Built({ built }: { built: Job["built"] }) {
@@ -81,22 +97,38 @@ function Built({ built }: { built: Job["built"] }) {
  * text equivalent. `data-diagram-node` and `data-diagram-path` are the hooks
  * for a draw-on in the motion runtime; nothing here animates.
  */
+const FLOW = {
+  row: {
+    list: "lg:col-span-2 lg:row-start-2 lg:flex-row lg:items-stretch",
+    item: "lg:flex-1 lg:flex-row lg:items-stretch",
+    arrow: "lg:my-0 lg:h-6 lg:w-10 lg:rotate-0 lg:self-center",
+    node: "lg:flex-col lg:items-start lg:py-3",
+  },
+  column: {
+    list: "lg:col-start-2 lg:row-span-2 lg:row-start-1",
+    item: "",
+    arrow: "",
+    node: "",
+  },
+} as const;
+
 function Flow({ job }: { job: Flagship }) {
+  const shape = FLOW[job.diagram];
   return (
     <ol
       aria-label={`${job.what}, step by step`}
-      className="flex flex-col items-center lg:col-span-2 lg:row-start-2 lg:flex-row lg:items-stretch"
+      className={`flex flex-col items-center ${shape.list}`}
       data-diagram
     >
       {job.flow.map((s, i) => (
         <li
-          className="flex w-full flex-col items-center lg:flex-1 lg:flex-row lg:items-stretch"
+          className={`flex w-full flex-col items-center ${shape.item}`}
           key={s.step}
         >
           {i > 0 ? (
             <svg
               aria-hidden="true"
-              className="my-1.5 h-5 w-8 shrink-0 rotate-90 lg:my-0 lg:h-6 lg:w-10 lg:rotate-0 lg:self-center"
+              className={`my-1.5 h-5 w-8 shrink-0 rotate-90 ${shape.arrow}`}
               fill="none"
               focusable="false"
               stroke="currentColor"
@@ -113,7 +145,7 @@ function Flow({ job }: { job: Flagship }) {
             </svg>
           ) : null}
           <div
-            className="paper flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2 lg:flex-col lg:items-start lg:py-3"
+            className={`paper flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2 ${shape.node}`}
             data-diagram-node
           >
             <span className={LABEL}>{s.tool}</span>
@@ -126,6 +158,7 @@ function Flow({ job }: { job: Flagship }) {
 }
 
 function FlagshipChapter({ job }: { job: Flagship }) {
+  const column = job.diagram === "column";
   return (
     <li
       className="grid items-start gap-6 md:gap-8 lg:grid-cols-[1fr_1.1fr]"
@@ -137,15 +170,16 @@ function FlagshipChapter({ job }: { job: Flagship }) {
           {job.what}
         </h3>
         <p className="mt-2 text-foreground-muted text-lg">{job.client}</p>
-        <Line
+        <Result
           className="mt-5 max-w-md font-serif text-xl italic leading-snug"
-          line={job.line}
+          text={job.result}
         />
         <p className="mt-5 max-w-measure text-foreground-muted">{job.about}</p>
+        <Quote className="mt-figure max-w-md text-lg" job={job} />
       </div>
       <Flow job={job} />
       <details
-        className="paper group p-6 text-foreground-muted md:p-8 lg:col-start-2 lg:row-start-1"
+        className={`paper group p-6 text-foreground-muted md:p-8 ${column ? "lg:col-start-1 lg:row-start-2" : "lg:col-start-2 lg:row-start-1"}`}
         data-open-wide
       >
         <summary className="-my-3 flex min-h-11 cursor-pointer items-center font-semibold text-accent">
@@ -184,13 +218,14 @@ function CompactCard({ job }: { job: Job }) {
         {job.client}
       </h3>
       <p className="text-foreground-muted">{job.what}</p>
-      <Line
+      <Result
         className="mt-3 font-serif text-lg italic leading-snug"
-        line={job.line}
+        text={job.result}
       />
       <p className="mt-3 font-mono text-foreground-muted text-xs leading-relaxed">
         {job.stack}
       </p>
+      <Quote className="mt-4" job={job} />
       <details className="group mt-auto pt-2 text-foreground-muted text-sm">
         <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-accent">
           Read more<span className="sr-only"> about {job.client}</span>
@@ -198,7 +233,15 @@ function CompactCard({ job }: { job: Job }) {
             <Arrow dir={90} />
           </span>
         </summary>
-        <p className="text-foreground">{job.about}</p>
+        {/* A link to this id opens the card (the browser reveals a closed
+            <details> around a fragment target); the margin keeps the card's
+            heading in view above it. */}
+        <p
+          className="scroll-mt-[24rem] text-foreground"
+          id={`${job.id}-detail`}
+        >
+          {job.about}
+        </p>
         <p className={`mt-3 ${LABEL}`}>{job.role}</p>
         <div className="mt-1">
           <Built built={job.built} />
@@ -233,7 +276,7 @@ export function JobChapters({
         More client work
       </h3>
       <ul
-        className="mt-figure grid items-start gap-8 md:grid-cols-2 lg:grid-cols-4"
+        className="mt-figure grid gap-8 md:grid-cols-2 lg:grid-cols-3"
         data-land
       >
         {jobs.map((job) => (

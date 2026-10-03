@@ -7,9 +7,6 @@ import { Cue } from "@/components/cue";
  * like everything else on the page: cut paper with a hard shadow. The nav marks
  * the hour in view from `html[data-hour]` (see `hour-watcher.tsx` and the
  * `[data-nav]` rules), so this stays a server component.
- *
- * One link per section, except the client words, which sit between Tools and
- * About and are met by scrolling.
  */
 export function SiteHeader({
   name,

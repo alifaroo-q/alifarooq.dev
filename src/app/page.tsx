@@ -18,7 +18,6 @@ import {
   Dusk,
   FishMarket,
   Port,
-  SeaView,
   Shore,
 } from "@/components/scenery";
 import { SectionHead } from "@/components/section-head";
@@ -39,8 +38,8 @@ import {
 /**
  * The home page.
  *
- * The page is one day on the Karachi coast. The fold is dawn, the four stack
- * hours run from morning to early evening, About is dusk, and Contact is the
+ * The page is one day on the Karachi coast. The fold is dawn, the three middle
+ * hours run from morning to golden hour, About is dusk, and Contact is the
  * night. Each hour ends in a band of scenery and a cue that names the next
  * one, stamped with its time, so the order of the sections is carried by the
  * clock and not by numbers.
@@ -76,7 +75,8 @@ const fold = {
   cue: { time: "08:30", label: "What I built ↓" },
 };
 
-/** Each figure is copied from its linked chapter in FLAGSHIPS. Change both together. */
+/** Each figure is copied from the job it links to. Change both together. The
+ * restaurant link targets the card's detail, so the browser opens it. */
 const PROOF: { system: string; metric: string; href: `#${string}` }[] = [
   {
     system: "AI voice caller",
@@ -92,7 +92,7 @@ const PROOF: { system: string; metric: string; href: `#${string}` }[] = [
   {
     system: "Restaurant voice AI",
     metric: "Answers the phone for restaurants in Belgium, in 3 languages.",
-    href: "#job-voxena",
+    href: "#job-voxena-detail",
   },
 ];
 
@@ -133,27 +133,7 @@ const TOOL_GROUPS: { title: string; tools: Tool[] }[] = [
   },
 ];
 
-/** The clients' own words, unedited, the AI caller first. Credit names the client only. */
-const QUOTES = [
-  {
-    text: "The call is much better by the way, seems pretty much perfect now!",
-    from: "HCPA",
-  },
-  {
-    text: "Perfect thank you, then lets push live asap! Exciting times",
-    from: "HCPA",
-  },
-  {
-    text: "Thank you so much for explaining this, Ali. That makes a lot of sense.",
-    from: "HCPA",
-  },
-  {
-    text: "The virtual number was received and the SMS code arrived quickly, a few minutes later. The whole process went smoothly from start to finish.",
-    from: "Numlix",
-  },
-];
-
-/** The agent skills Ali wrote. Borrowed ones are credited apart. */
+/** The agent skills Ali wrote. */
 const MY_SKILLS = [
   "react-state",
   "typescript",
@@ -164,7 +144,7 @@ const MY_SKILLS = [
   "vitest-test-coverage",
 ];
 
-/** The AI systems, in the order the fold's Proof strip names them. */
+/** The AI systems with a diagram, in the order the fold's Proof strip names them. */
 const FLAGSHIPS: Flagship[] = [
   {
     id: "job-hcpa-caller",
@@ -173,16 +153,16 @@ const FLAGSHIPS: Flagship[] = [
     years: "2025 to 2026",
     stamp: "in-production",
     role: "Lead, near-solo backend, main frontend",
-    line: {
-      kind: "Result",
-      text: "7,000 inbound leads a month go through it. 31 to 49 bookings a week from SMS follow-up.",
-    },
+    result:
+      "7,000 inbound leads a month go through it. 31 to 49 bookings a week from SMS follow-up.",
     about:
       "New leads came in through Pipedrive but went cold before a sales rep could call. The system calls each lead with an AI voice agent, follows up by SMS, and books a meeting in a rep's calendar.",
     built:
       "The whole path from new lead to booking. It respects rep leave and holidays, and shares bookings fairly so new reps get them too. I found and fixed the bug that had dropped bookings to zero. I also built the admin panel.",
     stack:
       "NestJS, BullMQ, Redis, Postgres, Vapi, Twilio, Google Calendar, Next.js",
+    quote: "The call is much better by the way, seems pretty much perfect now!",
+    diagram: "row",
     flow: [
       { tool: "Pipedrive", step: "New lead" },
       { tool: "BullMQ", step: "Queue the call" },
@@ -198,44 +178,20 @@ const FLAGSHIPS: Flagship[] = [
     years: "2026",
     stamp: "in-production",
     role: "Solo backend, lead frontend",
-    line: {
-      kind: "Problem",
-      text: "Each consultant gets 40 to 50 emails a day.",
-    },
+    result:
+      "Drafts sourced replies to 40 to 50 emails a day per consultant. A person checks each one.",
     about:
       "The assistant reads each email, pulls the client's details and drafts a reply with sources. A consultant checks every draft before it is sent.",
     built:
       "Gmail sync, email sorting, client context from Pipedrive, and search over past cases and official sources. A guard against prompt injection and a lock against double sends.",
     stack: "NestJS, Postgres with pgvector, BullMQ, Gmail API, OpenAI, Next.js",
+    diagram: "column",
     flow: [
       { tool: "Gmail API", step: "Sync and sort email" },
       { tool: "Pipedrive", step: "Client details" },
       { tool: "pgvector", step: "Search past cases and official sources" },
       { tool: "OpenAI", step: "Draft a reply with sources" },
       { tool: "Consultant", step: "Checks every draft before it is sent" },
-    ],
-  },
-  {
-    id: "job-voxena",
-    client: "Voxena",
-    what: "Restaurant voice AI",
-    years: "2026",
-    stamp: "handed-over",
-    role: "Main backend developer",
-    line: {
-      kind: "Problem",
-      text: "Restaurants in Belgium miss calls in three languages.",
-    },
-    about:
-      "Voxena answers the phone for restaurants in Belgium, in French, English and Dutch. It takes reservations, cancellations and questions.",
-    built:
-      "The platform behind the voice agent. Sign-in, restaurant onboarding, menus, opening hours and FAQs, all in three languages.",
-    stack: "NestJS, Prisma, Postgres, AWS",
-    flow: [
-      { tool: "Phone", step: "A guest calls the restaurant" },
-      { tool: "Voice agent", step: "Answers in French, English or Dutch" },
-      { tool: "My platform", step: "Menus, opening hours and FAQs" },
-      { tool: "Outcome", step: "Reservation, cancellation or answer" },
     ],
   },
 ];
@@ -249,10 +205,8 @@ const JOBS: Job[] = [
     years: "2025",
     stamp: "in-production",
     role: "Main backend developer",
-    line: {
-      kind: "Problem",
-      text: "A provider must pass every check before a site can approve them.",
-    },
+    result:
+      "Providers go through licence, DEA, background and exclusion checks online.",
     about:
       "Mach 1 helps healthcare sites take on new nurses and doctors. Before a provider can work, someone must check their licences, DEA, background and exclusion lists. The platform takes each provider through those checks online.",
     built:
@@ -266,10 +220,7 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-production",
     role: "Lead on a team of five",
-    line: {
-      kind: "Result",
-      text: "All billing now runs on Stripe, moved in 10 phases.",
-    },
+    result: "All billing now runs on Stripe, moved in 10 phases.",
     about:
       "Tenley puts a property company's units, tenants, staff and repair tickets in one app. Tenants can call a phone line and report an emergency to an AI voice agent.",
     built: [
@@ -288,15 +239,14 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-production",
     role: "Lead",
-    line: {
-      kind: "Result",
-      text: "The reconcile query went from 28.9 s to 0.5 s in production.",
-    },
+    result: "The reconcile query went from 28.9 s to 0.5 s in production.",
     about:
       "Numlix sells virtual phone numbers for SMS codes, paid from a wallet. Money moves between users, the payment provider and SMS suppliers, so every balance must match.",
     built:
       "The wallet ledger, with refunds and crash recovery. A check every 15 minutes that matches our records to the payment provider. Access rules on every table.",
     stack: "Next.js 16, Supabase, Drizzle, FedaPay",
+    quote:
+      "The virtual number was received and the SMS code arrived quickly, a few minutes later. The whole process went smoothly from start to finish.",
   },
   {
     id: "job-mycfo",
@@ -305,12 +255,27 @@ const JOBS: Job[] = [
     years: "2026",
     stamp: "in-development",
     role: "Solo",
-    line: { kind: "Problem", text: "Normal budget apps assume one salary." },
+    result:
+      "Shows people with side income what they can really spend, after business costs and tax.",
     about:
       "MyCFO is a money app for people who earn a salary plus freelance or creator income. It shows how much they can really spend after business costs and the tax their side income will owe.",
     built:
       "I am turning the prototype into the real product, now near the end. Sign-up and onboarding, bank links with Plaid, and an engine that sorts money into business, personal, transfer and tax. AI suggests a category and the user confirms it. Stripe subscriptions.",
     stack: "Next.js 16, Effect, Drizzle, Supabase, Plaid, Stripe, OpenAI",
+  },
+  {
+    id: "job-voxena",
+    client: "Voxena",
+    what: "Restaurant voice AI",
+    years: "2026",
+    stamp: "handed-over",
+    role: "Main backend developer",
+    result: "Answers the phone for restaurants in Belgium, in 3 languages.",
+    about:
+      "Voxena answers the phone for restaurants in Belgium, in French, English and Dutch. It takes reservations, cancellations and questions.",
+    built:
+      "The platform behind the voice agent. Sign-in, restaurant onboarding, menus, opening hours and FAQs, all in three languages.",
+    stack: "NestJS, Prisma, Postgres, AWS",
   },
 ];
 
@@ -603,36 +568,8 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <p className="mt-flow text-foreground-muted">
-              Also: Matt Pocock's skills, pstack, Superpowers.
-            </p>
           </div>
           <Dunes />
-          <HourCue href="#words" label="Words ↓" time="17:45" />
-        </section>
-
-        {/* Evening: the clients' own words. */}
-        <section
-          aria-labelledby="words"
-          className="hour hour-evening pt-section pb-[calc(var(--scene-h)+6.5rem)] md:pb-[calc(var(--scene-h)*0.8+6rem)]"
-          data-hour="evening"
-        >
-          <SectionHead accent="words" id="words" lead="Client" />
-          <ul className="wrap mt-group grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {QUOTES.map((q) => (
-              <li className="border-ink border-t-2 pt-4" key={q.text}>
-                <figure>
-                  <blockquote className="text-lg leading-snug">
-                    “{q.text}”
-                  </blockquote>
-                  <figcaption className="mt-3 font-mono text-foreground-label text-xs">
-                    {q.from}
-                  </figcaption>
-                </figure>
-              </li>
-            ))}
-          </ul>
-          <SeaView />
           <HourCue href="#about" label="About ↓" time="18:40" />
         </section>
 

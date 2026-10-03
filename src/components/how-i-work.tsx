@@ -22,7 +22,7 @@ const LOOP = [
   },
   {
     step: "Spike",
-    line: "Code is cheap now, so I build two or three rough versions of an idea and keep the best one.",
+    line: "I build two or three rough versions of an idea and keep the best one.",
   },
   {
     step: "Ship and iterate",
@@ -30,42 +30,42 @@ const LOOP = [
   },
 ];
 
-const RULES: { title: string; line?: string; href?: string; label?: string }[] =
-  [
-    {
-      title: "I name every error a function can return.",
-      line: "I model the errors I expect as values with Result and Option types, and I try to list all of them. Today I use Effect TS for this.",
-      href: "#job-result-kit",
-      label: "result-kit",
-    },
-    {
-      title: "I let the agent check its own work.",
-      line: "I give it unit, integration and browser tests it can run alone. In the browser it clicks through the whole flow and reads the network requests, console logs and errors. Oxlint, custom lint rules and an instructions file catch the rest.",
-    },
-    {
-      title: "A person approves before AI reaches a client.",
-      line: "The email assistant drafts; a consultant sends.",
-      href: "#job-hcpa-email",
-      label: "HCPA email assistant",
-    },
-    {
-      title: "I plan for the model being wrong.",
-      line: "Model output is treated like any input from outside.",
-      href: "#job-hcpa-email",
-      label: "The prompt-injection guard",
-    },
-    {
-      title: "Rules that must hold live in the database.",
-      href: "#job-numlix",
-      label: "Numlix ledger",
-    },
-    {
-      title: "I write the decision down.",
-      line: "Every big choice gets a short written record: what, why, and what I gave up.",
-      href: "#job-billys",
-      label: "Billy's Garage",
-    },
-  ];
+type Rule = {
+  title: string;
+  line: string;
+  links: readonly { href: `#${string}`; label: string }[];
+};
+
+const RULES: Rule[] = [
+  {
+    title: "I name every error a function can return.",
+    line: "I model the errors I expect as values with Result and Option types, and I try to list all of them. Today I use Effect TS for this. Rules that must hold live in the database.",
+    links: [
+      { href: "#job-result-kit", label: "result-kit" },
+      { href: "#job-numlix", label: "Numlix ledger" },
+    ],
+  },
+  {
+    title: "I let the agent check its own work.",
+    line: "I give it unit, integration and browser tests it can run alone. In the browser it clicks through the whole flow and reads the network requests, console logs and errors. Oxlint, custom lint rules and an instructions file catch the rest.",
+    links: [],
+  },
+  {
+    title: "I plan for the model being wrong.",
+    line: "Model output is treated like any input from outside, and a person approves before AI reaches a client. The email assistant drafts; a consultant sends.",
+    links: [
+      {
+        href: "#job-hcpa-email",
+        label: "The email assistant and its prompt-injection guard",
+      },
+    ],
+  },
+  {
+    title: "I write the decision down.",
+    line: "Every big choice gets a short written record: what, why, and what I gave up.",
+    links: [{ href: "#job-billys", label: "Billy's Garage" }],
+  },
+];
 
 function Rules({ className = "" }: { className?: string }) {
   return (
@@ -73,20 +73,20 @@ function Rules({ className = "" }: { className?: string }) {
       <h3 className="font-bold font-display text-xl tracking-tight">
         Rules I keep
       </h3>
-      <ul className="mt-figure grid gap-x-12 gap-y-6 md:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-figure grid gap-x-12 gap-y-6 md:grid-cols-2">
         {RULES.map((rule) => (
           <li key={rule.title}>
             <p className="font-bold font-display leading-snug tracking-tight">
               {rule.title}
             </p>
-            {rule.line ? (
-              <p className="mt-1 text-foreground-muted text-sm">{rule.line}</p>
-            ) : null}
-            {rule.href ? (
-              <p className="mt-1 font-semibold text-accent text-sm">
-                <a className="hit" href={rule.href}>
-                  <Cue label={`${rule.label} →`} />
-                </a>
+            <p className="mt-1 text-foreground-muted text-sm">{rule.line}</p>
+            {rule.links.length > 0 ? (
+              <p className="mt-1 flex flex-wrap gap-x-5 font-semibold text-accent text-sm">
+                {rule.links.map((link) => (
+                  <a className="hit" href={link.href} key={link.href}>
+                    <Cue label={`${link.label} →`} />
+                  </a>
+                ))}
               </p>
             ) : null}
           </li>
