@@ -26,12 +26,15 @@ export function SectionHead({
     <div className="wrap">
       <h2
         className="max-w-[18ch] font-bold text-[clamp(2.125rem,5vw,3.75rem)] leading-[1.04] tracking-[-0.03em] md:max-w-[20ch]"
-        data-reveal
         id={id}
       >
-        {lead ? `${lead} ` : null}
-        <em className="accent">{accent}</em>
-        {tail ? ` ${tail}` : null}
+        {/* The reveal moves this span, not the anchored h2, so a jump to the
+            heading measures where it rests and not where it starts. */}
+        <span className="block" data-reveal>
+          {lead ? `${lead} ` : null}
+          <em className="accent">{accent}</em>
+          {tail ? ` ${tail}` : null}
+        </span>
       </h2>
       {children ? (
         <p

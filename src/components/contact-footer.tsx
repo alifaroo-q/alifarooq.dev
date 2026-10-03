@@ -55,7 +55,7 @@ export function ContactFooter() {
           </p>
           <ul className="mt-tight flex flex-wrap gap-2.5">
             {REMOTE_REGIONS.map((region) => (
-              <li className="chip px-3.5 py-1 font-medium text-sm" key={region}>
+              <li className="chip px-3 py-1 text-sm" key={region}>
                 {region}
               </li>
             ))}

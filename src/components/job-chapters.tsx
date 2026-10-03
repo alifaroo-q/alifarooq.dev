@@ -145,7 +145,7 @@ function Flow({ job }: { job: Flagship }) {
             </svg>
           ) : null}
           <div
-            className={`paper flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2 ${shape.node}`}
+            className={`paper flat flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-2 ${shape.node}`}
             data-diagram-node
           >
             <span className={LABEL}>{s.tool}</span>

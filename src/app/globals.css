@@ -358,15 +358,20 @@
   box-shadow: 1px 1px 0 0 var(--ink);
 }
 
-/* A label that is not a control: flat, with a hairline, so only buttons and
-   links carry the hard shadow that says "press me". */
+/* A label that is not a control: no fill and a faint hairline, so only buttons
+   and links carry the hard shadow and the solid edge that say "press me". */
 .chip {
   display: inline-flex;
   align-items: center;
-  background: var(--background);
   color: var(--foreground);
-  border: 1px solid var(--border-strong);
+  border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
   border-radius: var(--radius);
+}
+
+/* Paper that is not a card or a control, such as a diagram step: the border
+   stays, the shadow goes. */
+.paper.flat {
+  box-shadow: none;
 }
 
 /* The one primary action: saffron, pressed like a key. */
@@ -505,19 +510,19 @@ html[data-hour="night"] [data-site-header] .paper {
 
 /* The nav lights the link of the hour the reader is in. `HourWatcher` writes
    `data-hour` on <html>; nothing else needs to know. */
-[data-nav] {
+[data-nav] > span {
   background-image: linear-gradient(var(--coral), var(--coral));
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0 3px;
   transition: background-size var(--duration-hover) var(--ease-arrive);
 }
-[data-nav]:hover,
-html[data-hour="morning"] [data-nav="work"],
-html[data-hour="noon"] [data-nav="how"],
-html[data-hour="golden"] [data-nav="tools"],
-html[data-hour="dusk"] [data-nav="about"],
-html[data-hour="night"] [data-nav="contact"] {
+[data-nav]:hover > span,
+html[data-hour="morning"] [data-nav="work"] > span,
+html[data-hour="noon"] [data-nav="how"] > span,
+html[data-hour="golden"] [data-nav="tools"] > span,
+html[data-hour="dusk"] [data-nav="about"] > span,
+html[data-hour="night"] [data-nav="contact"] > span {
   background-size: 100% 3px;
 }
 
@@ -534,7 +539,7 @@ html[data-hour="night"] [data-nav="contact"] {
 @media (prefers-reduced-motion: reduce) {
   .pill,
   .key,
-  [data-nav] {
+  [data-nav] > span {
     transition: none;
   }
 }

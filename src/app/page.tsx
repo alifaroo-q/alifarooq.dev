@@ -536,13 +536,13 @@ export default function Home() {
               <ul className="mt-figure flex flex-wrap gap-3 md:gap-4">
                 {group.tools.map((tool) => (
                   <li
-                    className="chip gap-2.5 px-4 py-2.5 font-bold font-display tracking-tight"
+                    className="chip gap-2 px-3 py-1.5 text-sm"
                     key={tool.label}
                   >
                     {tool.mark ? (
                       <svg
                         aria-hidden="true"
-                        className="size-5 shrink-0"
+                        className="size-4 shrink-0"
                         fill="currentColor"
                         focusable="false"
                         viewBox="0 0 24 24"

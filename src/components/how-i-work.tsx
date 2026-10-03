@@ -99,7 +99,7 @@ function Rules({ className = "" }: { className?: string }) {
 function Stance() {
   return (
     <div className="max-w-4xl">
-      <p className="font-serif text-[clamp(1.625rem,3.2vw,2.5rem)] italic leading-tight tracking-[-0.01em]">
+      <p className="font-serif text-[clamp(1.625rem,3.2vw,2.5rem)] italic leading-[1.3] tracking-[-0.01em]">
         {STANCE}
       </p>
       <p className="mt-flow max-w-measure text-[clamp(1.0625rem,1.6vw,1.1875rem)] text-foreground-muted">

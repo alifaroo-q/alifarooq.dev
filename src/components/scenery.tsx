@@ -752,22 +752,27 @@ export function Dusk() {
    Night: stars, a moon, a harbour with a lit skyline and a lighthouse.
    -------------------------------------------------------------------------- */
 
-/** The night sky. Fixed positions from a seed, so it never reshuffles. */
-export function Stars() {
-  const r = rng(77);
-  const stars = Array.from({ length: 70 }, (_, i) => ({
+/** A strip of stars. Fixed positions from a seed, so it never reshuffles. */
+function StarBand({
+  seed,
+  count,
+  className,
+}: {
+  seed: number;
+  count: number;
+  className: string;
+}) {
+  const r = rng(seed);
+  const stars = Array.from({ length: count }, (_, i) => ({
     key: i,
     x: r() * 100,
-    y: r() * 62,
+    y: r() * 100,
     size: r() > 0.86 ? 3 : 2,
     twinkle: r() > 0.55,
     delay: `${(r() * 3).toFixed(2)}s`,
   }));
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-    >
+    <div className={`absolute inset-x-0 ${className}`}>
       {stars.map((s) => (
         <span
           className="absolute rounded-full bg-[#fbefd8]"
@@ -782,6 +787,26 @@ export function Stars() {
           }}
         />
       ))}
+    </div>
+  );
+}
+
+/**
+ * The night sky. Stars sit only where there is no text: the strip above the
+ * heading, and the open sky between the form and the skyline.
+ */
+export function Stars() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+    >
+      <StarBand className="top-0 h-16" count={22} seed={77} />
+      <StarBand
+        className="bottom-[calc(var(--scene-h)*0.64)] h-[calc(var(--scene-h)*0.2+2.5rem)]"
+        count={30}
+        seed={78}
+      />
       <svg
         aria-hidden="true"
         className="absolute top-6 right-[8%] h-auto w-14 md:top-[7%] md:w-24"
