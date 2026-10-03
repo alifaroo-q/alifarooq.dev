@@ -1,3 +1,5 @@
+import { Cue } from "@/components/cue";
+
 export type Stamp = "in-production" | "in-development" | "handed-over";
 
 const STAMP: Record<Stamp, { label: string; dot: string }> = {
@@ -26,6 +28,7 @@ export type SmallJob = {
   kind: string;
   years: string;
   line: string;
+  href?: string;
 };
 
 const LABEL =
@@ -110,7 +113,13 @@ export function JobChapters({
         {smallJobs.map((s) => (
           <li id={s.id} key={s.id}>
             <p className="font-bold">
-              {s.name}{" "}
+              {s.href ? (
+                <a className="hit ink-link" href={s.href}>
+                  <Cue label={`${s.name} ↗`} />
+                </a>
+              ) : (
+                s.name
+              )}{" "}
               <span className="font-mono font-normal text-foreground-label text-xs">
                 {s.kind} · {s.years}
               </span>

@@ -25,8 +25,9 @@ import {
   ACTION_CLASS,
   BASE_LOCATION,
   BASE_UTC,
+  GITHUB_URL,
   PERSON_NAME,
-  PERSON_ROLES,
+  PERSON_ROLE,
   PORTRAIT_SRC,
   PROFILE_URLS,
   SITE_URL,
@@ -57,8 +58,8 @@ const person = {
 };
 
 /**
- * The fold. The headline makes the claim, the sentence under it says what is
- * behind the claim, and one line names the job title and the range under it.
+ * The fold. The headline makes the claim, the sentence under it gives one
+ * result behind it, and the proof names the AI systems a reader can check.
  */
 const fold = {
   headline: {
@@ -67,28 +68,66 @@ const fold = {
     tail: "inside them.",
   },
   sentence:
-    "Two years at Zenkoders shipping AI products for clients, front to back. I build with coding agents every day.",
-  title: "Software engineer",
-  range: "full-stack and AI product",
+    "Two years at Zenkoders shipping AI products for clients, front to back. 7,000 inbound leads a month go through the AI caller I built.",
   caption: "Good morning from Karachi",
   cue: { time: "08:30", label: "What I built ↓" },
 };
 
+/** Each figure is copied from its linked chapter in JOBS. Change both together. */
+const PROOF: { system: string; metric: string; href: `#${string}` }[] = [
+  {
+    system: "AI voice caller",
+    metric: "31 to 49 bookings a week from its SMS follow-up.",
+    href: "#job-hcpa-caller",
+  },
+  {
+    system: "Email assistant",
+    metric:
+      "Drafts sourced replies to 40 to 50 emails a day per consultant. A person checks each one.",
+    href: "#job-hcpa-email",
+  },
+  {
+    system: "Restaurant voice AI",
+    metric: "Answers the phone for restaurants in Belgium, in 3 languages.",
+    href: "#job-voxena",
+  },
+];
+
 type Tool = { label: string; mark?: keyof typeof BRAND_MARKS };
 
-const TOOLS: Tool[] = [
-  { label: "Node.js", mark: "nodedotjs" },
-  { label: "Next.js", mark: "nextdotjs" },
-  { label: "NestJS", mark: "nestjs" },
-  { label: "Postgres", mark: "postgresql" },
-  { label: "Redis", mark: "redis" },
-  { label: "Docker", mark: "docker" },
-  { label: "AWS", mark: "amazonwebservices" },
-  { label: "GitHub Actions", mark: "githubactions" },
-  { label: "OpenAI", mark: "openai" },
-  { label: "Claude Code", mark: "claude" },
-  { label: "GitHub Copilot", mark: "githubcopilot" },
-  { label: "Cursor", mark: "cursor" },
+const TOOL_GROUPS: { title: string; tools: Tool[] }[] = [
+  {
+    title: "AI I ship",
+    tools: [
+      { label: "OpenAI", mark: "openai" },
+      { label: "Vapi" },
+      { label: "Twilio" },
+      { label: "pgvector" },
+      { label: "BullMQ" },
+      { label: "Vision model" },
+    ],
+  },
+  {
+    title: "The stack under it",
+    tools: [
+      { label: "Node.js", mark: "nodedotjs" },
+      { label: "Next.js", mark: "nextdotjs" },
+      { label: "NestJS", mark: "nestjs" },
+      { label: "Postgres", mark: "postgresql" },
+      { label: "Redis", mark: "redis" },
+      { label: "Docker", mark: "docker" },
+      { label: "AWS", mark: "amazonwebservices" },
+      { label: "GitHub Actions", mark: "githubactions" },
+    ],
+  },
+  {
+    title: "AI I build with",
+    tools: [
+      { label: "Claude Code", mark: "claude" },
+      { label: "GitHub Copilot", mark: "githubcopilot" },
+      { label: "Cursor", mark: "cursor" },
+    ],
+  },
 ];
 
 /** The clients' own words, unedited. Credit names the client only. */
@@ -266,6 +305,7 @@ const SMALL_JOBS: SmallJob[] = [
     kind: "Open source",
     years: "2026",
     line: "A TypeScript result type on npm, with lint rules for ESLint and Oxlint.",
+    href: "https://github.com/alifaroo-q/result-kit",
   },
 ];
 
@@ -301,7 +341,7 @@ const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: PERSON_NAME,
-  jobTitle: [...PERSON_ROLES],
+  jobTitle: PERSON_ROLE,
   url: SITE_URL,
   image: `${SITE_URL}${PORTRAIT_SRC}`,
   sameAs: PROFILE_URLS,
@@ -370,13 +410,7 @@ export default function Home() {
                 {fold.sentence}
               </p>
               <p className="mt-figure font-bold font-display text-[clamp(1.0625rem,1.8vw,1.3125rem)] tracking-tight">
-                {fold.title}
-                <span aria-hidden="true" className="px-3 text-coral">
-                  /
-                </span>
-                <span className="font-semibold text-foreground-muted">
-                  {fold.range}
-                </span>
+                {PERSON_ROLE}
               </p>
               <p className="mt-figure flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground-muted text-sm">
                 <span
@@ -389,15 +423,32 @@ export default function Home() {
                 {person.location}
                 <span aria-hidden="true">·</span>
                 {person.hours}
+                <span aria-hidden="true">·</span>
+                <a className="hit font-semibold ink-link" href={GITHUB_URL}>
+                  <Cue label="GitHub ↗" />
+                </a>
               </p>
-              <div className="mt-figure flex flex-wrap items-center gap-x-8 gap-y-4">
-                <a className={ACTION_CLASS} href="#jobs">
-                  <Cue label="What I built ↘" />
-                </a>
-                <a className="hit font-semibold ink-link" href="#contact">
-                  <Cue label="Hire me ↓" />
-                </a>
-              </div>
+              <ul className="paper mt-figure grid sm:grid-cols-3">
+                {PROOF.map((p) => (
+                  <li
+                    className="border-border border-t-2 p-4 first:border-t-0 sm:border-t-0 sm:border-l-2 sm:first:border-l-0"
+                    key={p.href}
+                  >
+                    <a
+                      className="hit font-bold font-display text-accent tracking-tight"
+                      href={p.href}
+                    >
+                      <Cue label={`${p.system} →`} />
+                    </a>
+                    <p className="mt-1 text-foreground-muted text-sm">
+                      {p.metric}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <a className={`${ACTION_CLASS} mt-figure`} href="#contact">
+                <Cue label="Hire me ↓" />
+              </a>
             </div>
           </div>
           <Shore />
@@ -438,28 +489,35 @@ export default function Home() {
           data-hour="golden"
         >
           <SectionHead accent="build" id="tools" lead="What I" tail="with" />
-          <ul className="wrap mt-group flex flex-wrap gap-3 md:gap-4">
-            {TOOLS.map((tool) => (
-              <li
-                className="paper flex items-center gap-2.5 px-4 py-2.5 font-bold font-display tracking-tight"
-                key={tool.label}
-              >
-                {tool.mark ? (
-                  <svg
-                    aria-hidden="true"
-                    className="size-5 shrink-0"
-                    fill="currentColor"
-                    focusable="false"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+          {TOOL_GROUPS.map((group) => (
+            <div className="wrap mt-group" key={group.title}>
+              <h3 className="font-bold font-display text-xl tracking-tight">
+                {group.title}
+              </h3>
+              <ul className="mt-figure flex flex-wrap gap-3 md:gap-4">
+                {group.tools.map((tool) => (
+                  <li
+                    className="paper flex items-center gap-2.5 px-4 py-2.5 font-bold font-display tracking-tight"
+                    key={tool.label}
                   >
-                    <path d={BRAND_MARKS[tool.mark].d} />
-                  </svg>
-                ) : null}
-                {tool.label}
-              </li>
-            ))}
-          </ul>
+                    {tool.mark ? (
+                      <svg
+                        aria-hidden="true"
+                        className="size-5 shrink-0"
+                        fill="currentColor"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d={BRAND_MARKS[tool.mark].d} />
+                      </svg>
+                    ) : null}
+                    {tool.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
           <div className="wrap mt-group">
             <h3 className="font-bold font-display text-xl tracking-tight">
               Skills I wrote for my agents

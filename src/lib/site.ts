@@ -29,23 +29,12 @@ export const SITE_URL = "https://alifarooq.dev";
 export const SITE_NAME = "alifarooq.dev";
 
 /**
- * The name and the roles, as the `<head>` and the share card print them.
- *
- * Ali works across four kinds of engineering and the site says all four.
- * `PERSON_ROLE` is the one umbrella title: it is half of the home title and
- * the share card's footline, where a single phrase has to do the job.
- * `PERSON_ROLES` is the full list, printed in the fold and handed to a machine
- * as the `Person` block's `jobTitle`. Two literals of a job title is how a site
- * ends up claiming two different jobs, so both live here.
+ * The name and the one job title. The fold, the `<head>`, the share card and
+ * the `Person` block's `jobTitle` all print `PERSON_ROLE`, so the site cannot
+ * claim two different jobs.
  */
 export const PERSON_NAME = "Ali Farooq";
-export const PERSON_ROLE = "AI-native full-stack engineer";
-export const PERSON_ROLES = [
-  "Backend engineer",
-  "Software engineer",
-  "AI product engineer",
-  "Full-stack engineer",
-] as const;
+export const PERSON_ROLE = "AI full-stack engineer";
 
 /**
  * Where Ali works from and who he will work for, stated once.
@@ -83,7 +72,6 @@ export const PORTRAIT_SRC = "/profile-image.jpg";
  * neither can be derived from the other. Both are listed, and `sameAs` is the
  * one place a machine gets to tie the site to the name a recruiter types.
  */
-export const PROFILE_URLS = [
-  "https://github.com/alifaroo-q",
-  "https://www.linkedin.com/in/alifarooqdev",
-];
+export const GITHUB_URL = "https://github.com/alifaroo-q";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/alifarooqdev";
+export const PROFILE_URLS = [GITHUB_URL, LINKEDIN_URL];

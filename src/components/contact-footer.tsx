@@ -6,11 +6,10 @@ import {
   BASE_LOCATION,
   BASE_UTC,
   CONTACT_EMAIL,
-  PROFILE_URLS,
+  GITHUB_URL,
+  LINKEDIN_URL,
   REMOTE_REGIONS,
 } from "@/lib/site";
-
-const [GITHUB_URL, LINKEDIN_URL] = PROFILE_URLS;
 
 /**
  * Night, and the footer of every page.
