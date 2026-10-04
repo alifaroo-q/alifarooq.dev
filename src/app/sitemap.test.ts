@@ -1,18 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { SITE_URL } from "@/lib/site";
+import { CASES, caseHref } from "@/lib/work";
 import sitemap from "./sitemap";
 
 /**
  * The sitemap is the one piece of #33 that is logic rather than a string.
  *
- * The site is one page now. What these assertions hold is that nothing else
- * creeps in, and that nobody adds `lastModified` because the type allows it.
+ * What these assertions hold is that the list is the home page, the work index
+ * and the case pages, and that nobody adds `lastModified` because the type
+ * allows it.
  */
 describe("sitemap", () => {
   const entries = sitemap();
 
-  it("lists the home page, and nothing else", () => {
-    expect(entries.map((entry) => entry.url)).toEqual([SITE_URL]);
+  it("lists the home page, the work index and each case page", () => {
+    expect(entries.map((entry) => entry.url)).toEqual([
+      SITE_URL,
+      `${SITE_URL}/work`,
+      ...CASES.map((job) => `${SITE_URL}${caseHref(job)}`),
+    ]);
   });
 
   it("carries no lastModified — there is no date field to read (#9)", () => {

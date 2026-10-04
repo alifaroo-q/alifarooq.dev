@@ -1,5 +1,3 @@
-import { initBotId } from "botid/client/core";
-
 /**
  * Vercel BotID, client half (#24, #30).
  *
@@ -13,9 +11,21 @@ import { initBotId } from "botid/client/core";
  * about a path that is not protected here, which is the only thing that makes
  * the mistake findable.
  *
- * `instrumentation-client.ts` runs before the app's own code, so the script is
- * in place before any form can be submitted.
+ * The script is 38 KB and nothing on the page needs it until a form is
+ * submitted, which takes a person seconds. So it starts once the page is idle
+ * and stays out of the load. It is in place long before a submit.
  */
-initBotId({
-  protect: [{ path: "/api/contact", method: "POST" }],
-});
+const start = () =>
+  import("botid/client/core").then(({ initBotId }) =>
+    initBotId({
+      protect: [{ path: "/api/contact", method: "POST" }],
+    }),
+  );
+
+const whenIdle = () =>
+  window.requestIdleCallback
+    ? window.requestIdleCallback(start, { timeout: 3000 })
+    : window.setTimeout(start, 1000);
+
+if (document.readyState === "complete") whenIdle();
+else window.addEventListener("load", whenIdle, { once: true });

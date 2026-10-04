@@ -1,5 +1,5 @@
 /**
- * The five routes, read back off the deployment under test (#34).
+ * The site's routes, read back off the deployment under test (#34).
  *
  * Both post-deploy checks need the same list, so it lives here rather than in
  * whichever of them was written first.

@@ -2,20 +2,20 @@ import type { Metadata, Viewport } from "next";
 import {
   Bricolage_Grotesque,
   Hanken_Grotesk,
-  JetBrains_Mono,
   Spectral,
 } from "next/font/google";
 import { Analytics } from "@/components/analytics";
-import { Camel } from "@/components/camel";
 import { HourWatcher } from "@/components/hour-watcher";
+import { LateScene } from "@/components/late-scenery";
 import { MotionRuntime } from "@/components/motion-runtime";
 import { rootMetadata } from "@/lib/metadata";
 import "./globals.css";
 
 // One face per job. Bricolage Grotesque is the voice of headings, Hanken
-// Grotesk is body, Spectral italic is the single accented word in a heading,
-// and JetBrains Mono is kept for code and the times printed on the scenery,
-// which are data. Each weight listed is one that something on the site uses.
+// Grotesk is body and Spectral italic is the single accented word in a
+// heading. The times printed on the scenery use the system monospace: a face of
+// its own cost 31 KB on the wire for 12px labels. Each weight listed is one that
+// something on the site uses.
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -33,22 +33,15 @@ const hanken = Hanken_Grotesk({
 
 const spectral = Spectral({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: "400",
   style: "italic",
   variable: "--font-spectral",
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  weight: ["400", "500"],
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
-});
-
 /** The home description. It is not the headline: the headline says the claim, this says what is behind it. */
 const description =
-  "AI full-stack engineer in Karachi. I build products with AI inside them: an AI caller that 7,000 inbound leads a month go through, and an email assistant that drafts sourced replies for a person to check.";
+  "AI full-stack engineer in Karachi. I build products with AI inside them: an AI voice agent that 7,000 inbound leads a month go through, and an email assistant that drafts sourced replies for a person to check.";
 
 /**
  * `metadataBase`, the title template, and the home page's own `<head>` (#16).
@@ -72,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${hanken.variable} ${spectral.variable} ${jetbrainsMono.variable}`}
+      className={`${bricolage.variable} ${hanken.variable} ${spectral.variable}`}
     >
       <body className="min-h-dvh">
         <a className="skip-link" href="#main">
@@ -85,7 +78,7 @@ export default function RootLayout({
             source. See `motion-runtime.tsx`. */}
         <MotionRuntime />
         <HourWatcher />
-        <Camel />
+        <LateScene minWidth={640} name="camel" />
         <Analytics />
       </body>
     </html>

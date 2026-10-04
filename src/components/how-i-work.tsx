@@ -1,4 +1,5 @@
 import { Cue } from "@/components/cue";
+import { workHref } from "@/lib/work";
 
 const STANCE =
   "I own the system around the model: the data, the queues, the guards and the person who checks its work.";
@@ -33,7 +34,7 @@ const LOOP = [
 type Rule = {
   title: string;
   line: string;
-  links: readonly { href: `#${string}`; label: string }[];
+  links: readonly { href: string; label: string }[];
 };
 
 const RULES: Rule[] = [
@@ -41,8 +42,8 @@ const RULES: Rule[] = [
     title: "I name every error a function can return.",
     line: "I model the errors I expect as values with Result and Option types, and I try to list all of them. Today I use Effect TS for this. Rules that must hold live in the database.",
     links: [
-      { href: "#job-result-kit", label: "result-kit" },
-      { href: "#job-numlix", label: "Numlix ledger" },
+      { href: workHref("job-result-kit"), label: "result-kit" },
+      { href: workHref("job-numlix"), label: "Numlix ledger" },
     ],
   },
   {
@@ -55,7 +56,7 @@ const RULES: Rule[] = [
     line: "Model output is treated like any input from outside, and a person approves before AI reaches a client. The email assistant drafts; a consultant sends.",
     links: [
       {
-        href: "#job-hcpa-email",
+        href: workHref("job-hcpa-email"),
         label: "The email assistant and its prompt-injection guard",
       },
     ],
@@ -63,7 +64,7 @@ const RULES: Rule[] = [
   {
     title: "I write the decision down.",
     line: "Every big choice gets a short written record: what, why, and what I gave up.",
-    links: [{ href: "#job-billys", label: "Billy's Garage" }],
+    links: [{ href: workHref("job-billys"), label: "Billy's Garage" }],
   },
 ];
 

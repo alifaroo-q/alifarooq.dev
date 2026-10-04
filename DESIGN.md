@@ -63,7 +63,7 @@ typography:
     fontWeight: 400
     lineHeight: 1.65
   label:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontFamily: "ui-monospace, SF Mono, Cascadia Mono, Menlo, Consolas, monospace"
     fontSize: "0.75rem"
     fontWeight: 400
     lineHeight: 1.4
@@ -167,8 +167,8 @@ Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pa
 
 **Display Font:** Bricolage Grotesque (600/700/800, with system sans fallback)
 **Body Font:** Hanken Grotesk (400/500/600)
-**Accent Font:** Spectral italic (400/500), headings' accent word only
-**Label/Mono Font:** JetBrains Mono (400/500), times printed on the scenery, coordinates, code
+**Accent Font:** Spectral italic (400), headings' accent word only
+**Label/Mono Font:** the system monospace stack (no web font: a face of its own was 31 KB for 12px labels), times printed on the scenery, coordinates, code
 
 **Character:** A friendly, slightly quirky grotesque for the claim, a quiet humanist body for the reading, and one serif italic to change voice on the word the heading turns on.
 
@@ -185,7 +185,7 @@ Dawn peach (#f6c9a6 to #fbe6c8), morning pale blue (#cfe6ea to #f5ecd6), noon pa
 
 ## Layout
 
-One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically, in this order: the fold (dawn), Work (morning), How I work (noon), Tools (golden), a Sea View scenery band with no content (evening), About (dusk) and Contact (night); each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px. Below 1024px the arch portrait is hidden and a 40px round portrait sits on the name line under the h1; the dawn caption moves under the status row. Tools is three groups of wrapping chip rows, 0.75rem apart and 1rem from 768px. Work leads with two flagship chapters, two columns from 1024px, then compact cards three-up at large, stretched to one height so their disclosures line up. How I work's five steps climb as stairs from 768px and run as a sideways snap row on a phone. About is three caravan stops, three-up from 768px. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`, and section headings with 5.25rem plus 1.5rem. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
+One `.wrap` container (max 76rem, 24px side padding, 40px from 768px). Sections are full-bleed hours stacked vertically, in this order: the fold (dawn), Work (morning), How I work (noon), Tools (golden), a Sea View scenery band with no content (evening), About (dusk) and Contact (night); each pads its top by 5rem (`section`) and its foot by roughly 0.8 of the scenery height plus 5rem so content never sits on the water. The fold is `min-h-svh`, a two-column grid (19rem portrait, fluid text) from 1024px. Below 1024px the arch portrait is hidden and a 40px round portrait sits on the name line under the h1; the dawn caption moves under the status row. Tools is three groups, each a heading with a lede (14rem column from 768px) beside wrapping chip rows, 0.75rem apart and 1rem from 768px; the cloud and the less-used AI rows carry a small label above their chips. Work leads with two flagship chapters, two columns from 1024px, then compact cards three-up at large, stretched to one height so their disclosures line up. How I work's five steps climb as stairs from 768px and run as a sideways snap row on a phone. About is three caravan stops, three-up from 768px. Gaps between cards are 2rem, widening to 2.5rem at large. Spacing is named, with more above a heading than below: tight 0.75rem, flow 1.25rem, figure 1.75rem, group 3rem, section 5rem. The floating header is 56px tall at top 12px; anchors clear it with `scroll-margin-top: 5.25rem`, and section headings with 5.25rem plus 1.5rem. Scenery band height is `clamp(14rem, 24vw, 22rem)`, fixed so it costs no layout shift. Interactive targets are 44px or more.
 
 ## Elevation & Depth
 
@@ -219,12 +219,13 @@ Cut paper: 4px corners on cards, buttons, inputs and the header. Two deliberate 
 
 ### Chips
 - **`.chip`:** a label that is not a control: no fill, a 1px hairline at 40% of the text colour, 4px radius, no shadow, normal weight. Used for tool tags and the remote regions at night.
-- **Tool chip:** a `.chip` per tool, 14px body text, with a 16px mono Simple Icons mark before the name that takes `currentColor`. Tools with no mark (Vapi, Twilio, pgvector, BullMQ, Vision model) show the name only. The marks live in `src/lib/brand-marks.ts`.
+- **Tool chip:** a `.chip` per tool, 14px body text, with a 16px mono Simple Icons mark before the name that takes `currentColor`. Tools with no mark (Vapi, pgvector, Pinecone, BullMQ, Effect TS, the AWS and Google Cloud parts, Pi, Antigravity) show the name only. The marks live in `src/lib/brand-marks.ts`.
 
 ### Work
-- **Proof strip:** one `.paper` card in the fold, three cells (AI voice caller, email assistant, restaurant voice AI), each a link into Work with one figure under it. The restaurant link targets the card's detail, so the browser opens the closed `<details>` around it.
-- **Flagship chapter:** title, client, a labelled Result line in italic serif, a short paragraph, an optional client quote, then the system as flat paper steps joined by drawn arrows. The `diagram` field picks the shape: `row` runs across under the text, `column` stands beside it (both are a column on a phone). The role, what was built and the stack sit in a paper `<details>` card that is shut below 768px and always open above it, with no script.
-- **Compact card:** a `.paper` card per remaining client job, a Result line first, an optional client quote, and a "Role and what I built" disclosure.
+- **Proof strip:** one `.paper` card in the fold, three cells (AI voice agent, email assistant, restaurant voice AI), each a link to that project's page under `/work` with one figure under it.
+- **Home teaser:** under "What I built", two `.paper` cards for the flagships (meta line, name, client, Result line in italic serif, a "Read the case study" cue) and one key button, "See all 12 projects".
+- **Work index:** a list of every project with years, and a sticky `.paper` preview card beside it from 1024px. The preview follows hover, focus and a `#job-…` hash. Below 1024px each row prints its Result line instead.
+- **Case page:** a night-sky card (`hour-night`) with the name, client and role, and the Result line in saffron italic serif. Three `.paper` cards follow (the problem, what I built, the stack), then the system diagram for a flagship, an optional client quote and a "Next" pill.
 - **Client quote:** an unedited quote under a 2px ink rule, credited by client name, on the job it backs.
 
 ### Inputs / Fields
@@ -237,9 +238,9 @@ Cut paper: 4px corners on cards, buttons, inputs and the header. Two deliberate 
 - A full-round paper pill riding the foot of each scenery band: a mono time, then a semibold label naming the next hour with a drawn arrow. It is the section-to-section link.
 
 ### Scenery And Mascot
-- **Scenery:** one SVG band per hour, in layers carrying `data-layer` and a `--depth`; layers drift against scroll by depth times 26px, scrubbed by ScrollTrigger in the motion runtime. Clouds, twinkling stars, swaying palms, bobbing dhow and a pulsing lighthouse beam are slow and decorative, hidden from assistive tech. Night stars sit only where there is no text: a strip above the Contact heading and the open sky over the harbour. When a message is sent, the beam sweeps round once (`[data-beam]` in `EFFECTS`, fired by the form's `contact:sent` event).
+- **Scenery:** one SVG band per hour (the dawn band is in the page; the rest, and the camel, are fetched from `/scenes/<name>` as their section nears and inserted as HTML, see `src/components/late-scenery.tsx`), in layers carrying `data-layer` and a `--depth`; layers drift against scroll by depth times 26px, scrubbed by ScrollTrigger in the motion runtime. Clouds, twinkling stars, swaying palms, bobbing dhow and a pulsing lighthouse beam are slow and decorative, hidden from assistive tech. Night stars sit only where there is no text: a strip above the Contact heading and the open sky over the harbour. When a message is sent, the beam sweeps round once (`[data-beam]` in `EFFECTS`, fired by the form's `contact:sent` event).
 - **Camel:** a pixel sprite built from rects (ink, tan, shadow-tan, coral), two-step walk by day that only steps while the page scrolls, lying with floating z's at night. It is hidden below 640px, where text runs the full width, and drawn at 55% until 1600px, so it walks in the side margin without crossing the cards. Motion honours `prefers-reduced-motion`; all of it is off in that mode.
-- **Motion registry:** markup carries `data-*` hooks (`data-land`, `data-diagram`, `data-count`, `data-roll`, `data-camel`, scenery layers) and `EFFECTS` in `src/components/motion-runtime.tsx` is the one table that says what each does. Server markup is the final state; every effect sits inside `prefers-reduced-motion: no-preference`.
+- **Motion registry:** markup carries `data-*` hooks (`data-land`, `data-diagram`, `data-camel`, scenery layers) and `EFFECTS` in `src/lib/motion-effects.ts` is the one table that says what each does (loaded once the page is idle; the load entrance is CSS in `globals.css`). Server markup is the final state; every effect sits inside `prefers-reduced-motion: no-preference`.
 
 ## Do's and Don'ts
 

@@ -84,7 +84,7 @@ jobs:
           set -o pipefail
           node scripts/lighthouse-report.mjs "$PREVIEW_URL" | tee lighthouse.md
 
-      # Both themes, five routes, WCAG 2.2 AA. `CHROMEDRIVER_TEST_PATH` points
+      # Both themes, every route in the sitemap, WCAG 2.2 AA. `CHROMEDRIVER_TEST_PATH` points
       # axe at the runner's own chromedriver, which matches the runner's own
       # Chrome — the one pairing that cannot drift apart.
       - name: Accessibility — blocking

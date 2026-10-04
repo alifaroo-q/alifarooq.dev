@@ -1,6 +1,6 @@
 import { ContactFormSlot } from "@/components/contact-form-slot";
 import { Cue } from "@/components/cue";
-import { Harbour, Stars } from "@/components/scenery";
+import { LateScene } from "@/components/late-scenery";
 import { SectionHead } from "@/components/section-head";
 import {
   BASE_LOCATION,
@@ -25,7 +25,7 @@ export function ContactFooter() {
       className="hour hour-night pt-section pb-[calc(var(--scene-h)*0.85+3rem)]"
       data-hour="night"
     >
-      <Stars />
+      <LateScene name="stars" />
       <SectionHead accent="project?" id="contact" lead="Got a role or a">
         Full-time remote, contract or a single project. Tell me what you need
         and I reply within 24 hours.
@@ -86,7 +86,7 @@ export function ContactFooter() {
           </p>
         </div>
       </div>
-      <Harbour />
+      <LateScene name="harbour" />
     </footer>
   );
 }

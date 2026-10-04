@@ -17,17 +17,18 @@ Two audiences, equal weight (confirmed):
 
 A personal portfolio and proof-of-work site for Ali Farooq, a software engineer based in Karachi, Pakistan, currently "Open to remote roles". Success is a visitor deciding to get in touch, or to open the resume, after checking the claims against the evidence on the page.
 
-The site is one page. Surfaces in the codebase:
+The home page is one scroll, and the full work sits one click away. Surfaces in the codebase:
 
-- Home (`src/app/page.tsx`)
+- Home (`src/app/page.tsx`), with a short "What I built" that shows the two AI systems and links on
+- Work (`/work`), an index of every project with a preview card, and one page per client project (`/work/<slug>`), all fed by `src/lib/work.ts`
 - A contact form (`/api/contact`, Resend, with BotID)
 - A built resume (`resume/` → `public/resume.pdf`)
 
 ## Positioning
 
-Confirmed by the user (2026-10-03): the angle is "AI builder". The page must prove "AI full-stack engineer" in ten seconds by leading with AI systems shipped (the AI voice caller, the email assistant with search and a person who approves), not with coding assistants. The headline is "I build full-stack products with *AI* inside them." The sentence under it names two years at Zenkoders and the 7,000 inbound leads a month that go through the AI caller.
+Confirmed by the user (2026-10-03): the angle is "AI builder". The page must prove "AI full-stack engineer" in ten seconds by leading with AI systems shipped (the AI voice agent, the email assistant with search and a person who approves), not with coding assistants. The headline is "I build full-stack products with *AI* inside them." The sentence under it names two years at Zenkoders and the kinds of AI systems built there: voice agents, email assistants and the backends they run on.
 
-The one title is "AI full-stack engineer" (`PERSON_ROLE`): the fold, the page title, the share card and the `Person` block all print it. Under the headline sits the name line ("Ali Farooq · AI full-stack engineer", with a small portrait on a phone), then the sentence, then a Proof strip that names three systems (AI voice caller, email assistant, restaurant voice AI), each with one figure and a link into Work. The restaurant link opens its card's detail. The primary CTA follows, inside the first 844px on a 390px phone, and the status row comes after it. Every sentence restates something already on the site or resume; no new claims.
+The one title is "AI full-stack engineer" (`PERSON_ROLE`): the fold, the page title, the share card and the `Person` block all print it. Under the headline sits the name line ("Ali Farooq · AI full-stack engineer", with a small portrait on a phone), then the sentence, then a Proof strip that names three systems (AI voice agent, email assistant, restaurant voice AI), each with one figure and a link to its page under `/work`. The primary CTA follows, inside the first 844px on a 390px phone, and the status row comes after it. Every sentence restates something already on the site or resume; no new claims.
 
 ## Availability
 
@@ -37,7 +38,7 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 
 ## Operating Context
 
-- Visitors skim first. The site is one page, and the resume holds the dated detail for readers who want more.
+- Visitors skim first. The home page is one scroll, `/work` holds the detail for readers who want more, and the resume holds the dated record.
 - Most of the work is client work and cannot link to code. As of 2026-10-02 the user chose to name clients. Work names HCPA, Voxena, Mach 1, Tenley, Numlix, MyCFO, Billy's Garage and MarkRegistry. The new resume (`public/resume.pdf`, supplied by the user) names Numlix, Mach 1, Voxena and Billy's Garage.
 - A resume PDF is built from `resume/resume.html` by `pnpm resume:build`.
 
@@ -46,9 +47,9 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 - Next.js 16 App Router, React 19, Tailwind 4, `@base-ui/react`, GSAP motion. There is no MDX or content system; the home copy lives in `page.tsx`. Package manager is pnpm, Node 24.
 - CI gates that design work must not break: JS bundle budget (`budget:js`), Lighthouse report (`budget:perf`), a11y scan (`budget:a11y`) and a prose check (`pnpm prose`). The prose check encodes the house voice.
 - Colour is applied only through tokens in `globals.css`; components set no raw colour values.
-- Work leads with two flagship chapters (AI caller, email assistant), each with a step-by-step system diagram and a detail card that folds shut below 768px. The caller draws its diagram as a row under the text; the email assistant stands its diagram as a column beside the text. Every job leads with a "Result" line. The rest of the client work (the restaurant voice AI among it) is a row of compact cards whose detail opens on demand, then a list of smaller jobs and result-kit.
-- Tools is three groups of flat hairline tags: "AI I ship", "The stack under it" and "AI I build with", then the agent skills Ali wrote, each a plain line on what it does followed by its slug in mono. A tag has a mono Simple Icons mark where one exists. The tags state no skill levels.
-- Motion is one registry: markup carries `data-*` hooks and `EFFECTS` in `src/components/motion-runtime.tsx` says what each hook does, all inside `prefers-reduced-motion: no-preference`.
+- Work is two surfaces. Home shows the two flagships (AI voice agent, email assistant) as cards and a button to `/work`. `/work` lists every project as a row with a preview card beside it, and each client project has a page of its own: a night-sky poster with the name and a Result line, then the problem, what was built and the stack, with the system diagram for a flagship. Smaller jobs and result-kit stay as rows with no page.
+- Tools is three groups of flat hairline tags: "Core stack" (the major languages, frameworks and databases), "Services and cloud" (Vapi, Twilio, ElevenLabs, vector stores, queues, AWS and Google Cloud parts) and "AI I code with" (Claude Code, Copilot and Cursor as the main tools, then the ones used less often). A tag has a mono Simple Icons mark where one exists. The tags state no skill levels.
+- Motion is one registry: markup carries `data-*` hooks and `EFFECTS` in `src/lib/motion-effects.ts` says what each hook does, all inside `prefers-reduced-motion: no-preference`.
 - Contact: `hello@alifarooq.dev`, which the user will forward to `alifarooq122@gmail.com` (set up at the mail/DNS provider, not in this repo). The resume prints the gmail address directly. GitHub `alifaroo-q`; LinkedIn `alifarooqdev`.
 
 ## Brand Commitments
@@ -60,8 +61,8 @@ Open: `resume/resume.html` still says "Backend Engineer, AI Workflow Automation 
 
 ## Evidence on Hand
 
-- The Proof strip and the flagship chapters, with their figures: 7,000 inbound leads a month through the AI caller, 31 to 49 bookings a week from its SMS follow-up, 40 to 50 emails a day per consultant.
-- Client words: two outcome quotes, unedited and credited by client name only. The HCPA quote sits under the AI caller, the Numlix quote on the Numlix card. There is no separate Client words section.
+- The Proof strip and the flagship chapters, with their figures: 7,000 inbound leads a month through the AI voice agent, 31 to 49 bookings a week from its SMS follow-up, 40 to 50 emails a day per consultant.
+- Client words: two outcome quotes, unedited and credited by client name only. The HCPA quote sits under the AI voice agent, the Numlix quote on the Numlix card. There is no separate Client words section.
 - The About caravan: the gold medal (2024) and the Excellence in Work award (2026).
 - Resume at `public/resume.pdf`.
 - Not on hand, so future work must not fabricate them: more testimonials than the quotes on hand (two shown, two thank-you notes left out), quotes credited to a named person, traffic or revenue metrics, press.

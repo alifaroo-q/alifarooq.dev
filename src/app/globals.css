@@ -22,7 +22,8 @@
   --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-spectral), Georgia, serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-mono:
+    ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
 
   /* Corners are barely rounded: the cards are cut paper, not pills. */
   --radius: 4px;
@@ -166,12 +167,14 @@
 @layer base {
   * {
     @apply border-border outline-ring;
+    /* The one scrollbar: thin, ink on cream, on the page and in every box. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink) var(--cream);
   }
 
   html {
     @apply font-sans;
     background-color: var(--ink);
-    scrollbar-color: var(--ink) var(--cream);
     scroll-behavior: smooth;
   }
 
@@ -557,6 +560,47 @@ html[data-hour="night"] [data-nav="contact"] > span {
   }
 }
 
+/* ARRIVING ON LOAD, in CSS so it starts with the first paint and costs no
+   script. The markup is the final state; `both` only supplies the start. The
+   headline has its own entrance, so a fade on top of it would play twice. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+}
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    translate: 0 110%;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-enter] > :not([data-headline]) {
+    animation: enter var(--duration-enter) var(--ease-arrive) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+  [data-enter] > :nth-child(2) {
+    --i: 1;
+  }
+  [data-enter] > :nth-child(3) {
+    --i: 2;
+  }
+  [data-enter] > :nth-child(4) {
+    --i: 3;
+  }
+  [data-enter] > :nth-child(5) {
+    --i: 4;
+  }
+  [data-enter] > :nth-child(6) {
+    --i: 5;
+  }
+  [data-word] {
+    animation: word-rise 900ms cubic-bezier(0.165, 0.84, 0.44, 1) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+
 @view-transition {
   navigation: auto;
 }
@@ -701,45 +745,5 @@ html[data-hour="night"] [data-camel] [data-pose="sleep"] {
   to {
     opacity: 0;
     translate: 6px -10px;
-  }
-}
-
-/* A figure that counts and a time that rolls. The runtime lays an aria-hidden
-   copy over the real text; the real glyphs go see-through under it, by fill
-   and not by colour, so screen readers and search keep the real value. */
-[data-count] {
-  position: relative;
-  font-variant-numeric: tabular-nums;
-}
-[data-roll] {
-  position: relative;
-}
-:has(> [data-copy]) {
-  -webkit-text-fill-color: transparent;
-}
-[data-copy] {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  text-align: right;
-  white-space: pre;
-  -webkit-text-fill-color: currentColor;
-}
-[data-copy] > span {
-  display: block;
-}
-
-/* A flagship's detail card folds shut on a phone and is always open from
-   768px, with no script. Where `::details-content` is not supported the card
-   stays a working disclosure at every width. */
-@supports selector(::details-content) {
-  @media (min-width: 768px) {
-    [data-open-wide]::details-content {
-      content-visibility: visible;
-      display: block;
-    }
-    [data-open-wide] > summary {
-      display: none;
-    }
   }
 }

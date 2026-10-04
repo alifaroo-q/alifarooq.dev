@@ -28,7 +28,11 @@ export function Headline({
       {parts.map((part, i) => (
         <span key={part.key}>
           <span className="-mb-[0.14em] inline-block overflow-hidden pb-[0.14em] align-bottom">
-            <span className="inline-block" data-word>
+            <span
+              className="inline-block"
+              data-word
+              style={{ "--i": i } as React.CSSProperties}
+            >
               {part.accent ? (
                 <em className="accent">{part.word}</em>
               ) : (

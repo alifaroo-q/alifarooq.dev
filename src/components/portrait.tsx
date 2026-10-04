@@ -8,7 +8,8 @@ import { PERSON_NAME, PORTRAIT_SRC } from "@/lib/site";
  * that sits half behind the frame, so the photograph reads as somebody
  * standing in the morning. The image is square at 640px and shown at a fraction
  * of that, which is the retina copy; width and height are stated so the box
- * costs no layout shift.
+ * costs no layout shift. It is not preloaded: below `lg` its box is hidden and
+ * a preload would fetch a picture nobody sees on a phone.
  */
 export function Portrait({ className }: { className?: string }) {
   return (
@@ -23,7 +24,6 @@ export function Portrait({ className }: { className?: string }) {
             alt={PERSON_NAME}
             className="aspect-[4/5] w-full object-cover object-top"
             height={400}
-            priority
             sizes="(min-width: 768px) 19rem, 80vw"
             src={PORTRAIT_SRC}
             width={320}

@@ -1,4 +1,5 @@
 import { Cue } from "@/components/cue";
+import { PERSON_NAME, RESUME_HREF } from "@/lib/site";
 
 /**
  * The floating bar.
@@ -12,13 +13,17 @@ import { Cue } from "@/components/cue";
  * sits on the inner span, so it stays the width of the word. */
 const NAV_LINK = "inline-flex h-11 min-w-11 items-center justify-center";
 
+/** Off the home page, the links to its hours go through `/`. */
 export function SiteHeader({
-  name,
-  resumeHref,
+  name = PERSON_NAME,
+  resumeHref = RESUME_HREF,
+  home = false,
 }: {
-  name: string;
-  resumeHref: string;
+  name?: string;
+  resumeHref?: string;
+  home?: boolean;
 }) {
+  const at = home ? "" : "/";
   return (
     <header className="fixed inset-x-0 top-3 z-30" data-site-header>
       <div className="wrap">
@@ -37,20 +42,20 @@ export function SiteHeader({
             aria-label="Primary"
             className="flex font-medium min-[400px]:gap-1 sm:gap-6"
           >
-            <a className={NAV_LINK} data-nav="work" href="#jobs">
+            <a className={NAV_LINK} data-nav="work" href="/work">
               <span>Work</span>
             </a>
-            <a className={NAV_LINK} data-nav="how" href="#how">
+            <a className={NAV_LINK} data-nav="how" href={`${at}#how`}>
               <span className="sm:hidden">How</span>
               <span className="hidden sm:inline">How I work</span>
             </a>
-            <a className={NAV_LINK} data-nav="tools" href="#tools">
+            <a className={NAV_LINK} data-nav="tools" href={`${at}#tools`}>
               <span>Tools</span>
             </a>
-            <a className={NAV_LINK} data-nav="about" href="#about">
+            <a className={NAV_LINK} data-nav="about" href={`${at}#about`}>
               <span>About</span>
             </a>
-            <a className={NAV_LINK} data-nav="contact" href="#contact">
+            <a className={NAV_LINK} data-nav="contact" href={`${at}#contact`}>
               <span>Contact</span>
             </a>
           </nav>
@@ -58,10 +63,10 @@ export function SiteHeader({
             className="inline-flex h-11 min-w-11 items-center justify-center font-semibold ink-link"
             href={resumeHref}
           >
-            <span className="min-[400px]:hidden">
+            <span className="sm:hidden">
               <Cue label="CV ↗" />
             </span>
-            <span className="hidden min-[400px]:inline">
+            <span className="hidden sm:inline">
               <Cue label="Resume ↗" />
             </span>
           </a>
