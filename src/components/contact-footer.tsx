@@ -19,7 +19,11 @@ import {
  * and a lighthouse. The form sits in a cream card, which resets the tokens to
  * day ink, so it is as legible here as the cards were at noon.
  */
-export function ContactFooter() {
+export function ContactFooter({
+  regions = REMOTE_REGIONS,
+}: {
+  regions?: readonly string[];
+}) {
   return (
     <footer
       className="hour hour-night pt-section pb-[calc(var(--scene-h)*0.85+3rem)]"
@@ -70,7 +74,7 @@ export function ContactFooter() {
             hours. Open to roles in:
           </p>
           <ul className="mt-tight flex flex-wrap gap-2.5">
-            {REMOTE_REGIONS.map((region) => (
+            {regions.map((region) => (
               <li className="chip px-3 py-1 text-sm" key={region}>
                 {region}
               </li>

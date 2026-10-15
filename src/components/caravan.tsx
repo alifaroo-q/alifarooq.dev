@@ -68,26 +68,38 @@ function Camel({ ghost }: { ghost: boolean }) {
 
 /** The caravan at dusk: each stop a camel with its tag hung under it. */
 export function Caravan({ stops }: { stops: readonly Stop[] }) {
+  // Three to a row. The trail is one stroke across one row, so it is drawn
+  // only for two or three stops; a fourth wraps and would have no trail.
+  const columns = Math.min(Math.max(stops.length, 1), 3);
   return (
     <div className="wrap relative mt-group">
-      <svg
-        aria-hidden="true"
-        className="absolute inset-x-6 top-[6.25rem] hidden h-10 w-[calc(100%-3rem)] md:block"
-        preserveAspectRatio="none"
-        viewBox="0 0 1200 40"
+      {stops.length > 1 && stops.length <= 3 ? (
+        <svg
+          aria-hidden="true"
+          className="absolute inset-x-6 top-[6.25rem] hidden h-10 w-[calc(100%-3rem)] md:block"
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 40"
+        >
+          <path
+            d="M0 20 C200 6 400 30 600 18 S1000 8 1200 20"
+            fill="none"
+            className="stroke-trail"
+            strokeDasharray="10 14"
+            strokeLinecap="round"
+            strokeWidth="4"
+          />
+        </svg>
+      ) : null}
+      <ol
+        className="relative grid gap-12 md:grid-cols-[repeat(var(--n),minmax(0,1fr))] md:gap-8"
+        data-land
+        style={{ "--n": columns } as React.CSSProperties}
       >
-        <path
-          d="M0 20 C200 6 400 30 600 18 S1000 8 1200 20"
-          fill="none"
-          className="stroke-trail"
-          strokeDasharray="10 14"
-          strokeLinecap="round"
-          strokeWidth="4"
-        />
-      </svg>
-      <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8" data-land>
         {stops.map((stop) => (
-          <li className="flex flex-col items-start" key={stop.title}>
+          <li
+            className="flex flex-col items-start"
+            key={`${stop.span}:${stop.title}`}
+          >
             <Camel ghost={stop.kind === "next"} />
             <span
               aria-hidden="true"
@@ -104,7 +116,7 @@ export function Caravan({ stops }: { stops: readonly Stop[] }) {
                 <p className="text-foreground-muted">{stop.title}</p>
                 <ul className="mt-3 grid gap-1.5 text-sm">
                   {stop.moments.map((m) => (
-                    <li className="flex gap-3" key={m.what}>
+                    <li className="flex gap-3" key={`${m.when}:${m.what}`}>
                       <span className="w-16 shrink-0 pt-0.5 font-mono text-foreground-label text-xs">
                         {m.when}
                       </span>
