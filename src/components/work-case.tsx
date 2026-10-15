@@ -8,7 +8,7 @@ import {
   Meta,
   Quote,
 } from "@/components/work-parts";
-import { caseSub, caseTitle, stackTools } from "@/lib/work";
+import { caseHref, caseSub, caseTitle, stackTools } from "@/lib/work";
 
 const isFlagship = (job: Job): job is Flagship => "flow" in job;
 
@@ -66,6 +66,20 @@ export function WorkCase({ job }: { job: Job }) {
         <Quote className="mt-12 max-w-3xl text-xl" job={job} />
       ) : null}
     </article>
+  );
+}
+
+/** The pill at the foot of a case page that leads to the next case. */
+export function NextCase({ next }: { next: Job }) {
+  return (
+    <div className="mt-section flex justify-end">
+      <a
+        className="pill min-h-11 gap-3 px-4 py-2 font-semibold text-sm"
+        href={caseHref(next)}
+      >
+        Next: {caseTitle(next)} <Arrow />
+      </a>
+    </div>
   );
 }
 

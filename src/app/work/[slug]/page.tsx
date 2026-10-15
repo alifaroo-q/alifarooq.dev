@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContactFooter } from "@/components/contact-footer";
-import { Arrow } from "@/components/cue";
 import { LateScene } from "@/components/late-scenery";
 import { SiteHeader } from "@/components/site-header";
-import { BackLink, WorkCase } from "@/components/work-case";
+import { BackLink, NextCase, WorkCase } from "@/components/work-case";
 import { pageMetadata } from "@/lib/metadata";
 import {
   CASES,
@@ -54,14 +53,7 @@ export default async function CasePage({ params }: Props) {
               <BackLink />
             </div>
             <WorkCase job={job} />
-            <div className="mt-section flex justify-end">
-              <a
-                className="pill min-h-11 gap-3 px-4 py-2 font-semibold text-sm"
-                href={caseHref(next)}
-              >
-                Next: {caseTitle(next)} <Arrow />
-              </a>
-            </div>
+            <NextCase next={next} />
           </div>
           <LateScene name="fishMarket" />
         </section>

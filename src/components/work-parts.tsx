@@ -43,7 +43,6 @@ export function Meta({ job }: { job: Job }) {
   return (
     <p className={`flex flex-wrap items-center gap-x-3 gap-y-1 ${LABEL}`}>
       {job.years}
-      <span aria-hidden="true">·</span>
       <span className="inline-flex items-center gap-2">
         <span
           aria-hidden="true"

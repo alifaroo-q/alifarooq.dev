@@ -43,7 +43,8 @@ export function Arrow({
 
 /**
  * A call to action whose trailing arrow is drawn separately, so it can lean
- * toward where the link goes. The words before it are the label.
+ * toward where the link goes. The words before it are the label. Only a
+ * trailing arrow is drawn; one inside the label stays the typed character.
  */
 export function Cue({ label }: { label: string }) {
   const arrow = TRAILING_ARROW.exec(label);
