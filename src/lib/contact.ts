@@ -12,12 +12,32 @@ import { z } from "zod";
  * The messages are the ones a visitor reads next to the field they got wrong
  * (#24, story 30), so they say what the field wants rather than naming a rule.
  */
+export const NAME_MAX = 80;
+export const MESSAGE_MAX = 4000;
+
+/**
+ * Characters as a person counts them. `.length` counts UTF-16 units, so an
+ * emoji costs 2 and a family emoji 11; a message that looks like 3,000
+ * characters would be refused as over 4,000.
+ */
+export function characterCount(text: string) {
+  let count = 0;
+  for (const _ of new Intl.Segmenter().segment(text)) count++;
+  return count;
+}
+
+// The `.max()` on each text field is a cheap ceiling so the segmenter is never
+// run on a megabyte body; the refine is the limit a reader is told about.
 export const contactSchema = z.object({
   name: z
     .string()
     .trim()
     .min(2, "A name, so I know who I'm replying to.")
-    .max(80, "Shorter than 80 characters."),
+    .max(NAME_MAX * 8, "Shorter than 80 characters.")
+    .refine(
+      (v) => characterCount(v) <= NAME_MAX,
+      "Shorter than 80 characters.",
+    ),
   email: z
     .email("An address a reply can reach.")
     .max(160, "Shorter than 160 characters."),
@@ -25,7 +45,11 @@ export const contactSchema = z.object({
     .string()
     .trim()
     .min(20, "A little more than this. 20 characters at least.")
-    .max(4000, "Shorter than 4000 characters."),
+    .max(MESSAGE_MAX * 8, "Shorter than 4000 characters.")
+    .refine(
+      (v) => characterCount(v) <= MESSAGE_MAX,
+      "Shorter than 4000 characters.",
+    ),
 });
 
 export type ContactMessage = z.infer<typeof contactSchema>;

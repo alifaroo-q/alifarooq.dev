@@ -14,9 +14,11 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   type ContactMessage,
   type ContactResponse,
+  characterCount,
   contactSchema,
   ELAPSED_FIELD,
   HONEYPOT_FIELD,
+  MESSAGE_MAX,
 } from "@/lib/contact";
 import { CONTACT_SENT } from "@/lib/contact-sent";
 import { ACTION_CLASS, CONTACT_EMAIL } from "@/lib/site";
@@ -41,7 +43,7 @@ import { cn } from "@/lib/utils";
  * route to send it (#24, stories 31 and 32).
  */
 
-type Status = "editing" | "sending" | "sent" | "failed";
+export type Status = "editing" | "sending" | "sent" | "failed";
 
 /** What a field hands its control so the two agree about being wrong. */
 type ControlProps = {
@@ -89,8 +91,15 @@ function ContactField({
   );
 }
 
-export function ContactForm() {
-  const [status, setStatus] = useState<Status>("editing");
+export function ContactForm({
+  defaultValues,
+  initialStatus = "editing",
+}: {
+  /** Seeds the fields; the dev-only worst-case route is the one caller. */
+  defaultValues?: Partial<ContactMessage>;
+  initialStatus?: Status;
+} = {}) {
+  const [status, setStatus] = useState<Status>(initialStatus);
 
   // Set on the client at first render, which — because this component is
   // loaded on scroll — is when the reader arrived at the footer.
@@ -101,13 +110,19 @@ export function ContactForm() {
     register,
     handleSubmit,
     setError,
+    watch,
     formState: { errors },
   } = useForm<ContactMessage>({
+    defaultValues,
     resolver: zodResolver(contactSchema),
     // Quiet until a field has been left, then live. Validating on every
     // keystroke marks a field wrong while it is still being typed.
     mode: "onTouched",
   });
+
+  // Shown from 90% of the limit, so the box does not carry a counter a short
+  // message never needs.
+  const messageCount = characterCount(watch("message") ?? "");
 
   const onSubmit = handleSubmit(async (values) => {
     setStatus("sending");
@@ -157,7 +172,7 @@ export function ContactForm() {
 
   return (
     <form noValidate onSubmit={onSubmit}>
-      <FieldGroup>
+      <FieldGroup inert={status === "sending"}>
         <ContactField
           control={(props) => (
             <Input
@@ -191,7 +206,21 @@ export function ContactForm() {
 
         <ContactField
           control={(props) => (
-            <Textarea rows={6} {...props} {...register("message")} />
+            <>
+              <Textarea rows={6} {...props} {...register("message")} />
+              {messageCount >= MESSAGE_MAX * 0.9 ? (
+                <p
+                  className={cn(
+                    "text-sm tabular-nums",
+                    messageCount > MESSAGE_MAX
+                      ? "text-error"
+                      : "text-foreground-muted",
+                  )}
+                >
+                  {messageCount} / {MESSAGE_MAX}
+                </p>
+              ) : null}
+            </>
           )}
           error={errors.message}
           label="What you need"
