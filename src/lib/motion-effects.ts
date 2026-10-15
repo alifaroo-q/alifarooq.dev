@@ -53,7 +53,7 @@ const MOTION = {
   /** 70ms a slot. The container decides how many slots there are. */
   step: 0.07,
   scrubStart: "top 92%",
-  scrubEnd: "top 55%",
+  scrubEnd: "top 75%",
   /** Cards land as they come into view. */
   landAt: "top 88%",
   /** Seconds of catch-up. Enough to smooth a trackpad, short enough to track. */

@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 /* ==========================================================================
@@ -361,10 +360,15 @@
     translate var(--duration-hover) var(--ease-arrive),
     box-shadow var(--duration-hover) var(--ease-arrive);
 }
-.pill:hover,
 .pill:focus-visible {
   translate: -1px -1px;
   box-shadow: 5px 5px 0 0 var(--ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pill:hover {
+    translate: -1px -1px;
+    box-shadow: 5px 5px 0 0 var(--ink);
+  }
 }
 .pill:active {
   translate: 2px 2px;
@@ -406,9 +410,11 @@
     translate var(--duration-hover) var(--ease-arrive),
     box-shadow var(--duration-hover) var(--ease-arrive);
 }
-.key:hover {
-  translate: -2px -2px;
-  box-shadow: 6px 6px 0 0 var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .key:hover {
+    translate: -2px -2px;
+    box-shadow: 6px 6px 0 0 var(--ink);
+  }
 }
 .key:active {
   translate: 3px 3px;
@@ -443,10 +449,12 @@ em.accent {
   text-decoration-thickness: 2px;
   text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   text-underline-offset: 0.22em;
-  transition: text-decoration-color var(--duration-hover) linear;
+  transition: text-decoration-color var(--duration-hover) ease;
 }
-.ink-link:hover {
-  text-decoration-color: currentColor;
+@media (hover: hover) and (pointer: fine) {
+  .ink-link:hover {
+    text-decoration-color: currentColor;
+  }
 }
 
 /* A text link whose line is shorter than a thumb. The tap area grows to 44px
@@ -527,19 +535,29 @@ html[data-hour="night"] [data-site-header] .paper {
 /* The nav lights the link of the hour the reader is in. `HourWatcher` writes
    `data-hour` on <html>; nothing else needs to know. */
 [data-nav] > span {
-  background-image: linear-gradient(var(--coral), var(--coral));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0 3px;
-  transition: background-size var(--duration-hover) var(--ease-arrive);
+  position: relative;
 }
-[data-nav]:hover > span,
-html[data-hour="morning"] [data-nav="work"] > span,
-html[data-hour="noon"] [data-nav="how"] > span,
-html[data-hour="golden"] [data-nav="tools"] > span,
-html[data-hour="dusk"] [data-nav="about"] > span,
-html[data-hour="night"] [data-nav="contact"] > span {
-  background-size: 100% 3px;
+[data-nav] > span::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: var(--coral);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-hover) var(--ease-arrive);
+}
+html[data-hour="morning"] [data-nav="work"] > span::after,
+html[data-hour="noon"] [data-nav="how"] > span::after,
+html[data-hour="golden"] [data-nav="tools"] > span::after,
+html[data-hour="dusk"] [data-nav="about"] > span::after,
+html[data-hour="night"] [data-nav="contact"] > span::after {
+  transform: scaleX(1);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-nav]:hover > span::after {
+    transform: scaleX(1);
+  }
 }
 
 /* Form fields are labelled by the hour they sit in; the field's label warms up
@@ -555,7 +573,7 @@ html[data-hour="night"] [data-nav="contact"] > span {
 @media (prefers-reduced-motion: reduce) {
   .pill,
   .key,
-  [data-nav] > span {
+  [data-nav] > span::after {
     transition: none;
   }
 }
@@ -604,22 +622,26 @@ html[data-hour="night"] [data-nav="contact"] > span {
 @view-transition {
   navigation: auto;
 }
+/* A page arrives over the one it replaces. The old page holds still and
+   opaque underneath: the UA default blends both snapshots with `plus-lighter`,
+   and two different curves would sum past 1 and flash. The header is named so
+   it is not part of the root snapshot and does not slide with the page. */
+[data-site-header] {
+  view-transition-name: site-header;
+}
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root) {
-    animation: page-leave var(--duration-page) linear both;
+    animation: none;
+    mix-blend-mode: normal;
   }
   ::view-transition-new(root) {
     animation: page-arrive var(--duration-page) var(--ease-arrive) both;
+    mix-blend-mode: normal;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   @view-transition {
     navigation: none;
-  }
-}
-@keyframes page-leave {
-  to {
-    opacity: 0;
   }
 }
 @keyframes page-arrive {
