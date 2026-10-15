@@ -32,7 +32,7 @@ export function WorkCase({ job }: { job: Job }) {
           {job.result}
         </p>
       </div>
-      <div className="mt-10 grid gap-8 md:grid-cols-3">
+      <div className="mt-10 grid gap-8 md:grid-cols-3" data-land>
         <section className="paper p-6">
           <h2 className={LABEL}>The problem</h2>
           <p className="mt-3 text-foreground-muted">{job.about}</p>

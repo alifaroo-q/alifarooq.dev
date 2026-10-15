@@ -85,7 +85,7 @@ export function Caravan({ stops }: { stops: readonly Stop[] }) {
           strokeWidth="4"
         />
       </svg>
-      <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8">
+      <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8" data-land>
         {stops.map((stop) => (
           <li className="flex flex-col items-start" key={stop.title}>
             <Camel ghost={stop.kind === "next"} />

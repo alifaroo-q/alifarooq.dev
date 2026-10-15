@@ -140,7 +140,11 @@ export function ContactForm() {
 
   if (status === "sent") {
     return (
-      <p className="grid min-h-96 content-center gap-3" role="status">
+      <p
+        className="grid min-h-96 content-center gap-3"
+        data-enter
+        role="status"
+      >
         <span className="font-bold font-display text-[clamp(2.125rem,5vw,3.75rem)] leading-none tracking-[-0.03em]">
           Sent.
         </span>{" "}

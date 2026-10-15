@@ -737,6 +737,26 @@ html[data-hour="night"] [data-nav="contact"] > span::after {
   }
 }
 
+/* A message that appears inside a form (a field's error, a failed send) comes
+   in over the hover beat: a short rise and a fade, so it does not pop. Reduced
+   motion keeps the fade and drops the travel. */
+@keyframes enter-sm {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  form [role="alert"] {
+    animation: enter-sm var(--duration-hover) var(--ease-arrive) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  form [role="alert"] {
+    animation: page-fade var(--duration-hover) ease-out both;
+  }
+}
+
 /* The arrows lean toward where the link goes. */
 .cue-arrow {
   display: inline-block;
