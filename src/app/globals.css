@@ -440,7 +440,8 @@ a.paper:active {
    and links carry the hard shadow and the solid edge that say "press me". */
 .chip {
   display: inline-flex;
-  align-items: center;
+  /* A label that wraps keeps its mark beside the first line, not the middle. */
+  align-items: flex-start;
   color: var(--foreground);
   border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
   border-radius: var(--radius);

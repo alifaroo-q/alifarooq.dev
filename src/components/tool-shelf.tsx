@@ -14,7 +14,9 @@ type Row = {
 
 const t = (label: string, mark?: Tool["mark"]): Tool => ({ label, mark });
 
-const GROUPS: { title: string; lede: string; rows: Row[] }[] = [
+export type ToolGroup = { title: string; lede: string; rows: Row[] };
+
+const GROUPS: ToolGroup[] = [
   {
     title: "Core stack",
     lede: "What most of my work runs on.",
@@ -111,7 +113,7 @@ function Chip({ tool }: { tool: Tool }) {
       {tool.mark ? (
         <svg
           aria-hidden="true"
-          className="size-4 shrink-0"
+          className="mt-[calc((1lh-1rem)/2)] size-4 shrink-0"
           fill="currentColor"
           focusable="false"
           viewBox="0 0 24 24"
@@ -126,6 +128,7 @@ function Chip({ tool }: { tool: Tool }) {
 }
 
 function ChipRow({ row }: { row: Row }) {
+  if (row.tools.length === 0) return null;
   return (
     <div>
       {row.label ? (
@@ -133,7 +136,7 @@ function ChipRow({ row }: { row: Row }) {
           {row.mark ? (
             <svg
               aria-hidden="true"
-              className="size-4"
+              className="size-4 shrink-0"
               fill="currentColor"
               focusable="false"
               viewBox="0 0 24 24"
@@ -154,10 +157,11 @@ function ChipRow({ row }: { row: Row }) {
   );
 }
 
-export function ToolShelf() {
+export function ToolShelf({ groups = GROUPS }: { groups?: ToolGroup[] }) {
+  if (groups.length === 0) return null;
   return (
     <div className="wrap mt-group grid gap-10 lg:gap-12" data-land>
-      {GROUPS.map((group) => (
+      {groups.map((group) => (
         <section
           className="grid gap-4 md:grid-cols-[14rem_1fr] md:gap-10"
           key={group.title}
