@@ -60,7 +60,7 @@ export function SiteHeader({
             </a>
           </nav>
           <a
-            className="inline-flex h-11 min-w-11 items-center justify-center font-semibold ink-link"
+            className="inline-flex h-11 min-w-11 items-center justify-center font-semibold ink-link max-[359px]:hidden"
             href={resumeHref}
           >
             <span className="sm:hidden">

@@ -175,6 +175,20 @@
     @apply font-sans;
     background-color: var(--ink);
     scroll-behavior: smooth;
+    /* The browser's own tap flash would sit on top of the press states below. */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* No double-tap-zoom wait on a control, and a long press never selects its
+     label. Body text stays selectable. */
+  :where(a, button) {
+    touch-action: manipulation;
+  }
+  :where(button, .key, .pill, [data-nav]) {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 
   body {
@@ -300,11 +314,15 @@
   margin-inline: auto;
   width: 100%;
   max-width: 76rem;
-  padding-inline: 1.5rem;
+  /* `viewport-fit=cover` lets the page under the landscape notch; the gutter
+     grows to clear it. */
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
 }
 @media (min-width: 768px) {
   .wrap {
-    padding-inline: 2.5rem;
+    padding-left: max(2.5rem, env(safe-area-inset-left));
+    padding-right: max(2.5rem, env(safe-area-inset-right));
   }
 }
 
@@ -544,10 +562,12 @@ em.accent {
    -------------------------------------------------------------------------- */
 
 /* Below 400px the bar takes a narrower gutter than the page, so the five
-   links keep one line each down to a 320px screen. */
+   links keep one line each down to a 320px screen. The résumé link needs 360px
+   beside them; under that it lives in the contact footer only. */
 @media (max-width: 399px) {
   [data-site-header] .wrap {
-    padding-inline: 0.75rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
   }
 }
 
@@ -765,10 +785,19 @@ html[data-hour="night"] [data-nav="contact"] > span::after {
   .cue-arrow {
     transition: translate var(--duration-hover) var(--ease-arrive);
   }
-  :where(a:hover, a:focus-visible) .cue-arrow {
+  :where(a:focus-visible) .cue-arrow {
     translate: 0.25em 0;
   }
-  :where(a:hover, a:focus-visible) .cue-arrow[data-dir="down"] {
+  :where(a:focus-visible) .cue-arrow[data-dir="down"] {
+    translate: 0 0.25em;
+  }
+}
+/* On touch, :hover sticks after a tap, so the lean waits for a real pointer. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  :where(a:hover) .cue-arrow {
+    translate: 0.25em 0;
+  }
+  :where(a:hover) .cue-arrow[data-dir="down"] {
     translate: 0 0.25em;
   }
 }

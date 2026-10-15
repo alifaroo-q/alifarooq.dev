@@ -160,7 +160,12 @@ export function ContactForm() {
       <FieldGroup>
         <ContactField
           control={(props) => (
-            <Input autoComplete="name" {...props} {...register("name")} />
+            <Input
+              autoComplete="name"
+              autoCorrect="off"
+              {...props}
+              {...register("name")}
+            />
           )}
           error={errors.name}
           label="Name"
@@ -170,7 +175,9 @@ export function ContactForm() {
         <ContactField
           control={(props) => (
             <Input
+              autoCapitalize="none"
               autoComplete="email"
+              autoCorrect="off"
               inputMode="email"
               type="email"
               {...props}

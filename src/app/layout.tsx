@@ -57,6 +57,10 @@ export const metadata: Metadata = rootMetadata(description);
 // reader sees. There is no dark scheme: the dark half of the day is a section.
 export const viewport: Viewport = {
   themeColor: "#f7cfae",
+  // Paint under the notch in landscape (`.wrap` pads back out) and let the
+  // keyboard shrink the layout viewport on Android as it does on iOS.
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
