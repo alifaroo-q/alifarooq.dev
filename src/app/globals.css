@@ -505,25 +505,27 @@ em.accent {
   z-index: -1;
   background: var(--header-sky, transparent);
 }
-html[data-hour="dawn"] {
+/* Set on the header, not on <html>: a custom property is inherited, so one
+   written on the root restyles the whole document each time the hour flips. */
+html[data-hour="dawn"] [data-site-header] {
   --header-sky: var(--sky-dawn-a);
 }
-html[data-hour="morning"] {
+html[data-hour="morning"] [data-site-header] {
   --header-sky: var(--sky-morning-a);
 }
-html[data-hour="noon"] {
+html[data-hour="noon"] [data-site-header] {
   --header-sky: var(--sky-noon-a);
 }
-html[data-hour="golden"] {
+html[data-hour="golden"] [data-site-header] {
   --header-sky: var(--sky-golden-a);
 }
-html[data-hour="evening"] {
+html[data-hour="evening"] [data-site-header] {
   --header-sky: var(--sky-evening-a);
 }
-html[data-hour="dusk"] {
+html[data-hour="dusk"] [data-site-header] {
   --header-sky: var(--sky-dusk-a);
 }
-html[data-hour="night"] {
+html[data-hour="night"] [data-site-header] {
   --header-sky: var(--sky-night-a);
 }
 
