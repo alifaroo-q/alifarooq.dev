@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { PERSON_NAME } from "@/lib/site";
 
 /**
  * The share card: one template, three fills (#16).
@@ -65,6 +66,69 @@ export const ogFonts = [
   },
 ] as const;
 
+// The card's text is set in a monospace face, 0.6em to a character, in a box
+// 1040px wide (1200 less the 80px padding each side). Satori does no
+// shrink-to-fit, so the fit is done here from those two numbers.
+const BOX_WIDTH = 1040;
+const ADVANCE = 0.6;
+const LINE_HEIGHT = 1.1;
+// What the headline may take: the card less the rule, the footline's box and,
+// when there is an eyebrow, its line and margin.
+const HEADLINE_HEIGHT = 440;
+const HEADLINE_HEIGHT_WITH_EYEBROW = 390;
+const MIN_SIZE = 44;
+const EYEBROW_CHARS = 56;
+
+/** Scripts whose shaping the renderer cannot do: it throws, and no card is made. */
+const UNSHAPEABLE =
+  /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/u;
+// The emoji glyph is fetched from a CDN at render time, which makes the build
+// depend on the network for one picture.
+const EMOJI = /\p{Extended_Pictographic}|\u200D|\uFE0F/gu;
+
+/** Text the renderer can set, or `undefined` when none of it can be. */
+function printable(text: string | undefined) {
+  if (!text || UNSHAPEABLE.test(text)) return undefined;
+  return text.replace(EMOJI, "").replace(/\s+/g, " ").trim() || undefined;
+}
+
+/** Lines `text` takes at `size`, breaking at spaces and after a hyphen or slash. */
+function lineCount(text: string, size: number) {
+  const perLine = Math.max(1, Math.floor(BOX_WIDTH / (size * ADVANCE)));
+  let lines = 1;
+  let used = 0;
+  for (const token of text.split(/(?<=[-/])|\s+/u)) {
+    const remaining = token.length;
+    if (used > 0 && used + 1 + remaining <= perLine) {
+      used += 1 + remaining;
+      continue;
+    }
+    if (used > 0) lines++;
+    // The renderer does not break inside a word, so a word wider than the box
+    // does not fit at this size at all.
+    if (remaining > perLine) return Number.POSITIVE_INFINITY;
+    used = remaining;
+  }
+  return lines;
+}
+
+/** The largest size, at most `max`, at which the headline fits the box. */
+function fitHeadline(text: string, max: number, height: number) {
+  for (let size = max; size >= MIN_SIZE; size -= 4) {
+    if (lineCount(text, size) * size * LINE_HEIGHT <= height) {
+      return { text, size, breakAnywhere: false };
+    }
+  }
+  // Nothing fits: break anywhere and cut it, rather than let it run off the card.
+  const perLine = Math.floor(BOX_WIDTH / (MIN_SIZE * ADVANCE));
+  const lines = Math.floor(height / (MIN_SIZE * LINE_HEIGHT));
+  const cut =
+    text.length > perLine * lines
+      ? `${text.slice(0, perLine * lines - 1).trimEnd()}…`
+      : text;
+  return { text: cut, size: MIN_SIZE, breakAnywhere: true };
+}
+
 /**
  * The template.
  *
@@ -76,10 +140,10 @@ export const ogFonts = [
  * The home card fills it with the name, then the umbrella role under the rule.
  */
 export function OgCard({
-  eyebrow,
-  headline,
-  headlineSize,
-  footline,
+  eyebrow: eyebrowIn,
+  headline: headlineIn,
+  headlineSize: maxSize,
+  footline: footlineIn,
   footlineSize,
   footlineTone,
 }: {
@@ -94,6 +158,23 @@ export function OgCard({
       which is a caption and must not compete with the headline above it. */
   footlineTone: "muted" | "label";
 }) {
+  const eyebrowText = printable(eyebrowIn);
+  const eyebrow =
+    eyebrowText && eyebrowText.length > EYEBROW_CHARS
+      ? `${eyebrowText.slice(0, EYEBROW_CHARS - 1).trimEnd()}…`
+      : eyebrowText;
+  // A headline that cannot be set falls back to the name rather than failing
+  // the whole card, which is a shared link with no preview.
+  const {
+    text: headline,
+    size: headlineSize,
+    breakAnywhere,
+  } = fitHeadline(
+    printable(headlineIn) ?? PERSON_NAME,
+    maxSize,
+    eyebrow ? HEADLINE_HEIGHT_WITH_EYEBROW : HEADLINE_HEIGHT,
+  );
+  const footline = printable(footlineIn) ?? "";
   return (
     <div
       style={{
@@ -136,6 +217,7 @@ export function OgCard({
           style={{
             display: "flex",
             fontSize: headlineSize,
+            wordBreak: breakAnywhere ? "break-all" : "normal",
             fontWeight: 500,
             lineHeight: 1.1,
             letterSpacing: "-0.02em",
