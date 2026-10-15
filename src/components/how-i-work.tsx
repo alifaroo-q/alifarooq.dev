@@ -1,14 +1,14 @@
 import { Cue } from "@/components/cue";
 import { workHref } from "@/lib/work";
 
-const STANCE =
+export const STANCE =
   "I own the system around the model: the data, the queues, the guards and the person who checks its work.";
-const SUB =
+export const SUB =
   "I work close to the client. I learn how their business runs, then build a tool that fits it.";
-const CLOSING =
+export const CLOSING =
   "Because code is cheap, I can try ideas that cost too much to try before.";
 
-const LOOP = [
+export const LOOP: { step: string; line: string }[] = [
   {
     step: "Ask",
     line: "I sit with the client or product owner and ask questions until I can write the requirement down in plain words.",
@@ -31,13 +31,13 @@ const LOOP = [
   },
 ];
 
-type Rule = {
+export type Rule = {
   title: string;
   line: string;
   links: readonly { href: string; label: string }[];
 };
 
-const RULES: Rule[] = [
+export const RULES: Rule[] = [
   {
     title: "I name every error a function can return.",
     line: "I model the errors I expect as values with Result and Option types, and I try to list all of them. Today I use Effect TS for this. Rules that must hold live in the database.",
@@ -68,15 +68,38 @@ const RULES: Rule[] = [
   },
 ];
 
-function Rules({ className = "" }: { className?: string }) {
+export type HowContent = {
+  stance: string;
+  sub: string;
+  loop: typeof LOOP;
+  closing: string;
+  rules: Rule[];
+};
+
+const CONTENT: HowContent = {
+  stance: STANCE,
+  sub: SUB,
+  loop: LOOP,
+  closing: CLOSING,
+  rules: RULES,
+};
+
+function Rules({
+  className = "",
+  rules,
+}: {
+  className?: string;
+  rules: Rule[];
+}) {
   return (
     <div className={className}>
       <h3 className="font-bold font-display text-xl tracking-tight">
         Rules I keep
       </h3>
       <ul className="mt-figure grid gap-x-12 gap-y-6 md:grid-cols-2">
-        {RULES.map((rule) => (
-          <li key={rule.title}>
+        {rules.map((rule, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: the list is fixed copy that never reorders; the index only keeps two rules with one title apart.
+          <li key={`${i}:${rule.title}`}>
             <p className="font-bold font-display leading-snug tracking-tight">
               {rule.title}
             </p>
@@ -97,14 +120,14 @@ function Rules({ className = "" }: { className?: string }) {
   );
 }
 
-function Stance() {
+function Stance({ stance, sub }: { stance: string; sub: string }) {
   return (
     <div className="max-w-4xl">
       <p className="font-serif text-[clamp(1.625rem,3.2vw,2.5rem)] italic leading-[1.3] tracking-[-0.01em]">
-        {STANCE}
+        {stance}
       </p>
       <p className="mt-flow max-w-measure text-[clamp(1.0625rem,1.6vw,1.1875rem)] text-foreground-muted">
-        {SUB}
+        {sub}
       </p>
     </div>
   );
@@ -114,39 +137,48 @@ function Stance() {
  * The stance, then the loop as paper cards that climb like stairs, then the
  * rules, each linked to the job that shows it.
  */
-export function HowIWork() {
+export function HowIWork({ content = CONTENT }: { content?: HowContent }) {
+  const n = content.loop.length;
+  // The climb is 10rem however many steps there are, so a sixth step makes the
+  // stairs finer instead of taller. Five steps is the 2.5rem it always was.
+  const stair = `${Math.min(2.5, 10 / Math.max(n - 1, 1))}rem`;
   return (
     <div className="wrap mt-group">
-      <Stance />
+      <Stance stance={content.stance} sub={content.sub} />
       {/* Below md the stairs run sideways in a snap row, so the climb survives
           a phone instead of becoming five stacked cards. */}
-      <ol
-        aria-label="How I work, step by step"
-        className="-mx-6 mt-group flex snap-x snap-mandatory scroll-px-6 [scrollbar-width:none] items-end gap-4 overflow-x-auto px-6 pt-2 pb-4 md:mx-0 md:grid md:grid-cols-5 md:gap-5 md:overflow-visible md:p-0"
-        data-land
-        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrolling region must take keyboard focus so it can be scrolled without a pointer.
-        tabIndex={0}
-      >
-        {LOOP.map((s, i) => (
-          <li
-            className="paper w-[15.5rem] shrink-0 snap-start p-5 mb-[calc(var(--step)*1.25rem)] md:w-auto md:mb-[calc(var(--step)*2.5rem)]"
-            key={s.step}
-            style={{ "--step": i } as React.CSSProperties}
-          >
-            <p className="font-mono text-foreground-label text-xs">
-              Step {i + 1}
-            </p>
-            <p className="mt-2 font-bold font-display text-xl tracking-tight">
-              {s.step}
-            </p>
-            <p className="mt-2 text-foreground-muted text-sm">{s.line}</p>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-group font-serif text-xl italic">{CLOSING}</p>
-      <div className="paper mt-group p-6 md:p-8">
-        <Rules />
-      </div>
+      {n > 0 ? (
+        <ol
+          aria-label="How I work, step by step"
+          className="-mx-6 mt-group flex snap-x snap-mandatory scroll-px-6 [scrollbar-width:none] items-end gap-4 overflow-x-auto px-6 pt-2 pb-4 lg:mx-0 lg:grid lg:grid-cols-[repeat(var(--n),minmax(0,1fr))] lg:gap-5 lg:overflow-visible lg:p-0"
+          data-land
+          style={{ "--n": n, "--stair": stair } as React.CSSProperties}
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrolling region must take keyboard focus so it can be scrolled without a pointer.
+          tabIndex={0}
+        >
+          {content.loop.map((s, i) => (
+            <li
+              className="paper w-[15.5rem] shrink-0 snap-start p-5 mb-[calc(var(--step)*var(--stair)/2)] lg:w-auto lg:mb-[calc(var(--step)*var(--stair))]"
+              key={s.step}
+              style={{ "--step": i } as React.CSSProperties}
+            >
+              <p className="font-mono text-foreground-label text-xs">
+                Step {i + 1}
+              </p>
+              <p className="mt-2 font-bold font-display text-xl tracking-tight [overflow-wrap:anywhere]">
+                {s.step}
+              </p>
+              <p className="mt-2 text-foreground-muted text-sm">{s.line}</p>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+      <p className="mt-group font-serif text-xl italic">{content.closing}</p>
+      {content.rules.length > 0 ? (
+        <div className="paper mt-group p-6 md:p-8">
+          <Rules rules={content.rules} />
+        </div>
+      ) : null}
     </div>
   );
 }
