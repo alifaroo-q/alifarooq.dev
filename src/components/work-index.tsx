@@ -26,9 +26,11 @@ function Preview({ entry }: { entry: Entry }) {
         {entry.title}
       </p>
       <p className="mt-1 text-foreground-muted">{entry.sub}</p>
-      <p className="mt-5 font-serif text-xl italic leading-snug">
-        {entry.result}
-      </p>
+      {entry.result ? (
+        <p className="mt-5 font-serif text-xl italic leading-snug">
+          {entry.result}
+        </p>
+      ) : null}
       {job ? (
         <>
           <p className="mt-5 text-foreground-muted">{job.about}</p>
@@ -58,18 +60,20 @@ function Preview({ entry }: { entry: Entry }) {
 function Row({ entry }: { entry: Entry }) {
   const inner = (
     <>
-      <span className="flex items-baseline justify-between gap-4 px-2">
-        <span className="font-bold font-display text-xl tracking-tight">
+      <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-2">
+        <span className="min-w-0 font-bold font-display text-xl tracking-tight [overflow-wrap:anywhere]">
           {entry.title}{" "}
           <span className="font-normal text-foreground-muted text-sm">
             {entry.sub}
           </span>
         </span>
-        <span className={LABEL}>{entry.years}</span>
+        <span className={`${LABEL} whitespace-nowrap`}>{entry.years}</span>
       </span>
-      <span className="mt-1 block px-2 text-foreground-muted text-sm lg:sr-only">
-        {entry.result}
-      </span>
+      {entry.result ? (
+        <span className="mt-1 block px-2 text-foreground-muted text-sm lg:sr-only">
+          {entry.result}
+        </span>
+      ) : null}
     </>
   );
   return entry.href ? (
@@ -82,7 +86,7 @@ function Row({ entry }: { entry: Entry }) {
 }
 
 export function WorkIndex({ entries }: { entries: readonly Entry[] }) {
-  const [activeId, setActiveId] = useState(entries[0].id);
+  const [activeId, setActiveId] = useState(entries[0]?.id);
   const active = entries.find((e) => e.id === activeId) ?? entries[0];
 
   // A link to `/work#job-x` lands on its row, so the preview follows the hash.
@@ -98,8 +102,9 @@ export function WorkIndex({ entries }: { entries: readonly Entry[] }) {
     window.addEventListener("hashchange", follow);
     return () => window.removeEventListener("hashchange", follow);
   }, [entries]);
+  if (!active) return null;
   return (
-    <div className="wrap mt-group grid items-start gap-10 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
+    <div className="wrap mt-group grid grid-cols-[minmax(0,1fr)] items-start gap-10 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
       <ul>
         {entries.map((entry) => (
           <li
@@ -113,7 +118,10 @@ export function WorkIndex({ entries }: { entries: readonly Entry[] }) {
           </li>
         ))}
       </ul>
-      <div aria-hidden="true" className="sticky top-28 hidden lg:block">
+      <div
+        aria-hidden="true"
+        className="sticky top-28 hidden max-h-[calc(100dvh-8rem)] overflow-y-auto lg:block"
+      >
         <Preview entry={active} />
       </div>
     </div>

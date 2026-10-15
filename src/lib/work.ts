@@ -174,6 +174,12 @@ export const SMALL_JOBS: SmallJob[] = [
   },
 ];
 
+/**
+ * A job's stack as separate tools. It splits on commas outside parentheses, so
+ * `AWS (ECS Fargate, RDS)` stays one tool.
+ */
+export const stackTools = (stack: string) => stack.split(/,\s*(?![^()]*\))/);
+
 /** The URL segment of a job's own page: its id without the `job-` prefix. */
 export const slugOf = (job: Job) => job.id.replace(/^job-/, "");
 

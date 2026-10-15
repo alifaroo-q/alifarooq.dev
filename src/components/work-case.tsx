@@ -8,7 +8,7 @@ import {
   Meta,
   Quote,
 } from "@/components/work-parts";
-import { caseSub, caseTitle } from "@/lib/work";
+import { caseSub, caseTitle, stackTools } from "@/lib/work";
 
 const isFlagship = (job: Job): job is Flagship => "flow" in job;
 
@@ -22,7 +22,7 @@ export function WorkCase({ job }: { job: Job }) {
     <article>
       <div className="hour hour-night rounded-[var(--radius)] border-2 border-ink p-8 shadow-[6px_6px_0_0_var(--ink)] md:p-14">
         <Meta job={job} />
-        <h1 className="mt-4 font-bold text-[clamp(3rem,9vw,7rem)] leading-[0.95] tracking-[-0.04em]">
+        <h1 className="mt-4 font-bold text-[clamp(2.25rem,9vw,7rem)] leading-[0.95] tracking-[-0.04em] [overflow-wrap:anywhere]">
           {caseTitle(job)}
         </h1>
         <p className="mt-2 text-foreground-muted text-xl">
@@ -46,7 +46,7 @@ export function WorkCase({ job }: { job: Job }) {
         <section className="paper p-6">
           <h2 className={LABEL}>Under the hood</h2>
           <ul className="mt-3 flex flex-wrap gap-2">
-            {job.stack.split(", ").map((tool) => (
+            {stackTools(job.stack).map((tool) => (
               <li className="chip px-3 py-1.5 text-sm" key={tool}>
                 {tool}
               </li>

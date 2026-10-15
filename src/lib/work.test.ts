@@ -6,6 +6,7 @@ import {
   findCase,
   SMALL_JOBS,
   slugOf,
+  stackTools,
   workHref,
 } from "./work";
 
@@ -38,5 +39,13 @@ describe("work", () => {
 
   it("throws on an id that is not a project", () => {
     expect(() => workHref("job-nope")).toThrow();
+  });
+});
+
+describe("stackTools", () => {
+  it("splits on commas and keeps a parenthesised group whole", () => {
+    expect(
+      stackTools("NestJS, Postgres, AWS (ECS Fargate, RDS), Next.js"),
+    ).toEqual(["NestJS", "Postgres", "AWS (ECS Fargate, RDS)", "Next.js"]);
   });
 });
