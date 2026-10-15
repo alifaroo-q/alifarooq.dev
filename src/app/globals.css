@@ -326,8 +326,8 @@
   color: var(--ink);
   border: 2px solid var(--ink);
   border-radius: var(--radius);
-  box-shadow: calc(var(--lift, 1) * 6px) calc(var(--lift, 1) * 6px) 0 0
-    var(--shadow-ink);
+  box-shadow: calc(var(--lift, 1) * (6px + var(--rise, 0) * 1px))
+    calc(var(--lift, 1) * (6px + var(--rise, 0) * 1px)) 0 0 var(--shadow-ink);
 }
 
 /* How far a paper card stands off the page, 0 to 1. The motion runtime lands
@@ -336,6 +336,46 @@
   syntax: "<number>";
   inherits: false;
   initial-value: 1;
+}
+
+/* A linked card answers the press on pointer-down: it lifts toward the pointer
+   on hover and sits down onto the page while held. `--rise` is the shadow's
+   share of that, so the landing tween's `--lift` and this never fight over one
+   property. It moves by `top`/`left`, not `translate`: the landing tween
+   writes an inline `translate: none` on these cards and would win. Relative
+   offsets cost paint, not layout. Press-down is quicker than the release (it is the response); a
+   transition retargets from the live value, so a release mid-press is smooth. */
+@property --rise {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+a.paper {
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    top var(--duration-hover) var(--ease-arrive),
+    left var(--duration-hover) var(--ease-arrive),
+    --rise var(--duration-hover) var(--ease-arrive);
+}
+a.paper:focus-visible {
+  top: -2px;
+  left: -2px;
+  --rise: 2;
+}
+@media (hover: hover) and (pointer: fine) {
+  a.paper:hover {
+    top: -2px;
+    left: -2px;
+    --rise: 2;
+  }
+}
+a.paper:active {
+  top: 4px;
+  left: 4px;
+  --rise: -4;
+  transition-duration: 70ms;
 }
 
 /* The portrait's window: a doorway arch. */
@@ -349,6 +389,8 @@
    `translate` moves it out from under the pointer and the hover flickers. The
    hour cues are centred by a flex wrapper instead. */
 .pill {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   display: inline-flex;
   align-items: center;
   border: 2px solid var(--ink);
@@ -373,6 +415,7 @@
 .pill:active {
   translate: 2px 2px;
   box-shadow: 1px 1px 0 0 var(--ink);
+  transition-duration: 70ms;
 }
 
 /* A label that is not a control: no fill and a faint hairline, so only buttons
@@ -393,6 +436,8 @@
 
 /* The one primary action: saffron, pressed like a key. */
 .key {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -419,6 +464,7 @@
 .key:active {
   translate: 3px 3px;
   box-shadow: 1px 1px 0 0 var(--ink);
+  transition-duration: 70ms;
 }
 .key:disabled {
   background: var(--action-disabled);
@@ -466,6 +512,31 @@ em.accent {
   content: "";
   position: absolute;
   inset: calc(50% - 22px) -0.25rem;
+}
+
+/* More contrast on request: the two quiet text tiers and the hairlines go to
+   full ink (cream at night), and the soft underlines and chip edges go solid.
+   Placed after every redefinition above so it wins at equal specificity. */
+@media (prefers-contrast: more) {
+  :root,
+  .paper,
+  .hour-evening,
+  .hour-dusk {
+    --foreground-muted: var(--ink);
+    --foreground-label: var(--ink);
+    --border: var(--ink);
+  }
+  .hour-night {
+    --foreground-muted: var(--cream);
+    --foreground-label: var(--cream);
+    --border: var(--cream);
+  }
+  .chip {
+    border-color: currentColor;
+  }
+  .ink-link {
+    text-decoration-color: currentColor;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -575,6 +646,7 @@ html[data-hour="night"] [data-nav="contact"] > span::after {
 @media (prefers-reduced-motion: reduce) {
   .pill,
   .key,
+  a.paper,
   [data-nav] > span::after {
     transition: none;
   }
@@ -641,9 +713,21 @@ html[data-hour="night"] [data-nav="contact"] > span::after {
     mix-blend-mode: normal;
   }
 }
+/* Reduced motion keeps the change of page legible as a plain cross-fade:
+   no travel, no overshoot. */
 @media (prefers-reduced-motion: reduce) {
-  @view-transition {
-    navigation: none;
+  ::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-new(root) {
+    animation: page-fade 150ms ease-out both;
+    mix-blend-mode: normal;
+  }
+}
+@keyframes page-fade {
+  from {
+    opacity: 0;
   }
 }
 @keyframes page-arrive {
