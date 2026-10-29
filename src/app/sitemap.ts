@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { INTRO_VIDEO } from "@/lib/intro";
 import { SITE_URL } from "@/lib/site";
 import { CASES, caseHref } from "@/lib/work";
 
@@ -12,7 +13,12 @@ import { CASES, caseHref } from "@/lib/work";
  * both.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  return ["", "/work", ...CASES.map(caseHref)].map((path) => ({
+  return [
+    "",
+    "/work",
+    ...(INTRO_VIDEO ? ["/intro"] : []),
+    ...CASES.map(caseHref),
+  ].map((path) => ({
     url: `${SITE_URL}${path}`,
   }));
 }
